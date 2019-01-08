@@ -1,4 +1,4 @@
-import {World} from "ruzzle";
+import { WebClient } from "ruzzle";
 
-const world = World.new();
-console.log(world.width(), world.height());
+const world = WebClient.new("canvas", "assets");
+world.render();

@@ -1,8 +1,12 @@
 extern crate cfg_if;
 extern crate wasm_bindgen;
+extern crate web_sys;
+extern crate js_sys;
 
 mod utils;
+mod web_client;
 mod game;
+mod renderer;
 
 use cfg_if::cfg_if;
 use wasm_bindgen::prelude::*;
