@@ -1,7 +1,8 @@
 use super::Cell;
-
-const WORLD_WIDTH: usize = 12;
-const WORLD_HEIGHT: usize = 8;
+use super::constants::{
+    WORLD_WIDTH_IN_CELLS,
+    WORLD_HEIGHT_IN_CELLS
+};
 
 pub struct World {
     width: usize,
@@ -11,18 +12,15 @@ pub struct World {
 
 impl World {
     pub fn new() -> World {
-        let cells = (0..WORLD_WIDTH * WORLD_HEIGHT).map(|i| {
-            Cell::new(i, i)
-        }).collect();
         World {
-            width: WORLD_WIDTH,
-            height: WORLD_HEIGHT,
-            cells
+            width: WORLD_WIDTH_IN_CELLS,
+            height: WORLD_HEIGHT_IN_CELLS,
+            cells: vec![]
         }
     }
 
     pub fn get_index(&self, row: usize, col: usize) -> usize {
-        self.height * row + col
+        self.width * row + col
     }
 
     pub fn width(&self) -> usize {
@@ -35,5 +33,9 @@ impl World {
 
     pub fn cells(&self) -> &Vec<Cell> {
         &self.cells
+    }
+
+    pub fn set_cells(&mut self, cells: Vec<Cell>) {
+        self.cells = cells;
     }
 }

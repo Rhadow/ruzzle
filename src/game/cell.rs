@@ -1,29 +1,24 @@
-const CELL_SIZE: usize = 16;
+use super::terrain::Terrain;
+use super::object::Object;
 
 pub struct Cell {
-    terrain: usize,
-    item: usize,
-    size: usize
+    terrain: Option<Box<dyn Terrain>>,
+    object: Option<Box<dyn Object>>,
 }
 
 impl Cell {
-    pub fn new(terrain: usize, item: usize) -> Cell {
+    pub fn new(terrain: Option<Box<dyn Terrain>>, object: Option<Box<dyn Object>>) -> Cell {
         Cell {
             terrain,
-            item,
-            size: CELL_SIZE
+            object,
         }
     }
 
-    pub fn terrain(&self) -> usize {
-        self.terrain
+    pub fn get_terrain(&self) -> &Option<Box<dyn Terrain>> {
+        &self.terrain
     }
 
-    pub fn item(&self) -> usize {
-        self.item
-    }
-
-    pub fn size(&self) -> usize {
-        self.size
+    pub fn get_object(&self) -> &Option<Box<dyn Object>> {
+        &self.object
     }
 }

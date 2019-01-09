@@ -1,4 +1,11 @@
 import { WebClient } from "ruzzle";
 
-const world = WebClient.new("canvas", "assets");
-world.render();
+const webClient = WebClient.new("canvas", "environment", "object", "character");
+webClient.render();
+
+function render() {
+    webClient.render();
+    requestAnimationFrame(render);
+}
+
+render();
