@@ -7,47 +7,27 @@ use crate::game::constants::{
 };
 
 pub struct GrassLand {
-    asset_type: AssetType,
-    asset_x_offset: f64,
-    asset_y_offset: f64,
-    asset_width: f64,
-    asset_height: f64,
-}
-
-impl Asset for GrassLand {
-    fn get_asset_type(&self) -> &AssetType {
-        &self.asset_type
-    }
-
-    fn get_asset_x_offset(&self) -> f64 {
-        self.asset_x_offset
-    }
-
-    fn get_asset_y_offset(&self) -> f64 {
-        self.asset_y_offset
-    }
-
-    fn get_asset_width(&self) -> f64 {
-        self.asset_width
-    }
-
-    fn get_asset_height(&self) -> f64 {
-        self.asset_height
-    }
+    asset: Asset,
 }
 
 impl Terrain for GrassLand {
+    fn get_asset(&self) -> &Asset {
+        &self.asset
+    }
     fn update(&self) {}
 }
 
 impl GrassLand {
     pub fn new() -> GrassLand {
+        let asset = Asset::new(
+            AssetType::Environment,
+            GRASS_LAND_X_OFFSET,
+            GRASS_LAND_Y_OFFSET,
+            GRASS_LAND_SIZE,
+            GRASS_LAND_SIZE,
+        );
         GrassLand {
-            asset_type: AssetType::Environment,
-            asset_x_offset: GRASS_LAND_X_OFFSET,
-            asset_y_offset: GRASS_LAND_Y_OFFSET,
-            asset_width: GRASS_LAND_SIZE,
-            asset_height: GRASS_LAND_SIZE,
+            asset
         }
     }
 }

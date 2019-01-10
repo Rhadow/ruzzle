@@ -1,9 +1,10 @@
 // use web_sys::console::log_1;
 use wasm_bindgen::JsCast;
 use web_sys::{CanvasRenderingContext2d, HtmlCanvasElement, HtmlImageElement};
-use crate::game::{World, AssetType};
+use crate::game::{World, Asset, AssetType};
 use crate::game::terrain::Terrain;
 use crate::game::object::Object;
+use crate::game::character::Character;
 use crate::game::constants::{
     CELL_SIZE,
     ASSET_SIZE
@@ -32,56 +33,58 @@ impl WebRenderer {
     }
 
     pub fn render(&self, world: &World) {
-        let width = world.width();
-        let height = world.height();
+        let width_in_cells = world.width_in_cells();
+        let height_in_cells = world.height_in_cells();
         let cells = world.cells();
-        self.ctx.clear_rect(0f64, 0f64, width as f64 * CELL_SIZE, height as f64 * CELL_SIZE);
+        let characters = world.get_characters();
+        self.ctx.clear_rect(0f64, 0f64, width_in_cells as f64 * CELL_SIZE, height_in_cells as f64 * CELL_SIZE);
 
-        for row in 0..height {
-            for col in 0..width {
+        for row in 0..height_in_cells {
+            for col in 0..width_in_cells {
                 let idx = world.get_index(row, col);
                 let cell = &cells[idx];
                 if let Some(terrain) = cell.get_terrain() {
-                    self.draw_terrain(terrain, row, col);
+                    self.draw_terrain(terrain, row as f64, col as f64);
                 }
                 if let Some(object) = cell.get_object() {
-                    self.draw_object(object, row, col);
+                    self.draw_object(object, row as f64, col as f64);
                 }
             }
         }
+
+        self.draw_characters(characters);
     }
 
-    fn draw_terrain(&self, terrain: &Box<dyn Terrain>, row: usize, col: usize) {
-        let asset = match terrain.get_asset_type() {
+    fn draw_terrain(&self, terrain: &Box<dyn Terrain>, row: f64, col: f64) {
+        let asset = terrain.get_asset();
+        self.draw_asset(asset, row, col);
+    }
+
+    fn draw_object(&self, object: &Box<dyn Object>, row: f64, col: f64) {
+        let asset = object.get_asset();
+        self.draw_asset(asset, row, col);
+    }
+
+    fn draw_characters(&self, characters: &Vec<Box<dyn Character>>) {
+        for character in characters {
+            let asset = character.get_asset();
+            let (row, col) = (character.get_coordinate().row(), character.get_coordinate().col());
+            self.draw_asset(asset, row as f64, col as f64);
+        }
+    }
+
+    fn draw_asset(&self, asset: &Asset, row: f64, col: f64) {
+        let asset_by_type = match asset.get_type() {
             AssetType::Environment => &self.env_assets,
             AssetType::Object => &self.obj_assets,
             AssetType::Character => &self.char_assets,
         };
         self.ctx.draw_image_with_html_image_element_and_sw_and_sh_and_dx_and_dy_and_dw_and_dh(
-            asset,
-            terrain.get_asset_x_offset() * ASSET_SIZE,
-            terrain.get_asset_y_offset() * ASSET_SIZE,
-            terrain.get_asset_width(),
-            terrain.get_asset_height(),
-            col as f64 * CELL_SIZE,
-            row as f64 * CELL_SIZE,
-            CELL_SIZE,
-            CELL_SIZE,
-        ).unwrap();
-    }
-
-    fn draw_object(&self, object: &Box<dyn Object>, row: usize, col: usize) {
-        let asset = match object.get_asset_type() {
-            AssetType::Environment => &self.env_assets,
-            AssetType::Object => &self.obj_assets,
-            AssetType::Character => &self.char_assets,
-        };
-        self.ctx.draw_image_with_html_image_element_and_sw_and_sh_and_dx_and_dy_and_dw_and_dh(
-            asset,
-            object.get_asset_x_offset() * ASSET_SIZE,
-            object.get_asset_y_offset() * ASSET_SIZE,
-            object.get_asset_width(),
-            object.get_asset_height(),
+            asset_by_type,
+            asset.get_x_offset() * ASSET_SIZE,
+            asset.get_y_offset() * ASSET_SIZE,
+            asset.get_width(),
+            asset.get_height(),
             col as f64 * CELL_SIZE,
             row as f64 * CELL_SIZE,
             CELL_SIZE,

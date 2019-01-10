@@ -1,25 +1,25 @@
 mod world;
 mod cell;
+mod asset;
 
 pub mod level;
 pub mod terrain;
 pub mod constants;
 pub mod object;
+pub mod character;
 
 pub use self::world::World;
 pub use self::cell::Cell;
+pub use self::asset::{Asset, AssetType};
 
-pub enum AssetType {
-    Environment,
-    Character,
-    Object,
-}
+#[derive(Clone, Copy)]
+pub struct Coordinate (usize, usize);
 
-
-pub trait Asset {
-    fn get_asset_type(&self) -> &AssetType;
-    fn get_asset_x_offset(&self) -> f64;
-    fn get_asset_y_offset(&self) -> f64;
-    fn get_asset_width(&self) -> f64;
-    fn get_asset_height(&self) -> f64;
+impl Coordinate {
+    pub fn row(&self) -> usize {
+        self.0
+    }
+    pub fn col(&self) -> usize {
+        self.1
+    }
 }
