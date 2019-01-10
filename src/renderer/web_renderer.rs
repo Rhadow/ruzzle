@@ -1,4 +1,3 @@
-// use web_sys::console::log_1;
 use wasm_bindgen::JsCast;
 use web_sys::{CanvasRenderingContext2d, HtmlCanvasElement, HtmlImageElement};
 use crate::game::{World, Asset, AssetType};

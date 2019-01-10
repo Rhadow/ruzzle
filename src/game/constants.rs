@@ -6,6 +6,12 @@ pub const TOTAL_CELLS: usize = WORLD_WIDTH_IN_CELLS * WORLD_HEIGHT_IN_CELLS;
 pub const CELL_SIZE: f64 = 64f64;
 pub const ASSET_SIZE: f64 = 16f64;
 
+// Keyboard
+pub const ARROW_UP: &str = "ArrowUp";
+pub const ARROW_DOWN: &str = "ArrowDown";
+pub const ARROW_LEFT: &str = "ArrowLeft";
+pub const ARROW_RIGHT: &str = "ArrowRight";
+
 // Player
 pub const PLAYER_BASE_X_OFFSET: f64 = 0f64;
 pub const PLAYER_BASE_Y_OFFSET: f64 = 0f64;

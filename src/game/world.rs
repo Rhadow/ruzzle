@@ -1,8 +1,12 @@
 use super::Cell;
-use super::character::Character;
+use super::character::{Character, Direction};
 use super::constants::{
     WORLD_WIDTH_IN_CELLS,
-    WORLD_HEIGHT_IN_CELLS
+    WORLD_HEIGHT_IN_CELLS,
+    ARROW_DOWN,
+    ARROW_UP,
+    ARROW_RIGHT,
+    ARROW_LEFT,
 };
 
 pub struct World {
@@ -53,6 +57,16 @@ impl World {
     pub fn update(&mut self) {
         for character in &mut self.characters {
             character.update();
+        }
+    }
+
+    pub fn handle_key_down_event(&mut self, key: &str) {
+        match key {
+            ARROW_UP => self.characters[0].set_direction(Direction::Up),
+            ARROW_DOWN => self.characters[0].set_direction(Direction::Down),
+            ARROW_LEFT => self.characters[0].set_direction(Direction::Left),
+            ARROW_RIGHT => self.characters[0].set_direction(Direction::Right),
+            _ => ()
         }
     }
 }

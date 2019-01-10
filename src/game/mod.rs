@@ -2,6 +2,7 @@ mod world;
 mod cell;
 mod asset;
 
+pub mod canvas;
 pub mod level;
 pub mod terrain;
 pub mod constants;

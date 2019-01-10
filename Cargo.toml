@@ -44,4 +44,7 @@ features = [
   'HtmlImageElement',
   'Window',
   'console',
+  'KeyboardEvent',
+  'MouseEvent',
+  'EventTarget',
 ]
