@@ -21,7 +21,7 @@ use self::constants::{
 };
 
 #[derive(Clone, Copy, PartialEq)]
-pub struct Coordinate (f64, f64);
+pub struct Coordinate (pub f64, pub f64);
 
 impl Coordinate {
     pub fn x(&self) -> f64 {

@@ -11,8 +11,6 @@ use super::constants::{
 };
 
 pub struct World {
-    width_in_cells: usize,
-    height_in_cells: usize,
     cells: Vec<Cell>,
     characters: Vec<Box<dyn Character>>,
 }
@@ -20,23 +18,21 @@ pub struct World {
 impl World {
     pub fn new(cells: Vec<Cell>, characters: Vec<Box<dyn Character>>) -> World {
         World {
-            width_in_cells: WORLD_WIDTH_IN_CELLS,
-            height_in_cells: WORLD_HEIGHT_IN_CELLS,
             cells,
             characters,
         }
     }
 
     pub fn get_index(&self, row: usize, col: usize) -> usize {
-        self.width_in_cells * row + col
+        WORLD_WIDTH_IN_CELLS * row + col
     }
 
     pub fn width_in_cells(&self) -> usize {
-        self.width_in_cells
+        WORLD_WIDTH_IN_CELLS
     }
 
     pub fn height_in_cells(&self) -> usize {
-        self.height_in_cells
+        WORLD_HEIGHT_IN_CELLS
     }
 
     pub fn cells(&self) -> &Vec<Cell> {
@@ -56,13 +52,13 @@ impl World {
         &self.characters
     }
 
-    pub fn update(&mut self) {
+    pub fn update(&mut self, now: f64) {
         for character in &mut self.characters {
-            character.update();
+            character.update(now);
         }
     }
 
-    pub fn handle_key_down_event(&mut self, key: &str) {
+    pub fn handle_direction_event(&mut self, key: &str) {
         let direction = match key {
             ARROW_UP => Some(Direction::Up),
             ARROW_DOWN => Some(Direction::Down),

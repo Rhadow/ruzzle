@@ -28,6 +28,9 @@ impl Asset {
     pub fn get_x_offset(&self) -> f64 {
         self.x_offset
     }
+    pub fn set_x_offset(&mut self, new_x_offset: f64) {
+        self.x_offset = new_x_offset;
+    }
     pub fn get_y_offset(&self) -> f64 {
         self.y_offset
     }

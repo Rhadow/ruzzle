@@ -25,7 +25,7 @@ pub struct MovementManager {
 
 impl MovementManager {
     pub fn new(position: Position, direction: Direction) -> MovementManager {
-        let coordinate = position_to_coordinate(position);
+        let coordinate = MovementManager::position_to_coordinate(position);
         MovementManager {
             status: Status::Idle,
             coordinate,
@@ -34,7 +34,7 @@ impl MovementManager {
             direction
         }
     }
-    pub fn move_by_direction(&mut self, direction: Direction) {
+    pub fn walk(&mut self, direction: Direction) {
         let (d_row, d_col) = match direction {
             Direction::Up => (-1f64, 0f64),
             Direction::Down => (1f64, 0f64),
@@ -43,6 +43,7 @@ impl MovementManager {
         };
         let new_position = Position(self.position.row() + d_row, self.position.col() + d_col);
         if new_position.is_in_world() {
+            self.status = Status::Walking;
             self.last_position = self.position;
             self.position = new_position;
         }
@@ -50,8 +51,8 @@ impl MovementManager {
             self.direction = direction;
         }
     }
-}
 
-fn position_to_coordinate(position: Position) -> Coordinate {
-    Coordinate(position.col() * CELL_SIZE, position.row() * CELL_SIZE)
+    pub fn position_to_coordinate(position: Position) -> Coordinate {
+        Coordinate(position.col() * CELL_SIZE, position.row() * CELL_SIZE)
+    }
 }

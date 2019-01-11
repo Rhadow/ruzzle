@@ -1,3 +1,4 @@
+use crate::game::Coordinate;
 use cfg_if::cfg_if;
 
 cfg_if! {
@@ -14,4 +15,16 @@ cfg_if! {
         #[inline]
         pub fn set_panic_hook() {}
     }
+}
+
+pub fn coordinate_lerp(start: Coordinate, end: Coordinate, ratio: f64) -> Coordinate {
+    if ratio == 0f64 {
+        return start;
+    }
+    if ratio == 1f64 {
+        return end;
+    }
+    let dx = end.x() - start.x();
+    let dy = end.y() - start.y();
+    Coordinate(start.x() + ratio * dx, start.y() + ratio * dy)
 }
