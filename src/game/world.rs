@@ -1,5 +1,6 @@
 use super::Cell;
-use super::character::{Character, Direction};
+use super::character::Character;
+use super::movement_manager::Direction;
 use super::constants::{
     WORLD_WIDTH_IN_CELLS,
     WORLD_HEIGHT_IN_CELLS,
@@ -17,12 +18,12 @@ pub struct World {
 }
 
 impl World {
-    pub fn new() -> World {
+    pub fn new(cells: Vec<Cell>, characters: Vec<Box<dyn Character>>) -> World {
         World {
             width_in_cells: WORLD_WIDTH_IN_CELLS,
             height_in_cells: WORLD_HEIGHT_IN_CELLS,
-            cells: vec![],
-            characters: vec![],
+            cells,
+            characters,
         }
     }
 
@@ -42,12 +43,13 @@ impl World {
         &self.cells
     }
 
-    pub fn set_cells(&mut self, cells: Vec<Cell>) {
-        self.cells = cells;
+    pub fn player(&mut self) -> &mut Box<dyn Character> {
+        let idx = self.characters.len() - 1;
+        &mut self.characters[idx]
     }
 
-    pub fn set_characters(&mut self, characters: Vec<Box<dyn Character>>) {
-        self.characters = characters;
+    pub fn _set_cells(&mut self, cells: Vec<Cell>) {
+        self.cells = cells;
     }
 
     pub fn get_characters(&self) -> &Vec<Box<dyn Character>> {
@@ -61,12 +63,20 @@ impl World {
     }
 
     pub fn handle_key_down_event(&mut self, key: &str) {
-        match key {
-            ARROW_UP => self.characters[0].set_direction(Direction::Up),
-            ARROW_DOWN => self.characters[0].set_direction(Direction::Down),
-            ARROW_LEFT => self.characters[0].set_direction(Direction::Left),
-            ARROW_RIGHT => self.characters[0].set_direction(Direction::Right),
-            _ => ()
+        let direction = match key {
+            ARROW_UP => Some(Direction::Up),
+            ARROW_DOWN => Some(Direction::Down),
+            ARROW_LEFT => Some(Direction::Left),
+            ARROW_RIGHT => Some(Direction::Right),
+            _ => None
+        };
+        self.handle_player_movement(direction);
+    }
+
+    fn handle_player_movement(&mut self, direction: Option<Direction>) {
+        let player = self.player();
+        if let Some(dir) = direction {
+            player.move_by_direction(dir);
         }
     }
 }

@@ -9,7 +9,7 @@
 
 use crate::game::{
     Cell,
-    Coordinate
+    Position
 };
 use crate::game::terrain::{
     Terrain,
@@ -26,44 +26,44 @@ use crate::game::constants::{
 };
 use super::level00::LEVEL00;
 
-type Level = ([&'static str; TOTAL_CELLS], [&'static str; TOTAL_CELLS], Coordinate);
+type Level = ([&'static str; TOTAL_CELLS], [&'static str; TOTAL_CELLS], Position);
 const LEVELS: [Level; 1] = [
     LEVEL00,
 ];
 
 pub struct LevelManager {
-    player_coordinate: Option<Coordinate>
+    player_position: Option<Position>
 }
 
 impl LevelManager {
     pub fn new() -> LevelManager {
         LevelManager {
-            player_coordinate: None
+            player_position: None
         }
     }
 
-    fn index_to_coordinate(&self, idx: usize) -> Coordinate {
-        let row = (idx as i32 / WORLD_WIDTH_IN_CELLS as i32) as usize;
-        let col = (idx as i32 % WORLD_WIDTH_IN_CELLS as i32) as usize;
-        Coordinate(row, col)
+    fn index_to_position(&self, idx: usize) -> Position {
+        let row = (idx as i32 / WORLD_WIDTH_IN_CELLS as i32) as f64;
+        let col = (idx as i32 % WORLD_WIDTH_IN_CELLS as i32) as f64;
+        Position(row, col)
     }
 
-    pub fn get_player_coordinate(&self) -> &Option<Coordinate> {
-        &self.player_coordinate
+    pub fn get_player_position(&self) -> &Option<Position> {
+        &self.player_position
     }
 
-    pub fn set_player_coordinate(&mut self, new_coordinate: Option<Coordinate>) {
-        self.player_coordinate = new_coordinate;
+    pub fn set_player_position(&mut self, new_position: Option<Position>) {
+        self.player_position = new_position;
     }
 
     pub fn construct_level(&mut self, level: usize) -> Vec<Cell> {
         let mut cells = vec![];
-        let (terrains, objects, player_coordinate) = LEVELS[level];
-        self.set_player_coordinate(Some(player_coordinate));
+        let (terrains, objects, player_position) = LEVELS[level];
+        self.set_player_position(Some(player_position));
         for i in 0..terrains.len() {
             let terrain = terrains[i];
             let object = objects[i];
-            let coordinate = self.index_to_coordinate(i);
+            let position = self.index_to_position(i);
 
             let terrain: Option<Box<dyn Terrain>> = match String::from(terrain.trim()).to_uppercase().as_str() {
                 "G" => Some(Box::new(GrassLand::new())),
@@ -72,7 +72,7 @@ impl LevelManager {
             };
 
             let object: Option<Box<dyn Object>> = match String::from(object.trim()).to_uppercase().as_str() {
-                "T" => Some(Box::new(Tree::new(coordinate))),
+                "T" => Some(Box::new(Tree::new(position))),
                 _ => None
             };
 

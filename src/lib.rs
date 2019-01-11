@@ -5,8 +5,8 @@ extern crate js_sys;
 
 mod utils;
 mod web_client;
-mod game;
 mod renderer;
+pub mod game;
 
 use cfg_if::cfg_if;
 use wasm_bindgen::prelude::*;

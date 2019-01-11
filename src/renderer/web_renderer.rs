@@ -56,23 +56,42 @@ impl WebRenderer {
 
     fn draw_terrain(&self, terrain: &Box<dyn Terrain>, row: f64, col: f64) {
         let asset = terrain.get_asset();
-        self.draw_asset(asset, row, col);
+        self.draw_asset_by_position(asset, row, col);
     }
 
     fn draw_object(&self, object: &Box<dyn Object>, row: f64, col: f64) {
         let asset = object.get_asset();
-        self.draw_asset(asset, row, col);
+        self.draw_asset_by_position(asset, row, col);
     }
 
     fn draw_characters(&self, characters: &Vec<Box<dyn Character>>) {
         for character in characters {
-            let asset = character.get_asset();
-            let (row, col) = (character.get_coordinate().row(), character.get_coordinate().col());
-            self.draw_asset(asset, row as f64, col as f64);
+            let asset = character.asset();
+            let (x, y) = (character.movement_manager().coordinate.x(), character.movement_manager().coordinate.y());
+            self.draw_asset_by_coordinate(asset, x, y);
         }
     }
 
-    fn draw_asset(&self, asset: &Asset, row: f64, col: f64) {
+    fn draw_asset_by_coordinate(&self, asset: &Asset, x: f64, y: f64) {
+        let asset_by_type = match asset.get_type() {
+            AssetType::Environment => &self.env_assets,
+            AssetType::Object => &self.obj_assets,
+            AssetType::Character => &self.char_assets,
+        };
+        self.ctx.draw_image_with_html_image_element_and_sw_and_sh_and_dx_and_dy_and_dw_and_dh(
+            asset_by_type,
+            asset.get_x_offset() * ASSET_SIZE,
+            asset.get_y_offset() * ASSET_SIZE,
+            asset.get_width(),
+            asset.get_height(),
+            x,
+            y,
+            CELL_SIZE,
+            CELL_SIZE,
+        ).unwrap();
+    }
+
+    fn draw_asset_by_position(&self, asset: &Asset, row: f64, col: f64) {
         let asset_by_type = match asset.get_type() {
             AssetType::Environment => &self.env_assets,
             AssetType::Object => &self.obj_assets,

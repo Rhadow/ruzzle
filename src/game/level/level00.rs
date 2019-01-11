@@ -1,5 +1,5 @@
 use crate::game::constants::TOTAL_CELLS;
-use crate::game::Coordinate;
+use crate::game::Position;
 
 const TERRAINS: [&str; TOTAL_CELLS] = [
     "G ","WP","G ","G ","G ","G ","G ","G ","G ","G ","G ","G ",
@@ -23,6 +23,6 @@ const OBJECTS: [&str; TOTAL_CELLS] = [
     "  ","  ","  ","  ","  ","  ","  ","  ","  ","  ","  ","  ",
 ];
 
-const PLAYER_COORDINATE: Coordinate = Coordinate(7, 0);
+const PLAYER_POSITION: Position = Position(7f64, 0f64);
 
-pub const LEVEL00: ([&str; TOTAL_CELLS], [&str; TOTAL_CELLS], Coordinate) = (TERRAINS, OBJECTS, PLAYER_COORDINATE);
+pub const LEVEL00: ([&str; TOTAL_CELLS], [&str; TOTAL_CELLS], Position) = (TERRAINS, OBJECTS, PLAYER_POSITION);

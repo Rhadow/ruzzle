@@ -1,17 +1,10 @@
-use crate::game::{Asset, Coordinate};
+use crate::game::{Asset, MovementManager, Direction};
 mod player;
 pub use self::player::Player;
 
-pub enum Direction {
-    Up,
-    Down,
-    Left,
-    Right,
-}
-
 pub trait Character {
-    fn get_asset(&self) -> &Asset;
-    fn get_coordinate(&self) -> &Coordinate;
-    fn set_direction(&mut self, direction: Direction);
+    fn asset(&self) -> &Asset;
+    fn movement_manager(&self) -> &MovementManager;
+    fn move_by_direction(&mut self, direction: Direction);
     fn update(&mut self);
 }

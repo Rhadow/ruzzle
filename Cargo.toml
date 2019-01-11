@@ -47,4 +47,6 @@ features = [
   'KeyboardEvent',
   'MouseEvent',
   'EventTarget',
+  'Performance',
+  'PerformanceTiming',
 ]

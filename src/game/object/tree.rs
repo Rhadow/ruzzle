@@ -1,6 +1,7 @@
 use super::Object;
-use crate::game::{Asset, AssetType, Coordinate};
+use crate::game::{Asset, AssetType, Coordinate, Position};
 use crate::game::constants::{
+    CELL_SIZE,
     TREE_X_OFFSET,
     TREE_Y_OFFSET,
     TREE_SIZE
@@ -8,6 +9,7 @@ use crate::game::constants::{
 
 pub struct Tree {
     asset: Asset,
+    position: Position,
     coordinate: Coordinate
 }
 
@@ -18,11 +20,15 @@ impl Object for Tree {
     fn get_coordinate(&self) -> &Coordinate {
         &self.coordinate
     }
+    fn get_position(&self) -> &Position {
+        &self.position
+    }
     fn update(&self) {}
 }
 
 impl Tree {
-    pub fn new(coordinate: Coordinate) -> Tree {
+    pub fn new(position: Position) -> Tree {
+        let coordinate = Coordinate(position.col() * CELL_SIZE, position.row() * CELL_SIZE);
         let asset = Asset::new(
             AssetType::Object,
             TREE_X_OFFSET,
@@ -32,7 +38,8 @@ impl Tree {
         );
         Tree {
             asset,
-            coordinate
+            position,
+            coordinate,
         }
     }
 }

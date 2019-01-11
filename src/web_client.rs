@@ -2,15 +2,15 @@ use wasm_bindgen::prelude::*;
 use utils::set_panic_hook;
 use std::rc::Rc;
 use std::cell::RefCell;
-use crate::game::World;
 use crate::renderer::WebRenderer;
+use crate::game::World;
 use crate::game::canvas::Canvas;
 use crate::game::level::LevelManager;
-use crate::game::character::{Player, Direction};
+use crate::game::character::{Character, Player};
+use crate::game::movement_manager::Direction;
 
 #[wasm_bindgen]
 pub struct WebClient {
-    canvas: Canvas,
     world: Rc<RefCell<World>>,
     renderer: WebRenderer
 }
@@ -26,7 +26,6 @@ impl WebClient {
         canvas.bind_events();
 
         WebClient {
-            canvas,
             world: Rc::clone(&world),
             renderer
         }
@@ -42,13 +41,11 @@ impl WebClient {
     }
 }
 
-fn init_world (current_level: usize) -> World {
-    let mut world = World::new();
+fn init_world<'a> (current_level: usize) -> World {
     let mut level_manager = LevelManager::new();
     let level_cells = level_manager.construct_level(current_level);
-    let player_coordinate = level_manager.get_player_coordinate().unwrap();
-    let player = Box::new(Player::new(player_coordinate, Direction::Down));
-    world.set_cells(level_cells);
-    world.set_characters(vec![player]);
+    let player_position = level_manager.get_player_position().unwrap();
+    let player = Box::new(Player::new(player_position, Direction::Down)) as Box<dyn Character>;
+    let world = World::new(level_cells, vec![player]);
     world
 }

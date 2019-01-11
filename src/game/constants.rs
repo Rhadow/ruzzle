@@ -17,6 +17,8 @@ pub const PLAYER_BASE_X_OFFSET: f64 = 0f64;
 pub const PLAYER_BASE_Y_OFFSET: f64 = 0f64;
 pub const PLAYER_WIDTH: f64 = 16f64;
 pub const PLAYER_HEIGHT: f64 = 32f64;
+pub const PLAYER_MOVE_TIME: f64 = 1000f64;
+pub const PLAYER_ANIMATION_TIME: f64 = 250f64;
 
 // Terrains
 pub const GRASS_LAND_X_OFFSET: f64 = 7f64;

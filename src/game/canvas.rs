@@ -2,11 +2,12 @@ use web_sys::console::log_1;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use crate::game::World;
-use web_sys::HtmlCanvasElement;
+use web_sys::{HtmlCanvasElement, Window};
 use std::rc::Rc;
 use std::cell::RefCell;
 
 pub struct Canvas {
+    pub window: Window,
     canvas_element: HtmlCanvasElement,
     world: Rc<RefCell<World>>,
 }
@@ -18,13 +19,14 @@ impl Canvas {
         let document = window.document().unwrap();
         let canvas: HtmlCanvasElement = document.get_element_by_id(&canvas_id).unwrap().dyn_into().unwrap();
         Canvas {
+            window,
             canvas_element: canvas,
             world,
         }
     }
 
     pub fn bind_events(&self) {
-        bind_key_down_event(Rc::clone(&self.world));
+        bind_key_down_event(&self.window, Rc::clone(&self.world));
         bind_mouse_down_event(&self.canvas_element, Rc::clone(&self.world));
     }
 
@@ -35,8 +37,7 @@ impl Canvas {
 
 
 
-fn bind_key_down_event(world: Rc<RefCell<World>>) {
-    let window = web_sys::window().unwrap();
+fn bind_key_down_event(window: &Window, world: Rc<RefCell<World>>) {
     let handler = move |event: web_sys::KeyboardEvent| {
         let mut world = (*(world)).borrow_mut();
         world.handle_key_down_event(&event.key());
