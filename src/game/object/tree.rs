@@ -18,8 +18,9 @@ impl Object for Tree {
     fn movement_manager(&self) -> &MovementManager {
         &self.movement_manager
     }
-    fn step(&mut self, _direction: Direction, _world: &World) {}
-    fn update(&mut self, _now: f64) {}
+    fn can_move_to(&self, _direction: &Direction, _world: &World) -> bool {
+        false
+    }
 }
 
 impl Tree {

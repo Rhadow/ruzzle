@@ -96,7 +96,7 @@ impl World {
         if let Some(dir) = direction {
             let mut player = self.player().borrow_mut();
             if player.movement_manager().status == Status::Idle {
-                player.step(dir, &self);
+                player.walk(dir, &self);
             }
         }
     }

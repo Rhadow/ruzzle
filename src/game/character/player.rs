@@ -1,12 +1,11 @@
 // use web_sys::console::log_1;
+// log1(&format!("{}", x),into())
 use std::cell::RefCell;
-use crate::utils::coordinate_lerp;
 use super::Character;
 use crate::game::object::Object;
 use crate::game::{
     Asset,
     AssetType,
-    Coordinate,
     Direction,
     MovementManager,
     Position,
@@ -41,30 +40,17 @@ impl Character for Player {
     fn movement_manager(&self) -> &MovementManager {
         &self.movement_manager
     }
-    fn step(&mut self, dir: Direction, world: &World) {
-        let (d_row, d_col) = match dir {
-            Direction::Up => (-1f64, 0f64),
-            Direction::Down => (1f64, 0f64),
-            Direction::Left => (0f64, -1f64),
-            Direction::Right => (0f64, 1f64),
-        };
-        self.movement_manager.set_direction(dir.clone());
-        let new_position = Position(self.movement_manager.position.row() + d_row, self.movement_manager.position.col() + d_col);
-        if new_position.is_in_tile_map() {
-            let object = world.get_object_by_position(&new_position);
+    fn walk(&mut self, direction: Direction, world: &World) {
+        self.movement_manager.set_direction(direction.clone());
+        let next_position = self.movement_manager.get_next_position_by_direction(&direction);
+        if next_position.is_in_tile_map() {
+            let object = world.get_object_by_position(&next_position);
             match object {
                 Some(object) => {
-                    if object.borrow().is_walkable() {
-                        self.walk_to(new_position);
-                    } else if object.borrow().is_pushable() {
-                        if object.borrow().can_move_to(&dir, world) {
-                            self.push_object(dir.clone(), object, world);
-                            self.walk_to(new_position);
-                        }
-                    }
+                    self.interact(object, next_position, direction, world);
                 },
                 None => {
-                    self.walk_to(new_position);
+                    self.walk_to(next_position);
                 }
             }
         }
@@ -115,22 +101,12 @@ impl Player {
     }
 
     fn animate_walking (&mut self) {
-        let dst_coordinate = MovementManager::position_to_coordinate(self.movement_manager.position);
-        self.movement_manager.coordinate = self.calculate_next_coordinate(dst_coordinate);
+        self.movement_manager.set_next_coordinate(self.delta_time, PLAYER_MOVE_TIME);
         self.update_walking_sprite();
-        if self.movement_manager.coordinate == dst_coordinate {
+        if self.movement_manager.is_coordinate_equal_position() {
             self.movement_manager.status = Status::Idle;
             self.delta_time = 0f64;
         }
-    }
-
-    fn calculate_next_coordinate(&self, dst_coordinate: Coordinate) -> Coordinate {
-        let src_coordinate = MovementManager::position_to_coordinate(self.movement_manager.last_position);
-        let mut distance_ratio = self.delta_time / PLAYER_MOVE_TIME;
-        if distance_ratio >= 1f64 {
-            distance_ratio = 1f64;
-        }
-        coordinate_lerp(src_coordinate, dst_coordinate, distance_ratio)
     }
 
     fn update_idle_sprite(&mut self) {
@@ -151,8 +127,18 @@ impl Player {
     }
 
     fn push_object(&mut self, direction: Direction, object: &RefCell<Box<Object>>, world: &World) {
-        self.delta_time = 0f64;
         self.movement_manager.status = Status::Pushing;
-        object.borrow_mut().step(direction, world);
+        object.borrow_mut().walk(direction, world);
+    }
+
+    fn interact(&mut self, object: &RefCell<Box<Object>>, position: Position, direction: Direction, world: &World) {
+        if object.borrow().can_step_on() {
+            self.walk_to(position);
+        } else if object.borrow().is_pushable() {
+            if object.borrow().can_move_to(&direction, world) {
+                self.push_object(direction, object, world);
+                self.walk_to(position);
+            }
+        }
     }
 }
