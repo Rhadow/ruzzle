@@ -24,6 +24,7 @@ use crate::game::constants::{
     PLAYER_IDLE_ANIMATION_TIME,
     PLAYER_IDLE_ANIMATION_SPRITE_LENGTH,
     PLAYER_IDLE_ANIMATION_WAITING_TIME,
+    PLAYER_PUSHING_X_OFFSET,
 };
 
 pub struct Player {
@@ -66,8 +67,8 @@ impl Character for Player {
         }
         match self.movement_manager.status {
             Status::Idle => self.animate_idle(),
-            Status::Walking => self.animate_walking(),
-            Status::Pushing => self.animate_walking(),
+            Status::Walking => self.animate_moving(),
+            Status::Pushing => self.animate_moving(),
         }
     }
 }
@@ -91,18 +92,24 @@ impl Player {
     }
 
     fn animate_idle (&mut self) {
+        if self.asset.get_x_offset() != PLAYER_BASE_X_OFFSET {
+            self.asset.set_x_offset(PLAYER_BASE_X_OFFSET);
+        }
         if self.delta_time >= PLAYER_IDLE_ANIMATION_WAITING_TIME {
             self.update_idle_sprite();
             if self.delta_time >= PLAYER_IDLE_ANIMATION_WAITING_TIME + PLAYER_IDLE_ANIMATION_TIME {
-                self.asset.set_x_offset(PLAYER_BASE_X_OFFSET);
                 self.delta_time = 0f64;
             }
         }
     }
 
-    fn animate_walking (&mut self) {
+    fn animate_moving (&mut self) {
         self.movement_manager.set_next_coordinate(self.delta_time, PLAYER_MOVE_TIME);
-        self.update_walking_sprite();
+        match self.movement_manager.status {
+            Status::Walking => self.update_walking_sprite(),
+            Status::Pushing => self.update_pushing_sprite(),
+            _ => (),
+        }
         if self.movement_manager.is_coordinate_equal_position() {
             self.movement_manager.status = Status::Idle;
             self.delta_time = 0f64;
@@ -119,6 +126,12 @@ impl Player {
         let sprite_dt = PLAYER_WALKING_ANIMATION_TIME / PLAYER_WALKING_ANIMATION_SPRITE_LENGTH as f64;
         let dx = (self.delta_time / sprite_dt) as isize % PLAYER_WALKING_ANIMATION_SPRITE_LENGTH;
         self.asset.set_x_offset(PLAYER_BASE_X_OFFSET + dx as f64);
+    }
+
+    fn update_pushing_sprite(&mut self) {
+        let sprite_dt = PLAYER_WALKING_ANIMATION_TIME / PLAYER_WALKING_ANIMATION_SPRITE_LENGTH as f64;
+        let dx = (self.delta_time / sprite_dt) as isize % PLAYER_WALKING_ANIMATION_SPRITE_LENGTH;
+        self.asset.set_x_offset(PLAYER_BASE_X_OFFSET + PLAYER_PUSHING_X_OFFSET + dx as f64);
     }
 
     fn walk_to(&mut self, position: Position) {
