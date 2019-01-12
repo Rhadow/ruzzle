@@ -37,6 +37,7 @@ impl WebRenderer {
     pub fn render(&self, world: &World) {
         let tile_map = world.tile_map();
         let characters = world.get_characters();
+        let objects = world.get_objects();
         self.ctx.clear_rect(0f64, 0f64, WORLD_WIDTH_IN_TILES as f64 * TILE_SIZE, WORLD_HEIGHT_IN_TILES as f64 * TILE_SIZE);
 
         for row in 0..WORLD_HEIGHT_IN_TILES {
@@ -46,12 +47,9 @@ impl WebRenderer {
                 if let Some(terrain) = tile.get_terrain() {
                     self.draw_terrain(terrain, row as f64, col as f64);
                 }
-                if let Some(object) = tile.get_object() {
-                    self.draw_object(&*object.borrow(), row as f64, col as f64);
-                }
             }
         }
-
+        self.draw_objects(objects);
         self.draw_characters(characters);
     }
 
@@ -60,9 +58,13 @@ impl WebRenderer {
         self.draw_asset_by_position(asset, row, col);
     }
 
-    fn draw_object(&self, object: &Box<dyn Object>, row: f64, col: f64) {
-        let asset = object.asset();
-        self.draw_asset_by_position(asset, row, col);
+    fn draw_objects(&self, objects: &Vec<RefCell<Box<dyn Object>>>) {
+        for object in objects {
+            let object = object.borrow();
+            let asset = object.asset();
+            let (x, y) = (object.movement_manager().coordinate.x(), object.movement_manager().coordinate.y());
+            self.draw_asset_by_coordinate(asset, x, y);
+        }
     }
 
     fn draw_characters(&self, characters: &Vec<RefCell<Box<dyn Character>>>) {

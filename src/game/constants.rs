@@ -17,8 +17,8 @@ pub const PLAYER_BASE_X_OFFSET: f64 = 0f64;
 pub const PLAYER_BASE_Y_OFFSET: f64 = 0f64;
 pub const PLAYER_WIDTH: f64 = 16f64;
 pub const PLAYER_HEIGHT: f64 = 32f64;
-pub const PLAYER_MOVE_TIME: f64 = 200f64;
-pub const PLAYER_WALKING_ANIMATION_TIME: f64 = 200f64;
+pub const PLAYER_MOVE_TIME: f64 = 250f64;
+pub const PLAYER_WALKING_ANIMATION_TIME: f64 = 250f64;
 pub const PLAYER_WALKING_ANIMATION_SPRITE_LENGTH: isize = 4;
 pub const PLAYER_IDLE_X_OFFSET: f64 = 9f64;
 pub const PLAYER_IDLE_ANIMATION_WAITING_TIME: f64 = 5_000f64;
@@ -38,3 +38,9 @@ pub const WOODEN_PATH_SIZE: f64 = 32f64;
 pub const TREE_X_OFFSET: f64 = 16f64;
 pub const TREE_Y_OFFSET: f64 = 12f64;
 pub const TREE_SIZE: f64 = 32f64;
+
+pub const ROCK_X_OFFSET: f64 = 35f64;
+pub const ROCK_Y_OFFSET: f64 = 8f64;
+pub const ROCK_SIZE: f64 = 32f64;
+pub const ROCK_MOVE_TIME: f64 = 250f64;
+

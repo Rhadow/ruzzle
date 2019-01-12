@@ -8,7 +8,6 @@ use crate::game::constants::{
 
 pub struct Tree {
     asset: Asset,
-    is_walkable: bool,
     movement_manager: MovementManager,
 }
 
@@ -18,9 +17,6 @@ impl Object for Tree {
     }
     fn movement_manager(&self) -> &MovementManager {
         &self.movement_manager
-    }
-    fn is_walkable(&self) -> bool {
-        self.is_walkable
     }
     fn step(&mut self, _direction: Direction, _world: &World) {}
     fn update(&mut self, _now: f64) {}
@@ -38,7 +34,6 @@ impl Tree {
         let movement_manager = MovementManager::new(position, Direction::Down);
         Tree {
             asset,
-            is_walkable: false,
             movement_manager,
         }
     }

@@ -76,8 +76,8 @@ impl WebClient {
 
 fn init_world<> (current_level: usize, current_time: f64) -> World {
     let mut level_manager = LevelManager::new();
-    let level_cells = level_manager.construct_level(current_level);
+    let (level_cells, objects) = level_manager.construct_level(current_level);
     let player_position = level_manager.get_player_position().unwrap();
     let player = Box::new(Player::new(player_position, Direction::Down, current_time)) as Box<dyn Character>;
-    World::new(level_cells, vec![player])
+    World::new(level_cells, objects, vec![player])
 }

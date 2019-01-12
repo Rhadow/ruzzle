@@ -1,7 +1,7 @@
 use crate::game::{Coordinate, Position};
 use crate::game::constants::TILE_SIZE;
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Copy, Clone)]
 pub enum Direction {
     Up,
     Down,
@@ -12,7 +12,8 @@ pub enum Direction {
 #[derive(PartialEq)]
 pub enum Status {
     Idle,
-    Walking
+    Walking,
+    Pushing
 }
 
 pub struct MovementManager {

@@ -41,7 +41,7 @@ impl Position {
     pub fn col(&self) -> f64 {
         self.1
     }
-    pub fn is_in_world(&self) -> bool {
+    pub fn is_in_tile_map(&self) -> bool {
         self.0 >= 0f64 && self.0 < (WORLD_HEIGHT_IN_TILES as f64) && self.1 >= 0f64 && self.1 < (WORLD_WIDTH_IN_TILES as f64)
     }
 }

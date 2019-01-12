@@ -6,7 +6,7 @@
     Objects:
     "T": Tree
 */
-
+use std::cell::RefCell;
 use crate::game::{
     Tile,
     Position
@@ -18,7 +18,8 @@ use crate::game::terrain::{
 };
 use crate::game::object::{
     Object,
-    Tree
+    Tree,
+    Rock,
 };
 use crate::game::constants::{
     WORLD_WIDTH_IN_TILES,
@@ -56,8 +57,9 @@ impl LevelManager {
         self.player_position = new_position;
     }
 
-    pub fn construct_level(&mut self, level: usize) -> Vec<Tile> {
+    pub fn construct_level(&mut self, level: usize) -> (Vec<Tile>, Vec<RefCell<Box<dyn Object>>>) {
         let mut tiles = vec![];
+        let mut all_objects = vec![];
         let (terrains, objects, player_position) = LEVELS[level];
         self.set_player_position(Some(player_position));
         for i in 0..terrains.len() {
@@ -71,13 +73,17 @@ impl LevelManager {
                 _ => None
             };
 
-            let object: Option<Box<dyn Object>> = match String::from(object.trim()).to_uppercase().as_str() {
-                "T" => Some(Box::new(Tree::new(position))),
+            let object: Option<RefCell<Box<dyn Object>>> = match String::from(object.trim()).to_uppercase().as_str() {
+                "T" => Some(RefCell::new(Box::new(Tree::new(position)))),
+                "R" => Some(RefCell::new(Box::new(Rock::new(position)))),
                 _ => None
             };
 
-            tiles.push(Tile::new(terrain, object));
+            if let Some(object) = object {
+                all_objects.push(object);
+            }
+            tiles.push(Tile::new(terrain));
         }
-        tiles
+        (tiles, all_objects)
     }
 }

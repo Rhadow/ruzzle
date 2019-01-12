@@ -2,7 +2,11 @@
 use std::cell::RefCell;
 use super::Tile;
 use super::character::Character;
-use super::movement_manager::Direction;
+use super::object::Object;
+use super::movement_manager::{
+    Direction,
+    Status
+};
 use super::Position;
 use super::constants::{
     WORLD_WIDTH_IN_TILES,
@@ -14,11 +18,12 @@ use super::constants::{
 
 pub struct World {
     tile_map: Vec<Tile>,
+    objects: Vec<RefCell<Box<dyn Object>>>,
     characters: Vec<RefCell<Box<dyn Character>>>,
 }
 
 impl World {
-    pub fn new(tile_map: Vec<Tile>, characters: Vec<Box<dyn Character>>) -> World {
+    pub fn new(tile_map: Vec<Tile>, objects: Vec<RefCell<Box<dyn Object>>>, characters: Vec<Box<dyn Character>>) -> World {
         let mut new_characters = vec![];
         for character in characters {
             new_characters.push(RefCell::new(character));
@@ -26,6 +31,7 @@ impl World {
 
         World {
             tile_map,
+            objects,
             characters: new_characters,
         }
     }
@@ -38,9 +44,15 @@ impl World {
         &self.tile_map
     }
 
-    pub fn get_tile_by_position(&self, position: Position) -> &Tile {
-        let idx = self.get_index(position.row() as usize, position.col() as usize);
-        &self.tile_map[idx]
+    pub fn get_object_by_position(&self, position: &Position) -> Option<&RefCell<Box<dyn Object>>> {
+        let result = None;
+        for object in &self.objects {
+            let object_position = object.borrow().movement_manager().position;
+            if object_position.row() == position.row() && object_position.col() == position.col() {
+                return Some(object);
+            }
+        }
+        return result;
     }
 
     pub fn player(&self) -> &RefCell<Box<dyn Character>> {
@@ -56,7 +68,14 @@ impl World {
         &self.characters
     }
 
+    pub fn get_objects(&self) -> &Vec<RefCell<Box<dyn Object>>> {
+        &self.objects
+    }
+
     pub fn update(&mut self, now: f64) {
+        for object in &mut self.objects {
+            object.borrow_mut().update(now);
+        }
         for character in &mut self.characters {
             character.borrow_mut().update(now);
         }
@@ -76,7 +95,9 @@ impl World {
     fn handle_player_movement(&mut self, direction: Option<Direction>) {
         if let Some(dir) = direction {
             let mut player = self.player().borrow_mut();
-            player.step(dir, &self);
+            if player.movement_manager().status == Status::Idle {
+                player.step(dir, &self);
+            }
         }
     }
 }
