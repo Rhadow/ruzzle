@@ -2,18 +2,18 @@ use std::cell::RefCell;
 use super::terrain::Terrain;
 use super::object::Object;
 
-pub struct Cell {
+pub struct Tile {
     terrain: Option<Box<dyn Terrain>>,
     object: Option<RefCell<Box<dyn Object>>>,
 }
 
-impl Cell {
-    pub fn new(terrain: Option<Box<dyn Terrain>>, object: Option<Box<dyn Object>>) -> Cell {
+impl Tile {
+    pub fn new(terrain: Option<Box<dyn Terrain>>, object: Option<Box<dyn Object>>) -> Tile {
         let new_object = match object {
             Some(o) => Some(RefCell::new(o)),
             None => None
         };
-        Cell {
+        Tile {
             terrain,
             object: new_object,
         }

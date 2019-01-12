@@ -1,8 +1,7 @@
 mod world;
-mod cell;
+mod tile;
 mod asset;
 
-pub mod canvas;
 pub mod level;
 pub mod terrain;
 pub mod constants;
@@ -11,13 +10,13 @@ pub mod character;
 pub mod movement_manager;
 
 pub use self::world::World;
-pub use self::cell::Cell;
+pub use self::tile::Tile;
 pub use self::asset::{Asset, AssetType};
 pub use self::movement_manager::{MovementManager, Direction, Status};
 
 use self::constants::{
-    WORLD_WIDTH_IN_CELLS,
-    WORLD_HEIGHT_IN_CELLS,
+    WORLD_WIDTH_IN_TILES,
+    WORLD_HEIGHT_IN_TILES,
 };
 
 #[derive(Clone, Copy, PartialEq)]
@@ -43,6 +42,6 @@ impl Position {
         self.1
     }
     pub fn is_in_world(&self) -> bool {
-        self.0 >= 0f64 && self.0 < (WORLD_HEIGHT_IN_CELLS as f64) && self.1 >= 0f64 && self.1 < (WORLD_WIDTH_IN_CELLS as f64)
+        self.0 >= 0f64 && self.0 < (WORLD_HEIGHT_IN_TILES as f64) && self.1 >= 0f64 && self.1 < (WORLD_WIDTH_IN_TILES as f64)
     }
 }

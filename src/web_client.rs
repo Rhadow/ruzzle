@@ -2,9 +2,9 @@
 use wasm_bindgen::prelude::*;
 use utils::set_panic_hook;
 use web_sys::Performance;
+use crate::canvas::Canvas;
 use crate::renderer::WebRenderer;
 use crate::game::World;
-use crate::game::canvas::Canvas;
 use crate::game::level::LevelManager;
 use crate::game::character::{Character, Player};
 use crate::game::movement_manager::Direction;
@@ -57,9 +57,15 @@ impl WebClient {
     fn check_direction_event(&mut self) {
         let key_map = (*(self.canvas.key_map)).borrow();
         let mut direction_key = None;
+        let mut t = 0f64;
         for (key, &value) in &(*key_map) {
-            if value && (key == ARROW_DOWN || key == ARROW_UP || key == ARROW_RIGHT || key == ARROW_LEFT) {
-                direction_key = Some(key);
+            if key == ARROW_DOWN || key == ARROW_UP || key == ARROW_RIGHT || key == ARROW_LEFT {
+                if let Some(value) = value {
+                    if value > t {
+                        t = value;
+                        direction_key = Some(key);
+                    }
+                }
             }
         }
         if let Some(direction_key) = direction_key {

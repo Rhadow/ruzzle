@@ -8,7 +8,7 @@
 */
 
 use crate::game::{
-    Cell,
+    Tile,
     Position
 };
 use crate::game::terrain::{
@@ -21,12 +21,12 @@ use crate::game::object::{
     Tree
 };
 use crate::game::constants::{
-    WORLD_WIDTH_IN_CELLS,
-    TOTAL_CELLS,
+    WORLD_WIDTH_IN_TILES,
+    TOTAL_TILES,
 };
 use super::level00::LEVEL00;
 
-type Level = ([&'static str; TOTAL_CELLS], [&'static str; TOTAL_CELLS], Position);
+type Level = ([&'static str; TOTAL_TILES], [&'static str; TOTAL_TILES], Position);
 const LEVELS: [Level; 1] = [
     LEVEL00,
 ];
@@ -43,8 +43,8 @@ impl LevelManager {
     }
 
     fn index_to_position(&self, idx: usize) -> Position {
-        let row = (idx as i32 / WORLD_WIDTH_IN_CELLS as i32) as f64;
-        let col = (idx as i32 % WORLD_WIDTH_IN_CELLS as i32) as f64;
+        let row = (idx as i32 / WORLD_WIDTH_IN_TILES as i32) as f64;
+        let col = (idx as i32 % WORLD_WIDTH_IN_TILES as i32) as f64;
         Position(row, col)
     }
 
@@ -56,8 +56,8 @@ impl LevelManager {
         self.player_position = new_position;
     }
 
-    pub fn construct_level(&mut self, level: usize) -> Vec<Cell> {
-        let mut cells = vec![];
+    pub fn construct_level(&mut self, level: usize) -> Vec<Tile> {
+        let mut tiles = vec![];
         let (terrains, objects, player_position) = LEVELS[level];
         self.set_player_position(Some(player_position));
         for i in 0..terrains.len() {
@@ -76,8 +76,8 @@ impl LevelManager {
                 _ => None
             };
 
-            cells.push(Cell::new(terrain, object));
+            tiles.push(Tile::new(terrain, object));
         }
-        cells
+        tiles
     }
 }

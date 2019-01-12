@@ -139,7 +139,7 @@ impl Player {
         }
         let mut position_has_object = false;
         let mut object_walkable = false;
-        if let Some(object) = world.get_cell_by_position(position).get_object() {
+        if let Some(object) = world.get_tile_by_position(position).get_object() {
             position_has_object = true;
             object_walkable = object.borrow().is_walkable();
         }

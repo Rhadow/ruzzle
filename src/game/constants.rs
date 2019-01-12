@@ -1,9 +1,9 @@
 // Game
-pub const WORLD_WIDTH_IN_CELLS: usize = 12;
-pub const WORLD_HEIGHT_IN_CELLS: usize = 8;
-pub const TOTAL_CELLS: usize = WORLD_WIDTH_IN_CELLS * WORLD_HEIGHT_IN_CELLS;
+pub const WORLD_WIDTH_IN_TILES: usize = 12;
+pub const WORLD_HEIGHT_IN_TILES: usize = 8;
+pub const TOTAL_TILES: usize = WORLD_WIDTH_IN_TILES * WORLD_HEIGHT_IN_TILES;
 
-pub const CELL_SIZE: f64 = 64f64;
+pub const TILE_SIZE: f64 = 64f64;
 pub const ASSET_SIZE: f64 = 16f64;
 
 // Keyboard
@@ -17,8 +17,8 @@ pub const PLAYER_BASE_X_OFFSET: f64 = 0f64;
 pub const PLAYER_BASE_Y_OFFSET: f64 = 0f64;
 pub const PLAYER_WIDTH: f64 = 16f64;
 pub const PLAYER_HEIGHT: f64 = 32f64;
-pub const PLAYER_MOVE_TIME: f64 = 250f64;
-pub const PLAYER_WALKING_ANIMATION_TIME: f64 = 250f64;
+pub const PLAYER_MOVE_TIME: f64 = 200f64;
+pub const PLAYER_WALKING_ANIMATION_TIME: f64 = 200f64;
 pub const PLAYER_WALKING_ANIMATION_SPRITE_LENGTH: isize = 4;
 pub const PLAYER_IDLE_X_OFFSET: f64 = 9f64;
 pub const PLAYER_IDLE_ANIMATION_WAITING_TIME: f64 = 5_000f64;

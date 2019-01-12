@@ -6,8 +6,10 @@ use crate::game::terrain::Terrain;
 use crate::game::object::Object;
 use crate::game::character::Character;
 use crate::game::constants::{
-    CELL_SIZE,
-    ASSET_SIZE
+    TILE_SIZE,
+    ASSET_SIZE,
+    WORLD_WIDTH_IN_TILES,
+    WORLD_HEIGHT_IN_TILES,
 };
 
 pub struct WebRenderer {
@@ -33,20 +35,18 @@ impl WebRenderer {
     }
 
     pub fn render(&self, world: &World) {
-        let width_in_cells = world.width_in_cells();
-        let height_in_cells = world.height_in_cells();
-        let cells = world.cells();
+        let tile_map = world.tile_map();
         let characters = world.get_characters();
-        self.ctx.clear_rect(0f64, 0f64, width_in_cells as f64 * CELL_SIZE, height_in_cells as f64 * CELL_SIZE);
+        self.ctx.clear_rect(0f64, 0f64, WORLD_WIDTH_IN_TILES as f64 * TILE_SIZE, WORLD_HEIGHT_IN_TILES as f64 * TILE_SIZE);
 
-        for row in 0..height_in_cells {
-            for col in 0..width_in_cells {
+        for row in 0..WORLD_HEIGHT_IN_TILES {
+            for col in 0..WORLD_WIDTH_IN_TILES {
                 let idx = world.get_index(row, col);
-                let cell = &cells[idx];
-                if let Some(terrain) = cell.get_terrain() {
+                let tile = &tile_map[idx];
+                if let Some(terrain) = tile.get_terrain() {
                     self.draw_terrain(terrain, row as f64, col as f64);
                 }
-                if let Some(object) = cell.get_object() {
+                if let Some(object) = tile.get_object() {
                     self.draw_object(&*object.borrow(), row as f64, col as f64);
                 }
             }
@@ -88,8 +88,8 @@ impl WebRenderer {
             asset.get_height(),
             x,
             y,
-            CELL_SIZE,
-            CELL_SIZE,
+            TILE_SIZE,
+            TILE_SIZE,
         ).unwrap();
     }
 
@@ -105,10 +105,10 @@ impl WebRenderer {
             asset.get_y_offset() * ASSET_SIZE,
             asset.get_width(),
             asset.get_height(),
-            col as f64 * CELL_SIZE,
-            row as f64 * CELL_SIZE,
-            CELL_SIZE,
-            CELL_SIZE,
+            col as f64 * TILE_SIZE,
+            row as f64 * TILE_SIZE,
+            TILE_SIZE,
+            TILE_SIZE,
         ).unwrap();
     }
 }

@@ -1,12 +1,11 @@
 // use web_sys::console::log_1;
 use std::cell::RefCell;
-use super::Cell;
+use super::Tile;
 use super::character::Character;
 use super::movement_manager::Direction;
 use super::Position;
 use super::constants::{
-    WORLD_WIDTH_IN_CELLS,
-    WORLD_HEIGHT_IN_CELLS,
+    WORLD_WIDTH_IN_TILES,
     ARROW_DOWN,
     ARROW_UP,
     ARROW_RIGHT,
@@ -14,42 +13,34 @@ use super::constants::{
 };
 
 pub struct World {
-    cells: Vec<Cell>,
+    tile_map: Vec<Tile>,
     characters: Vec<RefCell<Box<dyn Character>>>,
 }
 
 impl World {
-    pub fn new(cells: Vec<Cell>, characters: Vec<Box<dyn Character>>) -> World {
+    pub fn new(tile_map: Vec<Tile>, characters: Vec<Box<dyn Character>>) -> World {
         let mut new_characters = vec![];
         for character in characters {
             new_characters.push(RefCell::new(character));
         }
 
         World {
-            cells,
+            tile_map,
             characters: new_characters,
         }
     }
 
     pub fn get_index(&self, row: usize, col: usize) -> usize {
-        WORLD_WIDTH_IN_CELLS * row + col
+        WORLD_WIDTH_IN_TILES * row + col
     }
 
-    pub fn width_in_cells(&self) -> usize {
-        WORLD_WIDTH_IN_CELLS
+    pub fn tile_map(&self) -> &Vec<Tile> {
+        &self.tile_map
     }
 
-    pub fn height_in_cells(&self) -> usize {
-        WORLD_HEIGHT_IN_CELLS
-    }
-
-    pub fn cells(&self) -> &Vec<Cell> {
-        &self.cells
-    }
-
-    pub fn get_cell_by_position(&self, position: Position) -> &Cell {
+    pub fn get_tile_by_position(&self, position: Position) -> &Tile {
         let idx = self.get_index(position.row() as usize, position.col() as usize);
-        &self.cells[idx]
+        &self.tile_map[idx]
     }
 
     pub fn player(&self) -> &RefCell<Box<dyn Character>> {
@@ -57,8 +48,8 @@ impl World {
         &self.characters[idx]
     }
 
-    pub fn _set_cells(&mut self, cells: Vec<Cell>) {
-        self.cells = cells;
+    pub fn _set_tile_map(&mut self, tile_map: Vec<Tile>) {
+        self.tile_map = tile_map;
     }
 
     pub fn get_characters(&self) -> &Vec<RefCell<Box<dyn Character>>> {

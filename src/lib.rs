@@ -6,6 +6,7 @@ extern crate js_sys;
 mod utils;
 mod web_client;
 mod renderer;
+mod canvas;
 pub mod game;
 
 use cfg_if::cfg_if;

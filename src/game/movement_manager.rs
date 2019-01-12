@@ -1,5 +1,5 @@
 use crate::game::{Coordinate, Position};
-use crate::game::constants::CELL_SIZE;
+use crate::game::constants::TILE_SIZE;
 
 #[derive(PartialEq)]
 pub enum Direction {
@@ -48,6 +48,6 @@ impl MovementManager {
     }
 
     pub fn position_to_coordinate(position: Position) -> Coordinate {
-        Coordinate(position.col() * CELL_SIZE, position.row() * CELL_SIZE)
+        Coordinate(position.col() * TILE_SIZE, position.row() * TILE_SIZE)
     }
 }

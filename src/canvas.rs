@@ -14,7 +14,7 @@ use crate::game::constants::{
 
 pub struct Canvas {
     pub window: Window,
-    pub key_map: Rc<RefCell<HashMap<String, bool>>>,
+    pub key_map: Rc<RefCell<HashMap<String, Option<f64>>>>,
     canvas_element: HtmlCanvasElement,
 }
 
@@ -42,11 +42,13 @@ impl Canvas {
     }
 }
 
-fn bind_key_down_event(window: &Window, key_map: Rc<RefCell<HashMap<String, bool>>>) {
+fn bind_key_down_event(window: &Window, key_map: Rc<RefCell<HashMap<String, Option<f64>>>>) {
+    let performance = window.performance().unwrap();
     let handler = move |event: web_sys::KeyboardEvent| {
         let mut key_map = (*(key_map)).borrow_mut();
         if let Some(_) = key_map.get(&event.key()) {
-            key_map.insert(event.key(), true);
+            let time = Some(performance.now());
+            key_map.insert(event.key(), time);
         }
     };
     let closure = Closure::wrap(Box::new(handler) as Box<dyn FnMut(_)>);
@@ -54,11 +56,11 @@ fn bind_key_down_event(window: &Window, key_map: Rc<RefCell<HashMap<String, bool
     closure.forget();
 }
 
-fn bind_key_up_event(window: &Window, key_map: Rc<RefCell<HashMap<String, bool>>>) {
+fn bind_key_up_event(window: &Window, key_map: Rc<RefCell<HashMap<String, Option<f64>>>>) {
     let handler = move |event: web_sys::KeyboardEvent| {
         let mut key_map = (*(key_map)).borrow_mut();
         if let Some(_) = key_map.get(&event.key()) {
-            key_map.insert(event.key(), false);
+            key_map.insert(event.key(), None);
         }
     };
     let closure = Closure::wrap(Box::new(handler) as Box<dyn FnMut(_)>);
@@ -75,11 +77,11 @@ fn bind_mouse_down_event(canvas: &HtmlCanvasElement) {
     closure.forget();
 }
 
-fn init_key_map() -> HashMap<String, bool> {
+fn init_key_map() -> HashMap<String, Option<f64>> {
     let mut result = HashMap::new();
-    result.insert(String::from(ARROW_DOWN), false);
-    result.insert(String::from(ARROW_UP), false);
-    result.insert(String::from(ARROW_LEFT), false);
-    result.insert(String::from(ARROW_RIGHT), false);
+    result.insert(String::from(ARROW_DOWN), None);
+    result.insert(String::from(ARROW_UP), None);
+    result.insert(String::from(ARROW_LEFT), None);
+    result.insert(String::from(ARROW_RIGHT), None);
     return result;
 }
