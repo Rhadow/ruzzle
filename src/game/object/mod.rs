@@ -1,11 +1,12 @@
-use crate::game::{Asset, Coordinate, Position};
+use crate::game::{Asset, Direction, MovementManager, World};
 pub mod tree;
 pub use self::tree::Tree;
 
 pub trait Object {
-    fn get_asset(&self) -> &Asset;
-    fn get_coordinate(&self) -> &Coordinate;
-    fn get_position(&self) -> &Position;
-    fn update(&self);
+    fn asset(&self) -> &Asset;
+    fn movement_manager(&self) -> &MovementManager;
+    fn update(&mut self, now: f64);
+    fn step(&mut self, direction: Direction, world: &World);
+    fn is_walkable(&self) -> bool;
 }
 

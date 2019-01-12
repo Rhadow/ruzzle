@@ -1,7 +1,6 @@
 use super::Object;
-use crate::game::{Asset, AssetType, Coordinate, Position};
+use crate::game::{Asset, AssetType, Direction, MovementManager, Position, World};
 use crate::game::constants::{
-    CELL_SIZE,
     TREE_X_OFFSET,
     TREE_Y_OFFSET,
     TREE_SIZE
@@ -9,26 +8,26 @@ use crate::game::constants::{
 
 pub struct Tree {
     asset: Asset,
-    position: Position,
-    coordinate: Coordinate
+    is_walkable: bool,
+    movement_manager: MovementManager,
 }
 
 impl Object for Tree {
-    fn get_asset(&self) -> &Asset {
+    fn asset(&self) -> &Asset {
         &self.asset
     }
-    fn get_coordinate(&self) -> &Coordinate {
-        &self.coordinate
+    fn movement_manager(&self) -> &MovementManager {
+        &self.movement_manager
     }
-    fn get_position(&self) -> &Position {
-        &self.position
+    fn is_walkable(&self) -> bool {
+        self.is_walkable
     }
-    fn update(&self) {}
+    fn step(&mut self, _direction: Direction, _world: &World) {}
+    fn update(&mut self, _now: f64) {}
 }
 
 impl Tree {
     pub fn new(position: Position) -> Tree {
-        let coordinate = Coordinate(position.col() * CELL_SIZE, position.row() * CELL_SIZE);
         let asset = Asset::new(
             AssetType::Object,
             TREE_X_OFFSET,
@@ -36,10 +35,11 @@ impl Tree {
             TREE_SIZE,
             TREE_SIZE,
         );
+        let movement_manager = MovementManager::new(position, Direction::Down);
         Tree {
             asset,
-            position,
-            coordinate,
+            is_walkable: false,
+            movement_manager,
         }
     }
 }

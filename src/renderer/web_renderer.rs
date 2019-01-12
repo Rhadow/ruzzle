@@ -1,3 +1,4 @@
+use std::cell::RefCell;
 use wasm_bindgen::JsCast;
 use web_sys::{CanvasRenderingContext2d, HtmlCanvasElement, HtmlImageElement};
 use crate::game::{World, Asset, AssetType};
@@ -46,7 +47,7 @@ impl WebRenderer {
                     self.draw_terrain(terrain, row as f64, col as f64);
                 }
                 if let Some(object) = cell.get_object() {
-                    self.draw_object(object, row as f64, col as f64);
+                    self.draw_object(&*object.borrow(), row as f64, col as f64);
                 }
             }
         }
@@ -60,12 +61,13 @@ impl WebRenderer {
     }
 
     fn draw_object(&self, object: &Box<dyn Object>, row: f64, col: f64) {
-        let asset = object.get_asset();
+        let asset = object.asset();
         self.draw_asset_by_position(asset, row, col);
     }
 
-    fn draw_characters(&self, characters: &Vec<Box<dyn Character>>) {
+    fn draw_characters(&self, characters: &Vec<RefCell<Box<dyn Character>>>) {
         for character in characters {
+            let character = character.borrow();
             let asset = character.asset();
             let (x, y) = (character.movement_manager().coordinate.x(), character.movement_manager().coordinate.y());
             self.draw_asset_by_coordinate(asset, x, y);

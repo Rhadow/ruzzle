@@ -2,10 +2,9 @@ use web_sys::console::log_1;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlCanvasElement, Window};
+use std::collections::HashMap;
 use std::rc::Rc;
 use std::cell::RefCell;
-use std::collections::HashMap;
-use crate::game::World;
 use crate::game::constants::{
     ARROW_DOWN,
     ARROW_UP,
@@ -17,19 +16,17 @@ pub struct Canvas {
     pub window: Window,
     pub key_map: Rc<RefCell<HashMap<String, bool>>>,
     canvas_element: HtmlCanvasElement,
-    world: Rc<RefCell<World>>,
 }
 
 impl Canvas {
 
-    pub fn new(canvas_id: &str, world: Rc<RefCell<World>>) -> Canvas {
+    pub fn new(canvas_id: &str) -> Canvas {
         let window = web_sys::window().unwrap();
         let document = window.document().unwrap();
         let canvas: HtmlCanvasElement = document.get_element_by_id(&canvas_id).unwrap().dyn_into().unwrap();
         Canvas {
             window,
             canvas_element: canvas,
-            world,
             key_map: Rc::new(RefCell::new(init_key_map())),
         }
     }
@@ -37,7 +34,7 @@ impl Canvas {
     pub fn bind_events(&self) {
         bind_key_down_event(&self.window, Rc::clone(&self.key_map));
         bind_key_up_event(&self.window, Rc::clone(&self.key_map));
-        bind_mouse_down_event(&self.canvas_element, Rc::clone(&self.world));
+        bind_mouse_down_event(&self.canvas_element);
     }
 
     pub fn canvas_element(&self) -> &HtmlCanvasElement{
@@ -69,7 +66,7 @@ fn bind_key_up_event(window: &Window, key_map: Rc<RefCell<HashMap<String, bool>>
     closure.forget();
 }
 
-fn bind_mouse_down_event(canvas: &HtmlCanvasElement, _world: Rc<RefCell<World>>) {
+fn bind_mouse_down_event(canvas: &HtmlCanvasElement) {
     let handler = move |event: web_sys::MouseEvent| {
         log_1(&format!("{}, {}", event.offset_x(), event.offset_y()).into());
     };

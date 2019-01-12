@@ -34,22 +34,17 @@ impl MovementManager {
             direction
         }
     }
-    pub fn walk(&mut self, direction: Direction) {
-        let (d_row, d_col) = match direction {
-            Direction::Up => (-1f64, 0f64),
-            Direction::Down => (1f64, 0f64),
-            Direction::Left => (0f64, -1f64),
-            Direction::Right => (0f64, 1f64),
-        };
-        let new_position = Position(self.position.row() + d_row, self.position.col() + d_col);
-        if new_position.is_in_world() {
-            self.status = Status::Walking;
-            self.last_position = self.position;
-            self.position = new_position;
-        }
+
+    pub fn set_direction(&mut self, direction: Direction) {
         if direction != self.direction {
             self.direction = direction;
         }
+    }
+
+    pub fn walk_to(&mut self, new_position: Position) {
+        self.status = Status::Walking;
+        self.last_position = self.position;
+        self.position = new_position;
     }
 
     pub fn position_to_coordinate(position: Position) -> Coordinate {
