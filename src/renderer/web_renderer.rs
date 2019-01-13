@@ -44,7 +44,7 @@ impl WebRenderer {
             for col in 0..WORLD_WIDTH_IN_TILES {
                 let idx = world.get_index(row, col);
                 let tile = &tile_map[idx];
-                if let Some(terrain) = tile.borrow().get_terrain() {
+                if let Some(terrain) = tile.borrow().terrain() {
                     self.draw_terrain(terrain, row as f64, col as f64);
                 }
             }
@@ -53,7 +53,8 @@ impl WebRenderer {
         self.draw_characters(characters);
     }
 
-    fn draw_terrain(&self, terrain: &Box<dyn Terrain>, row: f64, col: f64) {
+    fn draw_terrain(&self, terrain: &RefCell<Box<dyn Terrain>>, row: f64, col: f64) {
+        let terrain = terrain.borrow();
         let asset = terrain.get_asset();
         self.draw_asset_by_position(asset, row, col);
     }

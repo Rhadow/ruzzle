@@ -34,9 +34,19 @@ impl Object for Rock {
     fn is_pushable(&self) -> bool {
         self.is_pushable
     }
-    fn walk(&mut self, direction: Direction, _world: &World) {
+    fn walk(&mut self, direction: Direction, world: &World) {
+        const FALLING_OFFSET: f64 = 32f64;
         let next_position = self.movement_manager.get_next_position_by_direction(&direction);
         self.movement_manager.walk_to(next_position);
+        let tile = world.get_tile_by_position(&next_position).borrow_mut();
+        let terrain = tile.terrain();
+        if let Some(terrain) = terrain {
+            let mut terrain = terrain.borrow_mut();
+            if !terrain.is_filled() {
+                // Schedule falling logic to be 2 frames earlier to make sure the object is on the terrain
+                terrain.set_falling_schedule(ROCK_MOVE_TIME - FALLING_OFFSET);
+            }
+        }
     }
     fn update(&mut self, now: f64, _world: &World) {
         self.delta_time += now - self.time;

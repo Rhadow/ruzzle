@@ -10,6 +10,7 @@ pub use self::hole::Hole;
 pub trait Terrain {
     fn get_asset(&self) -> &Asset;
     fn movement_manager(&self) -> &MovementManager;
+    fn set_falling_schedule(&mut self, _dt: f64) {}
     fn update(&mut self, _now: f64, _world: &World) {}
     fn is_filled(&self) -> bool {
         true

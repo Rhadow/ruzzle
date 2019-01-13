@@ -121,4 +121,9 @@ impl World {
             }
         }
     }
+
+    pub fn get_tile_by_position(&self, position: &Position) -> &RefCell<Tile> {
+        let idx = self.get_index(position.row() as usize, position.col() as usize);
+        &self.tile_map[idx]
+    }
 }

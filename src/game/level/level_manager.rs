@@ -68,10 +68,10 @@ impl LevelManager {
             let object = objects[i];
             let position = self.index_to_position(i);
 
-            let terrain: Option<Box<dyn Terrain>> = match String::from(terrain.trim()).to_uppercase().as_str() {
-                "G" => Some(Box::new(GrassLand::new(position))),
-                "WP" => Some(Box::new(WoodenPath::new(position))),
-                "H" => Some(Box::new(Hole::new(position))),
+            let terrain: Option<RefCell<Box<dyn Terrain>>> = match String::from(terrain.trim()).to_uppercase().as_str() {
+                "G" => Some(RefCell::new(Box::new(GrassLand::new(position)))),
+                "WP" => Some(RefCell::new(Box::new(WoodenPath::new(position)))),
+                "H" => Some(RefCell::new(Box::new(Hole::new(position)))),
                 _ => None
             };
 
