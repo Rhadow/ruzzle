@@ -15,6 +15,7 @@ use crate::game::terrain::{
     Terrain,
     GrassLand,
     WoodenPath,
+    Hole,
 };
 use crate::game::object::{
     Object,
@@ -62,14 +63,15 @@ impl LevelManager {
         let mut all_objects = vec![];
         let (terrains, objects, player_position) = LEVELS[level];
         self.set_player_position(Some(player_position));
-        for i in 0..terrains.len() {
+        for i in 0..TOTAL_TILES {
             let terrain = terrains[i];
             let object = objects[i];
             let position = self.index_to_position(i);
 
             let terrain: Option<Box<dyn Terrain>> = match String::from(terrain.trim()).to_uppercase().as_str() {
-                "G" => Some(Box::new(GrassLand::new())),
-                "WP" => Some(Box::new(WoodenPath::new())),
+                "G" => Some(Box::new(GrassLand::new(position))),
+                "WP" => Some(Box::new(WoodenPath::new(position))),
+                "H" => Some(Box::new(Hole::new(position))),
                 _ => None
             };
 

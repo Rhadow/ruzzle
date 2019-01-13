@@ -10,6 +10,7 @@ use crate::game::constants::{
 };
 
 pub struct Rock {
+    is_visible: bool,
     delta_time: f64,
     time: f64,
     asset: Asset,
@@ -24,6 +25,12 @@ impl Object for Rock {
     fn movement_manager(&self) -> &MovementManager {
         &self.movement_manager
     }
+    fn is_visible(&self) -> bool {
+        self.is_visible
+    }
+    fn set_visible(&mut self, visible: bool) {
+        self.is_visible = visible;
+    }
     fn is_pushable(&self) -> bool {
         self.is_pushable
     }
@@ -31,7 +38,7 @@ impl Object for Rock {
         let next_position = self.movement_manager.get_next_position_by_direction(&direction);
         self.movement_manager.walk_to(next_position);
     }
-    fn update(&mut self, now: f64) {
+    fn update(&mut self, now: f64, _world: &World) {
         self.delta_time += now - self.time;
         self.time = now;
         match self.movement_manager.status {
@@ -53,6 +60,7 @@ impl Rock {
         );
         let movement_manager = MovementManager::new(position, Direction::Down);
         Rock {
+            is_visible: true,
             asset,
             delta_time: 0f64,
             is_pushable: true,

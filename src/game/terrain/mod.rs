@@ -1,11 +1,17 @@
-use crate::game::Asset;
+use crate::game::{Asset, MovementManager, World};
 pub mod grassland;
 pub mod wooden_path;
+pub mod hole;
 
 pub use self::grassland::GrassLand;
 pub use self::wooden_path::WoodenPath;
+pub use self::hole::Hole;
 
 pub trait Terrain {
     fn get_asset(&self) -> &Asset;
-    fn update(&self);
+    fn movement_manager(&self) -> &MovementManager;
+    fn update(&mut self, _now: f64, _world: &World) {}
+    fn is_filled(&self) -> bool {
+        true
+    }
 }

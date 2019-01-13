@@ -1,4 +1,5 @@
 // use web_sys::console::log_1;
+// log_1(&format!("{}", self.objects.len()).into());
 use std::cell::RefCell;
 use super::Tile;
 use super::character::Character;
@@ -17,7 +18,7 @@ use super::constants::{
 };
 
 pub struct World {
-    tile_map: Vec<Tile>,
+    tile_map: Vec<RefCell<Tile>>,
     objects: Vec<RefCell<Box<dyn Object>>>,
     characters: Vec<RefCell<Box<dyn Character>>>,
 }
@@ -25,12 +26,16 @@ pub struct World {
 impl World {
     pub fn new(tile_map: Vec<Tile>, objects: Vec<RefCell<Box<dyn Object>>>, characters: Vec<Box<dyn Character>>) -> World {
         let mut new_characters = vec![];
+        let mut new_tile_map = vec![];
         for character in characters {
             new_characters.push(RefCell::new(character));
         }
+        for tile in tile_map {
+            new_tile_map.push(RefCell::new(tile));
+        }
 
         World {
-            tile_map,
+            tile_map: new_tile_map,
             objects,
             characters: new_characters,
         }
@@ -40,16 +45,18 @@ impl World {
         WORLD_WIDTH_IN_TILES * row + col
     }
 
-    pub fn tile_map(&self) -> &Vec<Tile> {
+    pub fn tile_map(&self) -> &Vec<RefCell<Tile>> {
         &self.tile_map
     }
 
     pub fn get_object_by_position(&self, position: &Position) -> Option<&RefCell<Box<dyn Object>>> {
         let result = None;
         for object in &self.objects {
-            let object_position = object.borrow().movement_manager().position;
-            if object_position.row() == position.row() && object_position.col() == position.col() {
-                return Some(object);
+            if object.borrow().is_visible() {
+                let object_position = object.borrow().movement_manager().position;
+                if object_position.row() == position.row() && object_position.col() == position.col() {
+                    return Some(object);
+                }
             }
         }
         return result;
@@ -61,7 +68,11 @@ impl World {
     }
 
     pub fn _set_tile_map(&mut self, tile_map: Vec<Tile>) {
-        self.tile_map = tile_map;
+        let mut new_tile_map = vec![];
+        for tile in tile_map {
+            new_tile_map.push(RefCell::new(tile));
+        }
+        self.tile_map = new_tile_map;
     }
 
     pub fn get_characters(&self) -> &Vec<RefCell<Box<dyn Character>>> {
@@ -72,12 +83,22 @@ impl World {
         &self.objects
     }
 
+    fn remove_invisible_items(&mut self) {
+        self.objects.iter()
+            .position(|o| !o.borrow().is_visible())
+            .map(|idx| self.objects.remove(idx));
+    }
+
     pub fn update(&mut self, now: f64) {
-        for object in &mut self.objects {
-            object.borrow_mut().update(now);
+        self.remove_invisible_items();
+        for tile in &self.tile_map {
+            tile.borrow_mut().update(now, &self);
         }
-        for character in &mut self.characters {
-            character.borrow_mut().update(now);
+        for object in &self.objects {
+            object.borrow_mut().update(now, &self);
+        }
+        for character in &self.characters {
+            character.borrow_mut().update(now, &self);
         }
     }
 

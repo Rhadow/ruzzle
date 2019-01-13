@@ -1,4 +1,4 @@
-
+use crate::game::World;
 use super::terrain::Terrain;
 
 pub struct Tile {
@@ -14,5 +14,11 @@ impl Tile {
 
     pub fn get_terrain(&self) -> &Option<Box<dyn Terrain>> {
         &self.terrain
+    }
+
+    pub fn update(&mut self, now: f64, world: &World) {
+        if let Some(ref mut terrain) = self.terrain {
+            terrain.update(now, world);
+        }
     }
 }

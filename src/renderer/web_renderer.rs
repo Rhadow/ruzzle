@@ -44,7 +44,7 @@ impl WebRenderer {
             for col in 0..WORLD_WIDTH_IN_TILES {
                 let idx = world.get_index(row, col);
                 let tile = &tile_map[idx];
-                if let Some(terrain) = tile.get_terrain() {
+                if let Some(terrain) = tile.borrow().get_terrain() {
                     self.draw_terrain(terrain, row as f64, col as f64);
                 }
             }
@@ -61,9 +61,11 @@ impl WebRenderer {
     fn draw_objects(&self, objects: &Vec<RefCell<Box<dyn Object>>>) {
         for object in objects {
             let object = object.borrow();
-            let asset = object.asset();
-            let (x, y) = (object.movement_manager().coordinate.x(), object.movement_manager().coordinate.y());
-            self.draw_asset_by_coordinate(asset, x, y);
+            if object.is_visible() {
+                let asset = object.asset();
+                let (x, y) = (object.movement_manager().coordinate.x(), object.movement_manager().coordinate.y());
+                self.draw_asset_by_coordinate(asset, x, y);
+            }
         }
     }
 

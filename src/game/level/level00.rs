@@ -7,7 +7,7 @@ const TERRAINS: [&str; TOTAL_TILES] = [
     "G ","WP","G ","G ","G ","G ","G ","G ","G ","G ","G ","G ",
     "G ","WP","WP","WP","WP","WP","WP","WP","G ","G ","G ","G ",
     "G ","WP","G ","G ","G ","G ","G ","WP","WP","G ","G ","G ",
-    "G ","WP","G ","G ","G ","G ","G ","G ","WP","G ","G ","G ",
+    "G ","WP","G ","H ","G ","G ","G ","G ","WP","G ","G ","G ",
     "G ","G ","G ","G ","G ","G ","G ","G ","WP","WP","WP","WP",
     "G ","G ","G ","G ","G ","G ","G ","G ","G ","G ","G ","G ",
 ];

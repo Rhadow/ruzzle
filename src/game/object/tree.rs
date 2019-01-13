@@ -8,12 +8,19 @@ use crate::game::constants::{
 
 pub struct Tree {
     asset: Asset,
+    is_visible: bool,
     movement_manager: MovementManager,
 }
 
 impl Object for Tree {
     fn asset(&self) -> &Asset {
         &self.asset
+    }
+    fn is_visible(&self) -> bool {
+        self.is_visible
+    }
+    fn set_visible(&mut self, visible: bool) {
+        self.is_visible = visible;
     }
     fn movement_manager(&self) -> &MovementManager {
         &self.movement_manager
@@ -34,6 +41,7 @@ impl Tree {
         );
         let movement_manager = MovementManager::new(position, Direction::Down);
         Tree {
+            is_visible: true,
             asset,
             movement_manager,
         }

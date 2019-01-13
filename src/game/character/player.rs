@@ -56,7 +56,7 @@ impl Character for Player {
             }
         }
     }
-    fn update(&mut self, now: f64) {
+    fn update(&mut self, now: f64, _world: &World) {
         self.delta_time += now - self.time;
         self.time = now;
         match self.movement_manager.direction {
