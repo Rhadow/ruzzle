@@ -25,6 +25,9 @@ use crate::game::constants::{
     PLAYER_IDLE_ANIMATION_SPRITE_LENGTH,
     PLAYER_IDLE_ANIMATION_WAITING_TIME,
     PLAYER_PUSHING_X_OFFSET,
+    PLAYER_FALLING_X_OFFSET,
+    PLAYER_FALLING_ANIMATION_TIME,
+    PLAYER_FALLING_ANIMATION_SPRITE_LENGTH,
 };
 
 pub struct Player {
@@ -51,10 +54,13 @@ impl Character for Player {
                     self.interact(object, next_position, direction, world);
                 },
                 None => {
-                    self.walk_to(next_position);
+                    self.walk_to(next_position, world);
                 }
             }
         }
+    }
+    fn fall(&mut self) {
+        self.movement_manager.status = Status::Falling;
     }
     fn update(&mut self, now: f64, _world: &World) {
         self.delta_time += now - self.time;
@@ -69,6 +75,7 @@ impl Character for Player {
             Status::Idle => self.animate_idle(),
             Status::Walking => self.animate_moving(),
             Status::Pushing => self.animate_moving(),
+            Status::Falling => self.animate_falling(),
         }
     }
 }
@@ -116,6 +123,16 @@ impl Player {
         }
     }
 
+    fn animate_falling (&mut self) {
+        self.update_falling_sprite();
+        if self.delta_time >= PLAYER_FALLING_ANIMATION_TIME {
+            self.movement_manager.status = Status::Idle;
+            self.delta_time = 0f64;
+            let new_position = self.movement_manager.last_position;
+            self.movement_manager.set_position(new_position);
+        }
+    }
+
     fn update_idle_sprite(&mut self) {
         let sprite_dt = PLAYER_IDLE_ANIMATION_TIME / PLAYER_IDLE_ANIMATION_SPRITE_LENGTH as f64;
         let dx = (self.delta_time / sprite_dt) as isize % PLAYER_IDLE_ANIMATION_SPRITE_LENGTH;
@@ -134,9 +151,24 @@ impl Player {
         self.asset.set_x_offset(PLAYER_BASE_X_OFFSET + PLAYER_PUSHING_X_OFFSET + dx as f64);
     }
 
-    fn walk_to(&mut self, position: Position) {
+    fn update_falling_sprite(&mut self) {
+        let sprite_dt = PLAYER_FALLING_ANIMATION_TIME / PLAYER_FALLING_ANIMATION_SPRITE_LENGTH as f64;
+        let dx = (self.delta_time / sprite_dt) as isize % PLAYER_FALLING_ANIMATION_SPRITE_LENGTH;
+        self.asset.set_x_offset(PLAYER_BASE_X_OFFSET + PLAYER_FALLING_X_OFFSET + dx as f64);
+        self.asset.set_y_offset(PLAYER_BASE_Y_OFFSET);
+    }
+
+    fn walk_to(&mut self, position: Position, world: &World) {
         self.delta_time = 0f64;
         self.movement_manager.walk_to(position);
+        let tile = world.get_tile_by_position(&position).borrow_mut();
+        let terrain = tile.terrain();
+        if let Some(terrain) = terrain {
+            let mut terrain = terrain.borrow_mut();
+            if !terrain.is_filled() {
+                terrain.set_falling_schedule(PLAYER_MOVE_TIME);
+            }
+        }
     }
 
     fn push_object(&mut self, direction: Direction, object: &RefCell<Box<Object>>, world: &World) {
@@ -146,11 +178,11 @@ impl Player {
 
     fn interact(&mut self, object: &RefCell<Box<Object>>, position: Position, direction: Direction, world: &World) {
         if object.borrow().can_step_on() {
-            self.walk_to(position);
+            self.walk_to(position, world);
         } else if object.borrow().is_pushable() {
             if object.borrow().can_move_to(&direction, world) {
                 self.push_object(direction, object, world);
-                self.walk_to(position);
+                self.walk_to(position, world);
             }
         }
     }

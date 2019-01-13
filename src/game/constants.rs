@@ -5,6 +5,7 @@ pub const TOTAL_TILES: usize = WORLD_WIDTH_IN_TILES * WORLD_HEIGHT_IN_TILES;
 
 pub const TILE_SIZE: f64 = 64f64;
 pub const ASSET_SIZE: f64 = 16f64;
+pub const FALLING_BUFFER_TIME: f64 = 32f64;
 
 // Keyboard
 pub const ARROW_UP: &str = "ArrowUp";
@@ -25,6 +26,9 @@ pub const PLAYER_IDLE_X_OFFSET: f64 = 9f64;
 pub const PLAYER_IDLE_ANIMATION_WAITING_TIME: f64 = 5_000f64;
 pub const PLAYER_IDLE_ANIMATION_TIME: f64 = 2_000f64;
 pub const PLAYER_IDLE_ANIMATION_SPRITE_LENGTH: isize = 4;
+pub const PLAYER_FALLING_X_OFFSET: f64 = 6f64;
+pub const PLAYER_FALLING_ANIMATION_TIME: f64 = 500f64;
+pub const PLAYER_FALLING_ANIMATION_SPRITE_LENGTH: isize = 1;
 
 // Terrains
 pub const GRASS_LAND_X_OFFSET: f64 = 7f64;

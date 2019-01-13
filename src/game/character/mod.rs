@@ -12,4 +12,5 @@ pub trait Character {
     fn movement_manager(&self) -> &MovementManager;
     fn update(&mut self, now: f64, world: &World);
     fn walk(&mut self, direction: Direction, world: &World);
+    fn fall(&mut self);
 }

@@ -14,7 +14,8 @@ pub enum Direction {
 pub enum Status {
     Idle,
     Walking,
-    Pushing
+    Pushing,
+    Falling,
 }
 
 pub struct MovementManager {
@@ -41,6 +42,12 @@ impl MovementManager {
         if direction != self.direction {
             self.direction = direction;
         }
+    }
+
+    pub fn set_position(&mut self, new_position: Position) {
+        self.position = new_position;
+        self.coordinate = MovementManager::position_to_coordinate(self.position);
+        self.last_position = new_position;
     }
 
     pub fn walk_to(&mut self, new_position: Position) {

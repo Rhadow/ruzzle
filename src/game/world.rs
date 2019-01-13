@@ -2,7 +2,7 @@
 // log_1(&format!("{}", self.objects.len()).into());
 use std::cell::RefCell;
 use super::Tile;
-use super::character::Character;
+use super::character::{Character};
 use super::object::Object;
 use super::movement_manager::{
     Direction,

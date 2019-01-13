@@ -6,7 +6,8 @@ use crate::game::constants::{
     HOLE_X_OFFSET,
     HOLE_FILLED_X_OFFSET,
     HOLE_Y_OFFSET,
-    HOLE_SIZE
+    HOLE_SIZE,
+    FALLING_BUFFER_TIME,
 };
 
 pub struct Hole {
@@ -41,6 +42,7 @@ impl Terrain for Hole {
             if let Some(scheduled_time) = self.scheduled_falling_time {
                 if self.delta_time >= scheduled_time {
                     self.handle_falling(world);
+                    self.delta_time = 0f64;
                 }
             } else {
                 self.delta_time = 0f64;
@@ -75,10 +77,15 @@ impl Hole {
     }
     fn handle_falling(&mut self, world: &World) {
         let object = world.get_object_by_position(&self.movement_manager.position);
+        let mut player = world.player().borrow_mut();
         if let Some(object) = object {
             let mut object = object.borrow_mut();
             self.is_filled = true;
             object.set_visible(false);
         }
+        if player.movement_manager().position == self.movement_manager.position {
+            player.fall();
+        }
+        self.scheduled_falling_time = None;
     }
 }
