@@ -2,6 +2,7 @@
 // log1(&format!("{}", x),into())
 use std::cell::RefCell;
 use super::Character;
+use crate::audio::{BGM, WebAudioPlayer};
 use crate::game::object::Object;
 use crate::game::{
     Asset,
@@ -62,7 +63,7 @@ impl Character for Player {
     fn fall(&mut self) {
         self.movement_manager.status = Status::Falling;
     }
-    fn update(&mut self, now: f64, _world: &World) {
+    fn update(&mut self, now: f64, _world: &World, audio: &mut WebAudioPlayer) {
         self.delta_time += now - self.time;
         self.time = now;
         match self.movement_manager.direction {
@@ -73,8 +74,8 @@ impl Character for Player {
         }
         match self.movement_manager.status {
             Status::Idle => self.animate_idle(),
-            Status::Walking => self.animate_moving(),
-            Status::Pushing => self.animate_moving(),
+            Status::Walking => self.animate_moving(audio),
+            Status::Pushing => self.animate_moving(audio),
             Status::Falling => self.animate_falling(),
         }
     }
@@ -110,7 +111,7 @@ impl Player {
         }
     }
 
-    fn animate_moving (&mut self) {
+    fn animate_moving (&mut self, _audio: &mut WebAudioPlayer) {
         self.movement_manager.set_next_coordinate(self.delta_time, PLAYER_MOVE_TIME);
         match self.movement_manager.status {
             Status::Walking => self.update_walking_sprite(),

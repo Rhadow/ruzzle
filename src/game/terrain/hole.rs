@@ -7,7 +7,6 @@ use crate::game::constants::{
     HOLE_FILLED_X_OFFSET,
     HOLE_Y_OFFSET,
     HOLE_SIZE,
-    FALLING_BUFFER_TIME,
 };
 
 pub struct Hole {

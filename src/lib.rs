@@ -7,6 +7,7 @@ mod utils;
 mod web_client;
 mod renderer;
 mod canvas;
+mod audio;
 pub mod game;
 
 use cfg_if::cfg_if;

@@ -7,9 +7,11 @@
   </head>
   <body>
     <canvas id="canvas" width="768px" height="512px"></canvas>
-    <img id="environment" src="./assets/sprites/overworld.png" />
-    <img id="object" src="./assets/sprites/objects.png" />
-    <img id="character" src="./assets/sprites/character.png" />
-    <script src="./bootstrap.js"></script>
+    <img id="environment" class="asset" src="./assets/sprites/overworld.png" />
+    <img id="object" class="asset" src="./assets/sprites/objects.png" />
+    <img id="character" class="asset" src="./assets/sprites/character.png" />
+    <audio id='world_0_bgm' class="asset" loop preload="auto"><source src="./assets/audios/bgm/world_0.ogg" type="audio/ogg"></audio>
+    <audio id='world_1_bgm' class="asset" loop preload="auto"><source src="./assets/audios/bgm/world_1.ogg" type="audio/ogg"></audio>
+    <script defer src="./bootstrap.js"></script>
   </body>
 </html>

@@ -42,6 +42,8 @@ features = [
   'Element',
   'HtmlCanvasElement',
   'HtmlImageElement',
+  'HtmlAudioElement',
+  'HtmlMediaElement',
   'Window',
   'console',
   'KeyboardEvent',
