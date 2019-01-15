@@ -1,7 +1,7 @@
 // use web_sys::console::log_1;
 // log_1(&format!("{}", self.objects.len()).into());
 use std::cell::RefCell;
-use crate::audio::WebAudioPlayer;
+use crate::audio::AudioPlayer;
 use super::Tile;
 use super::character::{Character};
 use super::object::Object;
@@ -90,13 +90,13 @@ impl World {
             .map(|idx| self.objects.remove(idx));
     }
 
-    pub fn update(&mut self, now: f64, audio: &mut WebAudioPlayer) {
+    pub fn update(&mut self, now: f64, audio: &mut AudioPlayer) {
         self.remove_invisible_items();
         for tile in &self.tile_map {
-            tile.borrow_mut().update(now, &self);
+            tile.borrow_mut().update(now, &self, audio);
         }
         for object in &self.objects {
-            object.borrow_mut().update(now, &self);
+            object.borrow_mut().update(now, &self, audio);
         }
         for character in &self.characters {
             character.borrow_mut().update(now, &self, audio);

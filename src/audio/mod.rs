@@ -7,6 +7,14 @@ pub enum BGM {
     World1,
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Debug)]
 pub enum SFX {
+    RockFall,
+    RockMove,
+    Dead,
+}
+
+pub trait AudioPlayer {
+    fn play_bgm(&mut self, bgm: BGM);
+    fn play_sfx(&mut self, sfx: SFX);
 }

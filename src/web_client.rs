@@ -4,7 +4,7 @@ use utils::set_panic_hook;
 use web_sys::Performance;
 use crate::canvas::Canvas;
 use crate::renderer::WebRenderer;
-use crate::audio::{BGM, WebAudioPlayer};
+use crate::audio::{BGM, AudioPlayer, WebAudioPlayer};
 use crate::game::World;
 use crate::game::level::LevelManager;
 use crate::game::character::{Character, Player};
@@ -34,6 +34,9 @@ impl WebClient {
             char_assets_id: String,
             bgm_0_id: String,
             bgm_1_id: String,
+            sfx_rock_fall_id: String,
+            sfx_rock_move_id: String,
+            sfx_dead_id: String,
             ) -> WebClient {
         set_panic_hook();
         let current_level: usize = 0;
@@ -43,6 +46,9 @@ impl WebClient {
         let mut audio = WebAudioPlayer::new(
             &bgm_0_id,
             &bgm_1_id,
+            &sfx_rock_fall_id,
+            &sfx_rock_move_id,
+            &sfx_dead_id,
         );
         let world = init_world(current_level, now);
         let canvas = Canvas::new(&canvas_id);

@@ -1,5 +1,6 @@
 // use web_sys::console::log_1;
 use super::Object;
+use crate::audio::{SFX, AudioPlayer};
 use crate::game::{Asset, AssetType, Direction, MovementManager, Position, World};
 use crate::game::movement_manager::Status;
 use crate::game::constants::{
@@ -46,12 +47,12 @@ impl Object for Rock {
             }
         }
     }
-    fn update(&mut self, now: f64, _world: &World) {
+    fn update(&mut self, now: f64, _world: &World, audio: &mut AudioPlayer) {
         self.delta_time += now - self.time;
         self.time = now;
         match self.movement_manager.status {
             Status::Idle => self.animate_idle(),
-            Status::Walking => self.animate_walking(),
+            Status::Walking => self.animate_walking(audio),
             _ => (),
         }
     }
@@ -79,8 +80,9 @@ impl Rock {
     fn animate_idle (&mut self) {
         self.delta_time = 0f64;
     }
-    fn animate_walking (&mut self) {
+    fn animate_walking (&mut self, audio: &mut AudioPlayer) {
         self.movement_manager.set_next_coordinate(self.delta_time, ROCK_MOVE_TIME);
+        audio.play_sfx(SFX::RockMove);
         if self.movement_manager.is_coordinate_equal_position() {
             self.movement_manager.status = Status::Idle;
             self.delta_time = 0f64;

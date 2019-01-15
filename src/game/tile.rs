@@ -1,3 +1,4 @@
+use crate::audio::AudioPlayer;
 use std::cell::RefCell;
 use crate::game::World;
 use super::terrain::Terrain;
@@ -17,9 +18,9 @@ impl Tile {
         &self.terrain
     }
 
-    pub fn update(&mut self, now: f64, world: &World) {
+    pub fn update(&mut self, now: f64, world: &World, audio: &mut AudioPlayer) {
         if let Some(ref mut terrain) = self.terrain {
-            terrain.borrow_mut().update(now, world);
+            terrain.borrow_mut().update(now, world, audio);
         }
     }
 }

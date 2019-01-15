@@ -16,6 +16,7 @@ pub enum Status {
     Walking,
     Pushing,
     Falling,
+    Respawning,
 }
 
 pub struct MovementManager {

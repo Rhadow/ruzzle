@@ -44,6 +44,9 @@ loadAssets().then(() => {
         "character",
         "bgm_0",
         "bgm_1",
+        "sfx_rock_fall",
+        "sfx_rock_move",
+        "sfx_dead"
     );
     webClient.render();
     function render() {

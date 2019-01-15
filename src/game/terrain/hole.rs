@@ -1,5 +1,6 @@
 // use web_sys::console::log_1;
 // log_1(&format!("{}", self.objects.len()).into());
+use crate::audio::{SFX, AudioPlayer};
 use super::Terrain;
 use crate::game::{Asset, AssetType, Direction, MovementManager, Position, World};
 use crate::game::constants::{
@@ -31,7 +32,7 @@ impl Terrain for Hole {
     fn is_filled(&self) -> bool {
         self.is_filled
     }
-    fn update(&mut self, now: f64, world: &World) {
+    fn update(&mut self, now: f64, world: &World, audio: &mut AudioPlayer) {
         self.delta_time += now - self.time;
         self.time = now;
         if !self.is_filled {
@@ -40,7 +41,7 @@ impl Terrain for Hole {
             }
             if let Some(scheduled_time) = self.scheduled_falling_time {
                 if self.delta_time >= scheduled_time {
-                    self.handle_falling(world);
+                    self.handle_falling(world, audio);
                     self.delta_time = 0f64;
                 }
             } else {
@@ -74,13 +75,14 @@ impl Hole {
             delta_time: 0f64,
         }
     }
-    fn handle_falling(&mut self, world: &World) {
+    fn handle_falling(&mut self, world: &World, audio: &mut AudioPlayer) {
         let object = world.get_object_by_position(&self.movement_manager.position);
         let mut player = world.player().borrow_mut();
         if let Some(object) = object {
             let mut object = object.borrow_mut();
             self.is_filled = true;
             object.set_visible(false);
+            audio.play_sfx(SFX::RockFall);
         }
         if player.movement_manager().position == self.movement_manager.position {
             player.fall();
