@@ -32,8 +32,8 @@ impl WebClient {
             env_assets_id: String,
             obj_assets_id: String,
             char_assets_id: String,
-            world_0_bgm_id: String,
-            world_1_bgm_id: String,
+            bgm_0_id: String,
+            bgm_1_id: String,
             ) -> WebClient {
         set_panic_hook();
         let current_level: usize = 0;
@@ -41,8 +41,8 @@ impl WebClient {
         let timer = window.performance().unwrap();
         let now = timer.now();
         let mut audio = WebAudioPlayer::new(
-            &world_0_bgm_id,
-            &world_1_bgm_id,
+            &bgm_0_id,
+            &bgm_1_id,
         );
         let world = init_world(current_level, now);
         let canvas = Canvas::new(&canvas_id);

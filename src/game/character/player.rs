@@ -2,7 +2,7 @@
 // log1(&format!("{}", x),into())
 use std::cell::RefCell;
 use super::Character;
-use crate::audio::{BGM, WebAudioPlayer};
+use crate::audio::{WebAudioPlayer};
 use crate::game::object::Object;
 use crate::game::{
     Asset,
@@ -76,7 +76,7 @@ impl Character for Player {
             Status::Idle => self.animate_idle(),
             Status::Walking => self.animate_moving(audio),
             Status::Pushing => self.animate_moving(audio),
-            Status::Falling => self.animate_falling(),
+            Status::Falling => self.animate_falling(audio),
         }
     }
 }
@@ -124,7 +124,7 @@ impl Player {
         }
     }
 
-    fn animate_falling (&mut self) {
+    fn animate_falling (&mut self, _audio: &mut WebAudioPlayer) {
         self.update_falling_sprite();
         if self.delta_time >= PLAYER_FALLING_ANIMATION_TIME {
             self.movement_manager.status = Status::Idle;

@@ -4,14 +4,14 @@
     <meta charset="utf-8">
     <title>Ruzzle</title>
     <link rel="stylesheet" href="index.css">
+    <script defer src="./bootstrap.js"></script>
   </head>
   <body>
     <canvas id="canvas" width="768px" height="512px"></canvas>
-    <img id="environment" class="asset" src="./assets/sprites/overworld.png" />
-    <img id="object" class="asset" src="./assets/sprites/objects.png" />
-    <img id="character" class="asset" src="./assets/sprites/character.png" />
-    <audio id='world_0_bgm' class="asset" loop preload="auto"><source src="./assets/audios/bgm/world_0.ogg" type="audio/ogg"></audio>
-    <audio id='world_1_bgm' class="asset" loop preload="auto"><source src="./assets/audios/bgm/world_1.ogg" type="audio/ogg"></audio>
-    <script defer src="./bootstrap.js"></script>
+    <img id="environment" class="asset sprite" src="./assets/sprites/overworld.png" />
+    <img id="object" class="asset sprite" src="./assets/sprites/objects.png" />
+    <img id="character" class="asset sprite" src="./assets/sprites/character.png" />
+    <audio id='bgm_0' class="asset audio" loop preload="auto" src="./assets/audios/bgm/world_0.ogg"></audio>
+    <audio id='bgm_1' class="asset audio" loop preload="auto" src="./assets/audios/bgm/world_1.ogg"></audio>
   </body>
 </html>
