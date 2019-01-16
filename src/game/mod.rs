@@ -7,12 +7,12 @@ pub mod terrain;
 pub mod constants;
 pub mod object;
 pub mod character;
-pub mod movement_manager;
+pub mod status_manager;
 
 pub use self::world::World;
 pub use self::tile::Tile;
 pub use self::asset::{Asset, AssetType};
-pub use self::movement_manager::{MovementManager, Direction, Status};
+pub use self::status_manager::{StatusManager, Direction, Status};
 
 use self::constants::{
     WORLD_WIDTH_IN_TILES,

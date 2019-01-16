@@ -1,30 +1,55 @@
 /*
     Environment:
-    "G": GrassLand,
+    "G" : GrassLand,
     "WP": WoodenPath,
+    "H" : Hole,
 
     Objects:
-    "T": Tree
+    "T": Tree,
+    "R": Rock,
+    "C": Chest (Exit),
 */
 use std::cell::RefCell;
 use crate::game::{
+    Asset,
+    AssetType,
     Tile,
     Position
 };
 use crate::game::terrain::{
     Terrain,
-    GrassLand,
-    WoodenPath,
+    Land,
     Hole,
 };
 use crate::game::object::{
     Object,
-    Tree,
+    Wall,
     Rock,
+    Exit,
 };
 use crate::game::constants::{
     WORLD_WIDTH_IN_TILES,
     TOTAL_TILES,
+    // Terrain
+    GRASS_LAND_X_OFFSET,
+    GRASS_LAND_Y_OFFSET,
+    GRASS_LAND_SIZE,
+    WOODEN_PATH_X_OFFSET,
+    WOODEN_PATH_Y_OFFSET,
+    WOODEN_PATH_SIZE,
+    HOLE_X_OFFSET,
+    HOLE_Y_OFFSET,
+    HOLE_SIZE,
+    // Object
+    TREE_X_OFFSET,
+    TREE_Y_OFFSET,
+    TREE_SIZE,
+    ROCK_X_OFFSET,
+    ROCK_Y_OFFSET,
+    ROCK_SIZE,
+    CHEST_X_OFFSET,
+    CHEST_Y_OFFSET,
+    CHEST_SIZE,
 };
 use super::level00::LEVEL00;
 
@@ -69,15 +94,16 @@ impl LevelManager {
             let position = self.index_to_position(i);
 
             let terrain: Option<RefCell<Box<dyn Terrain>>> = match String::from(terrain.trim()).to_uppercase().as_str() {
-                "G" => Some(RefCell::new(Box::new(GrassLand::new(position)))),
-                "WP" => Some(RefCell::new(Box::new(WoodenPath::new(position)))),
-                "H" => Some(RefCell::new(Box::new(Hole::new(position)))),
+                "G" => self.create_grass_land(position),
+                "WP" => self.create_wooden_path(position),
+                "H" => self.create_hole(position),
                 _ => None
             };
 
             let object: Option<RefCell<Box<dyn Object>>> = match String::from(object.trim()).to_uppercase().as_str() {
-                "T" => Some(RefCell::new(Box::new(Tree::new(position)))),
-                "R" => Some(RefCell::new(Box::new(Rock::new(position)))),
+                "T" => self.create_tree(position),
+                "R" => self.create_rock(position),
+                "C" => self.create_chest(position),
                 _ => None
             };
 
@@ -87,5 +113,71 @@ impl LevelManager {
             tiles.push(Tile::new(terrain));
         }
         (tiles, all_objects)
+    }
+
+    fn create_grass_land(&self, position: Position) -> Option<RefCell<Box<dyn Terrain>>> {
+        let asset = Asset::new(
+            AssetType::Environment,
+            GRASS_LAND_X_OFFSET,
+            GRASS_LAND_Y_OFFSET,
+            GRASS_LAND_SIZE,
+            GRASS_LAND_SIZE,
+        );
+        Some(RefCell::new(Box::new(Land::new(position, asset))))
+    }
+
+    fn create_wooden_path(&self, position: Position) -> Option<RefCell<Box<dyn Terrain>>> {
+        let asset = Asset::new(
+            AssetType::Environment,
+            WOODEN_PATH_X_OFFSET,
+            WOODEN_PATH_Y_OFFSET,
+            WOODEN_PATH_SIZE,
+            WOODEN_PATH_SIZE,
+        );
+        Some(RefCell::new(Box::new(Land::new(position, asset))))
+    }
+
+    fn create_hole(&self, position: Position) -> Option<RefCell<Box<dyn Terrain>>> {
+        let asset = Asset::new(
+            AssetType::Environment,
+            HOLE_X_OFFSET,
+            HOLE_Y_OFFSET,
+            HOLE_SIZE,
+            HOLE_SIZE,
+        );
+        Some(RefCell::new(Box::new(Hole::new(position, asset))))
+    }
+
+    fn create_tree(&self, position: Position) -> Option<RefCell<Box<dyn Object>>> {
+        let asset = Asset::new(
+            AssetType::Object,
+            TREE_X_OFFSET,
+            TREE_Y_OFFSET,
+            TREE_SIZE,
+            TREE_SIZE,
+        );
+        Some(RefCell::new(Box::new(Wall::new(position, asset))))
+    }
+
+    fn create_rock(&self, position: Position) -> Option<RefCell<Box<dyn Object>>> {
+        let asset = Asset::new(
+            AssetType::Environment,
+            ROCK_X_OFFSET,
+            ROCK_Y_OFFSET,
+            ROCK_SIZE,
+            ROCK_SIZE,
+        );
+        Some(RefCell::new(Box::new(Rock::new(position, asset))))
+    }
+
+    fn create_chest(&self, position: Position) -> Option<RefCell<Box<dyn Object>>> {
+        let asset = Asset::new(
+            AssetType::Object,
+            CHEST_X_OFFSET,
+            CHEST_Y_OFFSET,
+            CHEST_SIZE,
+            CHEST_SIZE,
+        );
+        Some(RefCell::new(Box::new(Exit::new(position, asset))))
     }
 }

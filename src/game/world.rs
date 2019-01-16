@@ -5,7 +5,7 @@ use crate::audio::AudioPlayer;
 use super::Tile;
 use super::character::{Character};
 use super::object::Object;
-use super::movement_manager::{
+use super::status_manager::{
     Direction,
     Status
 };
@@ -50,11 +50,19 @@ impl World {
         &self.tile_map
     }
 
+    pub fn _set_tile_map(&mut self, tile_map: Vec<Tile>) {
+        let mut new_tile_map = vec![];
+        for tile in tile_map {
+            new_tile_map.push(RefCell::new(tile));
+        }
+        self.tile_map = new_tile_map;
+    }
+
     pub fn get_object_by_position(&self, position: &Position) -> Option<&RefCell<Box<dyn Object>>> {
         let result = None;
         for object in &self.objects {
             if object.borrow().is_visible() {
-                let object_position = object.borrow().movement_manager().position;
+                let object_position = object.borrow().status_manager().position;
                 if object_position.row() == position.row() && object_position.col() == position.col() {
                     return Some(object);
                 }
@@ -66,14 +74,6 @@ impl World {
     pub fn player(&self) -> &RefCell<Box<dyn Character>> {
         let idx = self.characters.len() - 1;
         &self.characters[idx]
-    }
-
-    pub fn _set_tile_map(&mut self, tile_map: Vec<Tile>) {
-        let mut new_tile_map = vec![];
-        for tile in tile_map {
-            new_tile_map.push(RefCell::new(tile));
-        }
-        self.tile_map = new_tile_map;
     }
 
     pub fn get_characters(&self) -> &Vec<RefCell<Box<dyn Character>>> {
@@ -117,7 +117,7 @@ impl World {
     fn handle_player_movement(&mut self, direction: Option<Direction>) {
         if let Some(dir) = direction {
             let mut player = self.player().borrow_mut();
-            if player.movement_manager().status == Status::Idle {
+            if player.status_manager().status == Status::Idle && !player.at_exit() {
                 player.walk(dir, &self);
             }
         }

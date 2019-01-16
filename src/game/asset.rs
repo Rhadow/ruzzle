@@ -1,3 +1,4 @@
+#[derive(PartialEq, Copy, Clone, Eq, Hash)]
 pub enum AssetType {
     Environment,
     Character,

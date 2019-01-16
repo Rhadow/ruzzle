@@ -37,17 +37,22 @@ function loadAssets() {
 
 loadAssets().then(() => {
     console.log('All assets loaded, starting game!');
-    const webClient = WebClient.new(
-        "canvas",
-        "environment",
-        "object",
-        "character",
-        "bgm_0",
-        "bgm_1",
-        "sfx_rock_fall",
-        "sfx_rock_move",
-        "sfx_dead"
-    );
+    const webClient = WebClient.new("canvas", {
+        "sprite": [
+            "environment",
+            "object",
+            "character",
+        ],
+        "bgm": [
+            "bgm_0",
+            "bgm_1",
+        ],
+        "sfx": [
+            "sfx_rock_fall",
+            "sfx_rock_move",
+            "sfx_dead",
+        ]
+    });
     webClient.render();
     function render() {
         webClient.update();

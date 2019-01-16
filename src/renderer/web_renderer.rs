@@ -1,6 +1,8 @@
 use std::cell::RefCell;
+use std::collections::HashMap;
 use wasm_bindgen::JsCast;
 use web_sys::{CanvasRenderingContext2d, HtmlCanvasElement, HtmlImageElement};
+use crate::web_client::WebAssets;
 use crate::game::{World, Asset, AssetType};
 use crate::game::terrain::Terrain;
 use crate::game::object::Object;
@@ -14,24 +16,32 @@ use crate::game::constants::{
 
 pub struct WebRenderer {
     ctx: CanvasRenderingContext2d,
-    env_assets: HtmlImageElement,
-    obj_assets: HtmlImageElement,
-    char_assets: HtmlImageElement,
+    asset_type_map: HashMap<AssetType, HtmlImageElement>,
 }
 
 impl WebRenderer {
-    pub fn new(canvas: &HtmlCanvasElement, env_assets_id: &str, obj_assets_id: &str, char_assets_id: &str) -> WebRenderer {
+    pub fn new(canvas: &HtmlCanvasElement, assets: &WebAssets) -> WebRenderer {
         let document = web_sys::window().unwrap().document().unwrap();
-        let env_assets: HtmlImageElement = document.get_element_by_id(env_assets_id).unwrap().dyn_into().unwrap();
-        let obj_assets: HtmlImageElement = document.get_element_by_id(obj_assets_id).unwrap().dyn_into().unwrap();
-        let char_assets: HtmlImageElement = document.get_element_by_id(char_assets_id).unwrap().dyn_into().unwrap();
+        let is_asset_type_map = WebRenderer::init_id_asset_type_map();
+        let mut asset_type_map = HashMap::new();
+        for sprite_id in &assets.sprite {
+            let asset_type = is_asset_type_map.get(sprite_id).unwrap();
+            let asset_element = document.get_element_by_id(sprite_id).unwrap().dyn_into().unwrap();
+            asset_type_map.insert(*asset_type, asset_element);
+        }
         let ctx: CanvasRenderingContext2d = canvas.get_context("2d").unwrap().unwrap().dyn_into().unwrap();
         WebRenderer {
             ctx,
-            env_assets,
-            obj_assets,
-            char_assets
+            asset_type_map,
         }
+    }
+
+    fn init_id_asset_type_map() -> HashMap<String, AssetType> {
+        let mut asset_type_map: HashMap<String, AssetType> = HashMap::new();
+        asset_type_map.insert(String::from("environment"), AssetType::Environment);
+        asset_type_map.insert(String::from("object"), AssetType::Object);
+        asset_type_map.insert(String::from("character"), AssetType::Character);
+        asset_type_map
     }
 
     pub fn render(&self, world: &World) {
@@ -64,7 +74,7 @@ impl WebRenderer {
             let object = object.borrow();
             if object.is_visible() {
                 let asset = object.asset();
-                let (x, y) = (object.movement_manager().coordinate.x(), object.movement_manager().coordinate.y());
+                let (x, y) = (object.status_manager().coordinate.x(), object.status_manager().coordinate.y());
                 self.draw_asset_by_coordinate(asset, x, y);
             }
         }
@@ -74,17 +84,13 @@ impl WebRenderer {
         for character in characters {
             let character = character.borrow();
             let asset = character.asset();
-            let (x, y) = (character.movement_manager().coordinate.x(), character.movement_manager().coordinate.y());
+            let (x, y) = (character.status_manager().coordinate.x(), character.status_manager().coordinate.y());
             self.draw_asset_by_coordinate(asset, x, y);
         }
     }
 
     fn draw_asset_by_coordinate(&self, asset: &Asset, x: f64, y: f64) {
-        let asset_by_type = match asset.get_type() {
-            AssetType::Environment => &self.env_assets,
-            AssetType::Object => &self.obj_assets,
-            AssetType::Character => &self.char_assets,
-        };
+        let asset_by_type = self.asset_type_map.get(asset.get_type()).unwrap();
         self.ctx.draw_image_with_html_image_element_and_sw_and_sh_and_dx_and_dy_and_dw_and_dh(
             asset_by_type,
             asset.get_x_offset() * ASSET_SIZE,
@@ -99,11 +105,7 @@ impl WebRenderer {
     }
 
     fn draw_asset_by_position(&self, asset: &Asset, row: f64, col: f64) {
-        let asset_by_type = match asset.get_type() {
-            AssetType::Environment => &self.env_assets,
-            AssetType::Object => &self.obj_assets,
-            AssetType::Character => &self.char_assets,
-        };
+        let asset_by_type = self.asset_type_map.get(asset.get_type()).unwrap();
         self.ctx.draw_image_with_html_image_element_and_sw_and_sh_and_dx_and_dy_and_dw_and_dh(
             asset_by_type,
             asset.get_x_offset() * ASSET_SIZE,

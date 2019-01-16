@@ -2,20 +2,15 @@
 // log_1(&format!("{}", self.objects.len()).into());
 use crate::audio::{SFX, AudioPlayer};
 use super::Terrain;
-use crate::game::{Asset, AssetType, Direction, MovementManager, Position, World};
-use crate::game::constants::{
-    HOLE_X_OFFSET,
-    HOLE_FILLED_X_OFFSET,
-    HOLE_Y_OFFSET,
-    HOLE_SIZE,
-};
+use crate::game::{Asset, Direction, StatusManager, Position, World};
+use crate::game::constants::{HOLE_X_OFFSET, HOLE_FILLED_X_OFFSET};
 
 pub struct Hole {
     delta_time: f64,
     time: f64,
     scheduled_falling_time: Option<f64>,
     asset: Asset,
-    movement_manager: MovementManager,
+    status_manager: StatusManager,
     is_filled: bool,
 }
 
@@ -23,8 +18,8 @@ impl Terrain for Hole {
     fn get_asset(&self) -> &Asset {
         &self.asset
     }
-    fn movement_manager(&self) -> &MovementManager {
-        &self.movement_manager
+    fn status_manager(&self) -> &StatusManager {
+        &self.status_manager
     }
     fn set_falling_schedule(&mut self, dt: f64) {
         self.scheduled_falling_time = Some(dt);
@@ -57,18 +52,11 @@ impl Terrain for Hole {
 }
 
 impl Hole {
-    pub fn new(position: Position) -> Hole {
-        let asset = Asset::new(
-            AssetType::Environment,
-            HOLE_X_OFFSET,
-            HOLE_Y_OFFSET,
-            HOLE_SIZE,
-            HOLE_SIZE,
-        );
-        let movement_manager = MovementManager::new(position, Direction::Down);
+    pub fn new(position: Position, asset: Asset) -> Hole {
+        let status_manager = StatusManager::new(position, Direction::Down);
         Hole {
             asset,
-            movement_manager,
+            status_manager,
             is_filled: false,
             scheduled_falling_time: None,
             time: 0f64,
@@ -76,7 +64,7 @@ impl Hole {
         }
     }
     fn handle_falling(&mut self, world: &World, audio: &mut AudioPlayer) {
-        let object = world.get_object_by_position(&self.movement_manager.position);
+        let object = world.get_object_by_position(&self.status_manager.position);
         let mut player = world.player().borrow_mut();
         if let Some(object) = object {
             let mut object = object.borrow_mut();
@@ -84,7 +72,7 @@ impl Hole {
             object.set_visible(false);
             audio.play_sfx(SFX::RockFall);
         }
-        if player.movement_manager().position == self.movement_manager.position {
+        if player.status_manager().position == self.status_manager.position {
             player.fall();
         }
         self.scheduled_falling_time = None;

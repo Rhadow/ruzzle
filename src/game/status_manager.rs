@@ -17,9 +17,10 @@ pub enum Status {
     Pushing,
     Falling,
     Respawning,
+    Exiting,
 }
 
-pub struct MovementManager {
+pub struct StatusManager {
     pub status: Status,
     pub coordinate: Coordinate,
     pub position: Position,
@@ -27,10 +28,10 @@ pub struct MovementManager {
     pub direction: Direction,
 }
 
-impl MovementManager {
-    pub fn new(position: Position, direction: Direction) -> MovementManager {
-        let coordinate = MovementManager::position_to_coordinate(position);
-        MovementManager {
+impl StatusManager {
+    pub fn new(position: Position, direction: Direction) -> StatusManager {
+        let coordinate = StatusManager::position_to_coordinate(position);
+        StatusManager {
             status: Status::Idle,
             coordinate,
             position,
@@ -47,7 +48,7 @@ impl MovementManager {
 
     pub fn set_position(&mut self, new_position: Position) {
         self.position = new_position;
-        self.coordinate = MovementManager::position_to_coordinate(self.position);
+        self.coordinate = StatusManager::position_to_coordinate(self.position);
         self.last_position = new_position;
     }
 
@@ -60,8 +61,8 @@ impl MovementManager {
     }
 
     pub fn set_next_coordinate(&mut self, delta_time: f64, total_move_time: f64) {
-        let src_coordinate = MovementManager::position_to_coordinate(self.last_position);
-        let dst_coordinate = MovementManager::position_to_coordinate(self.position);
+        let src_coordinate = StatusManager::position_to_coordinate(self.last_position);
+        let dst_coordinate = StatusManager::position_to_coordinate(self.position);
         let mut distance_ratio = delta_time / total_move_time;
         if distance_ratio >= 1f64 {
             distance_ratio = 1f64;
@@ -70,7 +71,7 @@ impl MovementManager {
     }
 
     pub fn is_coordinate_equal_position(&self) -> bool {
-        self.coordinate == MovementManager::position_to_coordinate(self.position)
+        self.coordinate == StatusManager::position_to_coordinate(self.position)
     }
 
     pub fn position_to_coordinate(position: Position) -> Coordinate {

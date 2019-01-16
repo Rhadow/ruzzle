@@ -1,13 +1,13 @@
 mod web_audio_player;
 pub use self::web_audio_player::WebAudioPlayer;
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Copy, Clone, Eq, Hash)]
 pub enum BGM {
     World0,
     World1,
 }
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Copy, Clone, Eq, Hash)]
 pub enum SFX {
     RockFall,
     RockMove,
