@@ -2,16 +2,17 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use wasm_bindgen::JsCast;
 use web_sys::{CanvasRenderingContext2d, HtmlCanvasElement, HtmlImageElement};
+use super::Renderer;
 use crate::web_client::WebAssets;
-use crate::game::{World, Asset, AssetType};
+use crate::game::{Asset, AssetType};
 use crate::game::terrain::Terrain;
 use crate::game::object::Object;
 use crate::game::character::Character;
 use crate::game::constants::{
     TILE_SIZE,
     ASSET_SIZE,
-    WORLD_WIDTH_IN_TILES,
     WORLD_HEIGHT_IN_TILES,
+    WORLD_WIDTH_IN_TILES,
 };
 
 pub struct WebRenderer {
@@ -19,48 +20,9 @@ pub struct WebRenderer {
     asset_type_map: HashMap<AssetType, HtmlImageElement>,
 }
 
-impl WebRenderer {
-    pub fn new(canvas: &HtmlCanvasElement, assets: &WebAssets) -> WebRenderer {
-        let document = web_sys::window().unwrap().document().unwrap();
-        let is_asset_type_map = WebRenderer::init_id_asset_type_map();
-        let mut asset_type_map = HashMap::new();
-        for sprite_id in &assets.sprite {
-            let asset_type = is_asset_type_map.get(sprite_id).unwrap();
-            let asset_element = document.get_element_by_id(sprite_id).unwrap().dyn_into().unwrap();
-            asset_type_map.insert(*asset_type, asset_element);
-        }
-        let ctx: CanvasRenderingContext2d = canvas.get_context("2d").unwrap().unwrap().dyn_into().unwrap();
-        WebRenderer {
-            ctx,
-            asset_type_map,
-        }
-    }
-
-    fn init_id_asset_type_map() -> HashMap<String, AssetType> {
-        let mut asset_type_map: HashMap<String, AssetType> = HashMap::new();
-        asset_type_map.insert(String::from("environment"), AssetType::Environment);
-        asset_type_map.insert(String::from("object"), AssetType::Object);
-        asset_type_map.insert(String::from("character"), AssetType::Character);
-        asset_type_map
-    }
-
-    pub fn render(&self, world: &World) {
-        let tile_map = world.tile_map();
-        let characters = world.get_characters();
-        let objects = world.get_objects();
+impl Renderer for WebRenderer {
+    fn clear_screen(&self) {
         self.ctx.clear_rect(0f64, 0f64, WORLD_WIDTH_IN_TILES as f64 * TILE_SIZE, WORLD_HEIGHT_IN_TILES as f64 * TILE_SIZE);
-
-        for row in 0..WORLD_HEIGHT_IN_TILES {
-            for col in 0..WORLD_WIDTH_IN_TILES {
-                let idx = world.get_index(row, col);
-                let tile = &tile_map[idx];
-                if let Some(terrain) = tile.borrow().terrain() {
-                    self.draw_terrain(terrain, row as f64, col as f64);
-                }
-            }
-        }
-        self.draw_objects(objects);
-        self.draw_characters(characters);
     }
 
     fn draw_terrain(&self, terrain: &RefCell<Box<dyn Terrain>>, row: f64, col: f64) {
@@ -117,5 +79,31 @@ impl WebRenderer {
             TILE_SIZE,
             TILE_SIZE,
         ).unwrap();
+    }
+}
+
+impl WebRenderer {
+    pub fn new(canvas: &HtmlCanvasElement, assets: &WebAssets) -> WebRenderer {
+        let document = web_sys::window().unwrap().document().unwrap();
+        let is_asset_type_map = WebRenderer::init_id_asset_type_map();
+        let mut asset_type_map = HashMap::new();
+        for sprite_id in &assets.sprite {
+            let asset_type = is_asset_type_map.get(sprite_id).unwrap();
+            let asset_element = document.get_element_by_id(sprite_id).unwrap().dyn_into().unwrap();
+            asset_type_map.insert(*asset_type, asset_element);
+        }
+        let ctx: CanvasRenderingContext2d = canvas.get_context("2d").unwrap().unwrap().dyn_into().unwrap();
+        WebRenderer {
+            ctx,
+            asset_type_map,
+        }
+    }
+
+    fn init_id_asset_type_map() -> HashMap<String, AssetType> {
+        let mut asset_type_map: HashMap<String, AssetType> = HashMap::new();
+        asset_type_map.insert(String::from("environment"), AssetType::Environment);
+        asset_type_map.insert(String::from("object"), AssetType::Object);
+        asset_type_map.insert(String::from("character"), AssetType::Character);
+        asset_type_map
     }
 }

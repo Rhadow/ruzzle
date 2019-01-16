@@ -8,6 +8,7 @@ pub mod constants;
 pub mod object;
 pub mod character;
 pub mod status_manager;
+pub mod scenes;
 
 pub use self::world::World;
 pub use self::tile::Tile;

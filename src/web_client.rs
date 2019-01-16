@@ -2,19 +2,14 @@
 use wasm_bindgen::prelude::*;
 use utils::set_panic_hook;
 use web_sys::Performance;
+use crate::game::scenes::{Scene, GameScene};
 use crate::canvas::Canvas;
 use crate::renderer::WebRenderer;
-use crate::audio::{BGM, AudioPlayer, WebAudioPlayer};
+use crate::audio::WebAudioPlayer;
 use crate::game::World;
 use crate::game::level::LevelManager;
 use crate::game::character::{Character, Player};
 use crate::game::status_manager::Direction;
-use crate::game::constants::{
-    ARROW_DOWN,
-    ARROW_UP,
-    ARROW_RIGHT,
-    ARROW_LEFT,
-};
 
 #[derive(Debug, Deserialize)]
 pub struct WebAssets {
@@ -30,6 +25,7 @@ pub struct WebClient {
     timer: Performance,
     renderer: WebRenderer,
     audio: WebAudioPlayer,
+    current_scene: Box<dyn Scene>,
 }
 
 #[wasm_bindgen]
@@ -41,12 +37,11 @@ impl WebClient {
         let window = web_sys::window().unwrap();
         let timer = window.performance().unwrap();
         let now = timer.now();
-        let mut audio = WebAudioPlayer::new(&assets);
+        let audio = WebAudioPlayer::new(&assets);
         let world = init_world(current_level, now);
         let canvas = Canvas::new(&canvas_id);
         let renderer = WebRenderer::new(canvas.canvas_element(), &assets);
         canvas.bind_events();
-        audio.play_bgm(BGM::World1);
 
         WebClient {
             canvas,
@@ -54,36 +49,17 @@ impl WebClient {
             timer,
             renderer,
             audio,
+            current_scene: Box::new(GameScene::new()),
         }
     }
 
     pub fn update(&mut self) {
-        self.check_direction_event();
         let now = self.timer.now();
-        self.world.update(now, &mut self.audio);
+        self.current_scene.update(&mut self.world, &mut self.canvas.key_map, &mut self.audio, now);
     }
 
     pub fn render(&self) {
-        self.renderer.render(&self.world);
-    }
-
-    fn check_direction_event(&mut self) {
-        let key_map = (*(self.canvas.key_map)).borrow();
-        let mut direction_key = None;
-        let mut most_recent_timestamp = 0f64;
-        for (key, &value) in &(*key_map) {
-            if key == ARROW_DOWN || key == ARROW_UP || key == ARROW_RIGHT || key == ARROW_LEFT {
-                if let Some(timestamp) = value {
-                    if timestamp > most_recent_timestamp {
-                        most_recent_timestamp = timestamp;
-                        direction_key = Some(key);
-                    }
-                }
-            }
-        }
-        if let Some(direction_key) = direction_key {
-            self.world.handle_direction_event(direction_key);
-        }
+        self.current_scene.render(&self.renderer, &self.world);
     }
 }
 

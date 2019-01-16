@@ -12,9 +12,11 @@ use crate::game::constants::{
     ARROW_LEFT,
 };
 
+pub type CanvasKeyMap = Rc<RefCell<HashMap<String, Option<f64>>>>;
+
 pub struct Canvas {
     pub window: Window,
-    pub key_map: Rc<RefCell<HashMap<String, Option<f64>>>>,
+    pub key_map: CanvasKeyMap,
     canvas_element: HtmlCanvasElement,
 }
 
