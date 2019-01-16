@@ -12,6 +12,7 @@ pub enum SFX {
     RockFall,
     RockMove,
     Dead,
+    Fanfare,
 }
 
 pub trait AudioPlayer {

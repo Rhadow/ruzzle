@@ -51,6 +51,7 @@ loadAssets().then(() => {
             "sfx_rock_fall",
             "sfx_rock_move",
             "sfx_dead",
+            "sfx_fanfare",
         ]
     });
     webClient.render();

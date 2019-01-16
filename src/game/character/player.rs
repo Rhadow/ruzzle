@@ -162,8 +162,9 @@ impl Player {
         }
     }
 
-    fn animate_exiting (&mut self, _world: &World, _audio: &mut AudioPlayer) {
+    fn animate_exiting (&mut self, _world: &World, audio: &mut AudioPlayer) {
         self.update_exiting_sprite();
+        audio.play_sfx(SFX::Fanfare);
         if self.delta_time >= PLAYER_EXITING_ANIMATION_TIME {
             self.set_idle();
         }
