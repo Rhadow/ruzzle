@@ -1,4 +1,4 @@
-use web_sys::console::log_1;
+// use web_sys::console::log_1;
 use wasm_bindgen::prelude::JsValue;
 use super::{SceneType, Scene};
 use crate::renderer::Renderer;
@@ -29,10 +29,8 @@ impl Scene for EntryScene {
         renderer.draw_rectangle(0f64, 0f64, self.width, self.height, &JsValue::from_str("#01cafe"));
         renderer.draw_rectangle(start_btn_x, start_btn_y, START_BUTTON_WIDTH, START_BUTTON_HEIGHT, &JsValue::from_str("#ffffff"));
     }
-    fn on_mouse_up(&mut self, mouse_x: f64, mouse_y: f64, world: &mut World) {
-        log_1(&format!("{}, {}", mouse_x, mouse_y).into());
-        self.set_next_scene_type(SceneType::Game);
-        world.init_level(0);
+    fn on_mouse_up(&mut self, _mouse_x: f64, _mouse_y: f64, _world: &mut World) {
+        self.set_next_scene_type(SceneType::LevelSelection);
     }
     fn next_scene_type(&self) -> &Option<SceneType> {
         &self.next_scene_type

@@ -53,8 +53,17 @@ use crate::game::constants::{
 };
 use super::level00::LEVEL00;
 
-type Level = ([&'static str; TOTAL_TILES], [&'static str; TOTAL_TILES], Position);
-const LEVELS: [Level; 1] = [
+pub type Level = ([&'static str; TOTAL_TILES], [&'static str; TOTAL_TILES], Position);
+pub const LEVELS: [Level; 10] = [
+    LEVEL00,
+    LEVEL00,
+    LEVEL00,
+    LEVEL00,
+    LEVEL00,
+    LEVEL00,
+    LEVEL00,
+    LEVEL00,
+    LEVEL00,
     LEVEL00,
 ];
 

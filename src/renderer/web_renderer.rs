@@ -1,3 +1,4 @@
+// use web_sys::console::log_1;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use wasm_bindgen::JsCast;
@@ -25,6 +26,7 @@ pub struct WebRenderer {
 
 impl Renderer for WebRenderer {
     fn clear_screen(&self) {
+        // log_1(&format!("{}, {}", self.width, self.height).into());
         self.ctx.clear_rect(0f64, 0f64, self.width, self.height);
     }
 
@@ -71,10 +73,12 @@ impl Renderer for WebRenderer {
     }
 
     fn draw_rectangle(&self, x: f64, y: f64, width: f64, height: f64, fill_color: &JsValue) {
+        self.ctx.begin_path();
         self.ctx.set_fill_style(fill_color);
         self.ctx.rect(x, y, width, height);
         self.ctx.fill_rect(x, y, width, height);
         self.ctx.stroke();
+        self.ctx.close_path();
     }
 }
 

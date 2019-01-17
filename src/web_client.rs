@@ -2,7 +2,7 @@
 use wasm_bindgen::prelude::*;
 use utils::set_panic_hook;
 use web_sys::Performance;
-use crate::game::scenes::{Scene, SceneType, EntryScene, GameScene};
+use crate::game::scenes::{Scene, SceneType, EntryScene, GameScene, LevelSelectionScene};
 use crate::game::World;
 use crate::controller::Controller;
 use crate::renderer::WebRenderer;
@@ -60,7 +60,9 @@ impl WebClient {
                         next_scene = Some(Box::new(GameScene::new()));
                         self.audio.play_bgm(BGM::World1);
                     },
-                    _ => ()
+                    SceneType::LevelSelection => {
+                        next_scene = Some(Box::new(LevelSelectionScene::new()));
+                    },
                 }
             }
         }

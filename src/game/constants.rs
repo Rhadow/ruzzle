@@ -2,6 +2,13 @@
 pub const START_BUTTON_WIDTH: f64 = 100f64;
 pub const START_BUTTON_HEIGHT: f64 = 20f64;
 
+// Level Selection Scene
+pub const LEVEL_BUTTON_WIDTH: f64 = 80f64;
+pub const LEVEL_BUTTON_HEIGHT: f64 = 80f64;
+pub const LEVEL_BUTTON_MARGIN: f64 = 30f64;
+pub const LEVELS_PER_PAGE: usize = 8;
+pub const ROW_PER_PAGE: usize = 2;
+
 // Game Scene
 pub const WORLD_WIDTH_IN_TILES: usize = 12;
 pub const WORLD_HEIGHT_IN_TILES: usize = 8;

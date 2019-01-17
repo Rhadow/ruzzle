@@ -5,9 +5,11 @@ use crate::audio::AudioPlayer;
 
 mod game_scene;
 mod entry_scene;
+mod level_selection_scene;
 
 pub use self::game_scene::GameScene;
 pub use self::entry_scene::EntryScene;
+pub use self::level_selection_scene::LevelSelectionScene;
 
 #[derive(Clone, Copy)]
 pub enum SceneType {
