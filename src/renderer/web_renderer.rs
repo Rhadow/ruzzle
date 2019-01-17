@@ -79,8 +79,9 @@ impl Renderer for WebRenderer {
 }
 
 impl WebRenderer {
-    pub fn new(canvas: &HtmlCanvasElement, assets: &WebAssets) -> WebRenderer {
+    pub fn new(canvas_id: &str, assets: &WebAssets) -> WebRenderer {
         let document = web_sys::window().unwrap().document().unwrap();
+        let canvas: HtmlCanvasElement = document.get_element_by_id(canvas_id).unwrap().dyn_into().unwrap();
         let is_asset_type_map = WebRenderer::init_id_asset_type_map();
         let mut asset_type_map = HashMap::new();
         for sprite_id in &assets.sprite {

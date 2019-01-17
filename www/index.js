@@ -35,6 +35,21 @@ function loadAssets() {
     return Promise.all(assetPromises);
 };
 
+function bindControllerEvents(webClient) {
+    document.getElementById("canvas").addEventListener("mousedown", (e) => {
+        webClient.handle_mousedown(e.offsetX, e.offsetY);
+    });
+    document.getElementById("canvas").addEventListener("mouseup", (e) => {
+        webClient.handle_mouseup(e.offsetX, e.offsetY);
+    });
+    window.addEventListener("keydown", (e) => {
+        webClient.handle_keydown(e.key, performance.now());
+    });
+    window.addEventListener("keyup", (e) => {
+        webClient.handle_keyup(e.key);
+    });
+}
+
 loadAssets().then(() => {
     console.log('All assets loaded, starting game!');
     const webClient = WebClient.new("canvas", {
@@ -54,7 +69,7 @@ loadAssets().then(() => {
             "sfx_fanfare",
         ]
     });
-    webClient.bind_events();
+    bindControllerEvents(webClient);
     webClient.render();
     function render() {
         webClient.update();

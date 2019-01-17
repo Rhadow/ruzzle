@@ -42,7 +42,7 @@ impl Object for Rock {
             }
         }
     }
-    fn update(&mut self, now: f64, _world: &World, audio: &mut AudioPlayer) {
+    fn update(&mut self, now: f64, _world: &World, audio: &mut Box<dyn AudioPlayer>) {
         self.delta_time += now - self.time;
         self.time = now;
         match self.status_manager.status {
@@ -68,7 +68,7 @@ impl Rock {
     fn animate_idle (&mut self) {
         self.delta_time = 0f64;
     }
-    fn animate_walking (&mut self, audio: &mut AudioPlayer) {
+    fn animate_walking (&mut self, audio: &mut Box<dyn AudioPlayer>) {
         self.status_manager.set_next_coordinate(self.delta_time, ROCK_MOVE_TIME);
         audio.play_sfx(SFX::RockMove);
         if self.status_manager.is_coordinate_equal_position() {

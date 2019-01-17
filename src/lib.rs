@@ -8,8 +8,8 @@ extern crate serde_derive;
 mod utils;
 mod web_client;
 mod renderer;
-mod canvas;
 mod audio;
+mod controller;
 pub mod game;
 
 use cfg_if::cfg_if;

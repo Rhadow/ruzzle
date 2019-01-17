@@ -13,7 +13,7 @@ pub trait Object {
     fn status_manager(&self) -> &StatusManager;
     fn is_visible(&self) -> bool;
     fn set_visible(&mut self, _visible: bool);
-    fn update(&mut self, _now: f64, _world: &World, _audio: &mut AudioPlayer) {}
+    fn update(&mut self, _now: f64, _world: &World, _audio: &mut Box<dyn AudioPlayer>) {}
     fn walk(&mut self, _direction: Direction, _world: &World) {}
     fn interact(&mut self, _player: &mut Player) {}
     fn can_move_to(&self, direction: &Direction, world: &World) -> bool {

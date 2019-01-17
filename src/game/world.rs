@@ -103,7 +103,7 @@ impl World {
             .map(|idx| self.objects.remove(idx));
     }
 
-    pub fn update(&mut self, now: f64, audio: &mut AudioPlayer) {
+    pub fn update(&mut self, now: f64, audio: &mut Box<dyn AudioPlayer>) {
         self.remove_invisible_items();
         for tile in &self.tile_map {
             tile.borrow_mut().update(now, &self, audio);

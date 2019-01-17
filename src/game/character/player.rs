@@ -71,7 +71,7 @@ impl Character for Player {
     fn fall(&mut self) {
         self.status_manager.status = Status::Falling;
     }
-    fn update(&mut self, now: f64, world: &World, audio: &mut AudioPlayer) {
+    fn update(&mut self, now: f64, world: &World, audio: &mut Box<dyn AudioPlayer>) {
         self.delta_time += now - self.time;
         self.time = now;
         match self.status_manager.direction {
@@ -127,7 +127,7 @@ impl Player {
         }
     }
 
-    fn animate_moving (&mut self, _audio: &mut AudioPlayer) {
+    fn animate_moving (&mut self, _audio: &mut Box<dyn AudioPlayer>) {
         self.status_manager.set_next_coordinate(self.delta_time, PLAYER_MOVE_TIME);
         match self.status_manager.status {
             Status::Walking => self.update_walking_sprite(),
@@ -144,7 +144,7 @@ impl Player {
         }
     }
 
-    fn animate_falling (&mut self, audio: &mut AudioPlayer) {
+    fn animate_falling (&mut self, audio: &mut Box<dyn AudioPlayer>) {
         self.update_falling_sprite();
         audio.play_sfx(SFX::Dead);
         if self.delta_time >= PLAYER_FALLING_ANIMATION_TIME {
@@ -155,14 +155,14 @@ impl Player {
         }
     }
 
-    fn animate_respawning (&mut self, _audio: &mut AudioPlayer) {
+    fn animate_respawning (&mut self, _audio: &mut Box<dyn AudioPlayer>) {
         self.update_respawning_sprite();
         if self.delta_time >= PLAYER_RESPAWNING_ANIMATION_TIME {
             self.set_idle();
         }
     }
 
-    fn animate_exiting (&mut self, _world: &World, audio: &mut AudioPlayer) {
+    fn animate_exiting (&mut self, _world: &World, audio: &mut Box<dyn AudioPlayer>) {
         self.update_exiting_sprite();
         audio.play_sfx(SFX::Fanfare);
         if self.delta_time >= PLAYER_EXITING_ANIMATION_TIME {

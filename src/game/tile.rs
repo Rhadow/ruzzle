@@ -18,7 +18,7 @@ impl Tile {
         &self.terrain
     }
 
-    pub fn update(&mut self, now: f64, world: &World, audio: &mut AudioPlayer) {
+    pub fn update(&mut self, now: f64, world: &World, audio: &mut Box<dyn AudioPlayer>) {
         if let Some(ref mut terrain) = self.terrain {
             terrain.borrow_mut().update(now, world, audio);
         }

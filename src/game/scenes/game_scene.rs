@@ -1,7 +1,8 @@
+// use web_sys::console::log_1;
 use super::{SceneType, Scene};
 use crate::renderer::Renderer;
 use crate::game::World;
-use crate::canvas::CanvasInputMap;
+use crate::controller::Controller;
 use crate::game::constants::{
     ARROW_DOWN,
     ARROW_UP,
@@ -38,8 +39,8 @@ impl Scene for GameScene {
         renderer.draw_objects(objects);
         renderer.draw_characters(characters);
     }
-    fn update(&mut self, world: &mut World, input_map: &mut CanvasInputMap, audio: &mut AudioPlayer, now: f64) {
-        self.check_direction_event(input_map, world);
+    fn update(&mut self, world: &mut World, controller: &mut Controller, audio: &mut Box<dyn AudioPlayer>, now: f64) {
+        self.check_direction_event(controller, world);
         world.update(now, audio);
     }
 }
@@ -50,8 +51,8 @@ impl GameScene {
             scene_type: SceneType::Game
         }
     }
-    fn check_direction_event(&mut self, input_map: &mut CanvasInputMap, world: &mut World) {
-        let key_map = &((*input_map).borrow().key_map);
+    fn check_direction_event(&mut self, controller: &mut Controller, world: &mut World) {
+        let key_map = &controller.key_map;
         let mut direction_key = None;
         let mut most_recent_timestamp = 0f64;
         for (key, &value) in key_map {

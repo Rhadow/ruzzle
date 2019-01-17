@@ -27,7 +27,7 @@ impl Terrain for Hole {
     fn is_filled(&self) -> bool {
         self.is_filled
     }
-    fn update(&mut self, now: f64, world: &World, audio: &mut AudioPlayer) {
+    fn update(&mut self, now: f64, world: &World, audio: &mut Box<dyn AudioPlayer>) {
         self.delta_time += now - self.time;
         self.time = now;
         if !self.is_filled {
@@ -63,7 +63,7 @@ impl Hole {
             delta_time: 0f64,
         }
     }
-    fn handle_falling(&mut self, world: &World, audio: &mut AudioPlayer) {
+    fn handle_falling(&mut self, world: &World, audio: &mut Box<dyn AudioPlayer>) {
         let object = world.get_object_by_position(&self.status_manager.position);
         let mut player = world.player().borrow_mut();
         if let Some(object) = object {

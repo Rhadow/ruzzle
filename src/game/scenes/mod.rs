@@ -1,5 +1,5 @@
 use crate::game::World;
-use crate::canvas::CanvasInputMap;
+use crate::controller::Controller;
 use crate::renderer::Renderer;
 use crate::audio::AudioPlayer;
 
@@ -23,6 +23,6 @@ pub trait Scene {
         &None
     }
     fn set_next_scene_type(&mut self, _scene_type: SceneType) {}
-    fn update(&mut self, _world: &mut World, _input_map: &mut CanvasInputMap, _audio: &mut AudioPlayer, _now: f64) {}
+    fn update(&mut self, _world: &mut World, _controller: &mut Controller, _audio: &mut Box<AudioPlayer>, _now: f64) {}
     fn on_mouse_up(&mut self, _mouse_x: f64, _mouse_y: f64, _world: &mut World) {}
 }
