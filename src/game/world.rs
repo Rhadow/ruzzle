@@ -3,8 +3,9 @@
 use std::cell::RefCell;
 use crate::audio::AudioPlayer;
 use super::Tile;
-use super::character::{Character};
+use super::character::{Character, Player};
 use super::object::Object;
+use crate::game::level::LevelManager;
 use super::status_manager::{
     Direction,
     Status
@@ -50,7 +51,7 @@ impl World {
         &self.tile_map
     }
 
-    pub fn _set_tile_map(&mut self, tile_map: Vec<Tile>) {
+    pub fn set_tile_map(&mut self, tile_map: Vec<Tile>) {
         let mut new_tile_map = vec![];
         for tile in tile_map {
             new_tile_map.push(RefCell::new(tile));
@@ -80,8 +81,20 @@ impl World {
         &self.characters
     }
 
+    pub fn set_characters(&mut self, characters: Vec<Box<dyn Character>>) {
+        let mut new_characters = vec![];
+        for character in characters {
+            new_characters.push(RefCell::new(character));
+        }
+        self.characters = new_characters;
+    }
+
     pub fn get_objects(&self) -> &Vec<RefCell<Box<dyn Object>>> {
         &self.objects
+    }
+
+    pub fn set_objects(&mut self, objects: Vec<RefCell<Box<dyn Object>>>) {
+        self.objects = objects;
     }
 
     fn remove_invisible_items(&mut self) {
@@ -126,5 +139,15 @@ impl World {
     pub fn get_tile_by_position(&self, position: &Position) -> &RefCell<Tile> {
         let idx = self.get_index(position.row() as usize, position.col() as usize);
         &self.tile_map[idx]
+    }
+
+    pub fn init_level(&mut self, level: usize) {
+        let mut level_manager = LevelManager::new();
+        let (level_cells, objects) = level_manager.construct_level(level);
+        let player_position = level_manager.get_player_position().unwrap();
+        let player = Box::new(Player::new(player_position, Direction::Down, 0f64)) as Box<dyn Character>;
+        self.set_tile_map(level_cells);
+        self.set_objects(objects);
+        self.set_characters(vec![player]);
     }
 }

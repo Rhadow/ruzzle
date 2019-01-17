@@ -1,6 +1,7 @@
 use std::cell::RefCell;
 use std::collections::HashMap;
 use wasm_bindgen::JsCast;
+use wasm_bindgen::prelude::JsValue;
 use web_sys::{CanvasRenderingContext2d, HtmlCanvasElement, HtmlImageElement};
 use super::Renderer;
 use crate::web_client::WebAssets;
@@ -18,17 +19,20 @@ use crate::game::constants::{
 pub struct WebRenderer {
     ctx: CanvasRenderingContext2d,
     asset_type_map: HashMap<AssetType, HtmlImageElement>,
+    width: f64,
+    height: f64
 }
 
 impl Renderer for WebRenderer {
     fn clear_screen(&self) {
-        self.ctx.clear_rect(0f64, 0f64, WORLD_WIDTH_IN_TILES as f64 * TILE_SIZE, WORLD_HEIGHT_IN_TILES as f64 * TILE_SIZE);
+        self.ctx.clear_rect(0f64, 0f64, self.width, self.height);
     }
 
-    fn draw_terrain(&self, terrain: &RefCell<Box<dyn Terrain>>, row: f64, col: f64) {
+    fn draw_terrain(&self, terrain: &RefCell<Box<dyn Terrain>>) {
         let terrain = terrain.borrow();
         let asset = terrain.get_asset();
-        self.draw_asset_by_position(asset, row, col);
+        let (x, y) = (terrain.status_manager().coordinate.x(), terrain.status_manager().coordinate.y());
+        self.draw_asset_by_coordinate(asset, x, y);
     }
 
     fn draw_objects(&self, objects: &Vec<RefCell<Box<dyn Object>>>) {
@@ -66,19 +70,11 @@ impl Renderer for WebRenderer {
         ).unwrap();
     }
 
-    fn draw_asset_by_position(&self, asset: &Asset, row: f64, col: f64) {
-        let asset_by_type = self.asset_type_map.get(asset.get_type()).unwrap();
-        self.ctx.draw_image_with_html_image_element_and_sw_and_sh_and_dx_and_dy_and_dw_and_dh(
-            asset_by_type,
-            asset.get_x_offset() * ASSET_SIZE,
-            asset.get_y_offset() * ASSET_SIZE,
-            asset.get_width(),
-            asset.get_height(),
-            col as f64 * TILE_SIZE,
-            row as f64 * TILE_SIZE,
-            TILE_SIZE,
-            TILE_SIZE,
-        ).unwrap();
+    fn draw_rectangle(&self, x: f64, y: f64, width: f64, height: f64, fill_color: &JsValue) {
+        self.ctx.set_fill_style(fill_color);
+        self.ctx.rect(x, y, width, height);
+        self.ctx.fill_rect(x, y, width, height);
+        self.ctx.stroke();
     }
 }
 
@@ -96,6 +92,8 @@ impl WebRenderer {
         WebRenderer {
             ctx,
             asset_type_map,
+            width: WORLD_WIDTH_IN_TILES as f64 * TILE_SIZE,
+            height: WORLD_HEIGHT_IN_TILES as f64 * TILE_SIZE,
         }
     }
 

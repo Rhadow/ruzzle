@@ -54,6 +54,7 @@ loadAssets().then(() => {
             "sfx_fanfare",
         ]
     });
+    webClient.bind_events();
     webClient.render();
     function render() {
         webClient.update();

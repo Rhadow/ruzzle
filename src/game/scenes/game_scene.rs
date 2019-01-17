@@ -1,7 +1,7 @@
 use super::{SceneType, Scene};
 use crate::renderer::Renderer;
 use crate::game::World;
-use crate::canvas::CanvasKeyMap;
+use crate::canvas::CanvasInputMap;
 use crate::game::constants::{
     ARROW_DOWN,
     ARROW_UP,
@@ -31,15 +31,15 @@ impl Scene for GameScene {
                 let idx = world.get_index(row, col);
                 let tile = &tile_map[idx];
                 if let Some(terrain) = tile.borrow().terrain() {
-                    renderer.draw_terrain(terrain, row as f64, col as f64);
+                    renderer.draw_terrain(terrain);
                 }
             }
         }
         renderer.draw_objects(objects);
         renderer.draw_characters(characters);
     }
-    fn update(&mut self, world: &mut World, key_map: &mut CanvasKeyMap, audio: &mut AudioPlayer, now: f64) {
-        self.check_direction_event(key_map, world);
+    fn update(&mut self, world: &mut World, input_map: &mut CanvasInputMap, audio: &mut AudioPlayer, now: f64) {
+        self.check_direction_event(input_map, world);
         world.update(now, audio);
     }
 }
@@ -50,11 +50,11 @@ impl GameScene {
             scene_type: SceneType::Game
         }
     }
-    fn check_direction_event(&mut self, key_map: &mut CanvasKeyMap, world: &mut World) {
-        let key_map = (*key_map).borrow();
+    fn check_direction_event(&mut self, input_map: &mut CanvasInputMap, world: &mut World) {
+        let key_map = &((*input_map).borrow().key_map);
         let mut direction_key = None;
         let mut most_recent_timestamp = 0f64;
-        for (key, &value) in &(*key_map) {
+        for (key, &value) in key_map {
             if key == ARROW_DOWN || key == ARROW_UP || key == ARROW_RIGHT || key == ARROW_LEFT {
                 if let Some(timestamp) = value {
                     if timestamp > most_recent_timestamp {

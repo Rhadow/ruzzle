@@ -1,4 +1,8 @@
-// Game
+// Entry Scene
+pub const START_BUTTON_WIDTH: f64 = 100f64;
+pub const START_BUTTON_HEIGHT: f64 = 20f64;
+
+// Game Scene
 pub const WORLD_WIDTH_IN_TILES: usize = 12;
 pub const WORLD_HEIGHT_IN_TILES: usize = 8;
 pub const TOTAL_TILES: usize = WORLD_WIDTH_IN_TILES * WORLD_HEIGHT_IN_TILES;
