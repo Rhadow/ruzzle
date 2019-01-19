@@ -7,6 +7,7 @@ use crate::game::World;
 use crate::controller::Controller;
 use crate::renderer::WebRenderer;
 use crate::audio::{BGM, WebAudioPlayer, AudioPlayer};
+use crate::game::level::LEVELS;
 
 #[derive(Debug, Deserialize)]
 pub struct WebAssets {
@@ -23,6 +24,8 @@ pub struct WebClient {
     timer: Performance,
     world: World,
     current_scene: Box<dyn Scene>,
+    completed_levels: Vec<bool>,
+    current_level_page: usize,
 }
 
 #[wasm_bindgen]
@@ -36,6 +39,7 @@ impl WebClient {
         let world = World::new(vec![], vec![], vec![]);
         let renderer = WebRenderer::new(&canvas_id, &assets);
         let controller = Controller::new();
+        let completed_levels = vec![false; LEVELS.len()];
 
         WebClient {
             controller,
@@ -44,6 +48,8 @@ impl WebClient {
             renderer,
             audio,
             current_scene: Box::new(EntryScene::new()),
+            completed_levels,
+            current_level_page: 0,
         }
     }
 
@@ -61,7 +67,8 @@ impl WebClient {
                         self.audio.play_bgm(BGM::World1);
                     },
                     SceneType::LevelSelection => {
-                        next_scene = Some(Box::new(LevelSelectionScene::new()));
+                        next_scene = Some(Box::new(LevelSelectionScene::new(self.current_level_page)));
+                        self.audio.play_bgm(BGM::LevelSelection);
                     },
                 }
             }
@@ -70,24 +77,25 @@ impl WebClient {
             self.current_scene = next_scene;
         }
         let now = self.timer.now();
-        self.current_scene.update(&mut self.world, &mut self.controller, &mut self.audio, now);
+        self.current_scene.update(&mut self.world, &mut self.controller, &mut self.audio, &mut self.completed_levels, now);
     }
 
     pub fn render(&self) {
-        self.current_scene.render(&self.renderer, &self.world);
+        self.current_scene.render(&self.renderer, &self.world, &self.completed_levels);
     }
 
     pub fn handle_mousedown(&mut self, x: usize, y: usize) {
         self.controller.is_mouse_down = true;
         self.controller.mouse_x = x as f64;
         self.controller.mouse_y = y as f64;
+        self.current_scene.on_mouse_down(x as f64, y as f64, &mut self.world);
     }
 
     pub fn handle_mouseup(&mut self, x: usize, y: usize) {
         self.controller.is_mouse_down = false;
         self.controller.mouse_x = x as f64;
         self.controller.mouse_y = y as f64;
-        self.current_scene.on_mouse_up(x as f64, y as f64, &mut self.world);
+        self.current_scene.on_mouse_up(x as f64, y as f64, &mut self.world, &mut self.current_level_page);
     }
 
     pub fn handle_keydown(&mut self, key: String, time: usize) {

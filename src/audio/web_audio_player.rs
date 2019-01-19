@@ -43,6 +43,7 @@ impl WebAudioPlayer {
         let mut bgm_map: HashMap<String, BGM> = HashMap::new();
         bgm_map.insert(String::from("bgm_0"), BGM::World0);
         bgm_map.insert(String::from("bgm_1"), BGM::World1);
+        bgm_map.insert(String::from("bgm_level_selection"), BGM::LevelSelection);
         bgm_map
     }
 

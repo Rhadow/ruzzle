@@ -87,6 +87,7 @@ impl Character for Player {
             Status::Falling => self.animate_falling(audio),
             Status::Respawning => self.animate_respawning(audio),
             Status::Exiting => self.animate_exiting(world, audio),
+            Status::LevelComplete => (),
         }
     }
 }
@@ -166,7 +167,8 @@ impl Player {
         self.update_exiting_sprite();
         audio.play_sfx(SFX::Fanfare);
         if self.delta_time >= PLAYER_EXITING_ANIMATION_TIME {
-            self.set_idle();
+            self.status_manager.status = Status::LevelComplete;
+            self.delta_time = 0f64;
         }
     }
 

@@ -22,14 +22,14 @@ impl Scene for EntryScene {
     fn scene_type(&self) -> &SceneType {
         &self.scene_type
     }
-    fn render(&self, renderer: &Renderer, _world: &World) {
+    fn render(&self, renderer: &Renderer, _world: &World, _completed_levels: &Vec<bool>) {
         let start_btn_x = self.width / 2f64 - START_BUTTON_WIDTH / 2f64;
         let start_btn_y = self.height / 2f64 - START_BUTTON_HEIGHT / 2f64;
         renderer.clear_screen();
         renderer.draw_rectangle(0f64, 0f64, self.width, self.height, &JsValue::from_str("#01cafe"));
         renderer.draw_rectangle(start_btn_x, start_btn_y, START_BUTTON_WIDTH, START_BUTTON_HEIGHT, &JsValue::from_str("#ffffff"));
     }
-    fn on_mouse_up(&mut self, _mouse_x: f64, _mouse_y: f64, _world: &mut World) {
+    fn on_mouse_up(&mut self, _mouse_x: f64, _mouse_y: f64, _world: &mut World, _current_level_page: &mut usize) {
         self.set_next_scene_type(SceneType::LevelSelection);
     }
     fn next_scene_type(&self) -> &Option<SceneType> {

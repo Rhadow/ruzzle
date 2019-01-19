@@ -8,6 +8,8 @@ pub const LEVEL_BUTTON_HEIGHT: f64 = 80f64;
 pub const LEVEL_BUTTON_MARGIN: f64 = 30f64;
 pub const LEVELS_PER_PAGE: usize = 8;
 pub const ROW_PER_PAGE: usize = 2;
+pub const PAGE_BUTTON_WIDTH: f64 = 30f64;
+pub const PAGE_BUTTON_HEIGHT: f64 = 30f64;
 
 // Game Scene
 pub const WORLD_WIDTH_IN_TILES: usize = 12;

@@ -61,6 +61,7 @@ loadAssets().then(() => {
         "bgm": [
             "bgm_0",
             "bgm_1",
+            "bgm_level_selection",
         ],
         "sfx": [
             "sfx_rock_fall",

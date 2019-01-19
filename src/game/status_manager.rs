@@ -18,6 +18,7 @@ pub enum Status {
     Falling,
     Respawning,
     Exiting,
+    LevelComplete,
 }
 
 pub struct StatusManager {

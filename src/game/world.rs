@@ -23,6 +23,8 @@ pub struct World {
     tile_map: Vec<RefCell<Tile>>,
     objects: Vec<RefCell<Box<dyn Object>>>,
     characters: Vec<RefCell<Box<dyn Character>>>,
+    pub is_completed: bool,
+    pub level_number: Option<usize>,
 }
 
 impl World {
@@ -40,6 +42,8 @@ impl World {
             tile_map: new_tile_map,
             objects,
             characters: new_characters,
+            is_completed: false,
+            level_number: None,
         }
     }
 
@@ -106,13 +110,16 @@ impl World {
     pub fn update(&mut self, now: f64, audio: &mut Box<dyn AudioPlayer>) {
         self.remove_invisible_items();
         for tile in &self.tile_map {
-            tile.borrow_mut().update(now, &self, audio);
+            tile.borrow_mut().update(now, self, audio);
         }
         for object in &self.objects {
-            object.borrow_mut().update(now, &self, audio);
+            object.borrow_mut().update(now, self, audio);
         }
         for character in &self.characters {
-            character.borrow_mut().update(now, &self, audio);
+            character.borrow_mut().update(now, self, audio);
+        }
+        if self.player().borrow().status_manager().status == Status::LevelComplete {
+            self.is_completed = true;
         }
     }
 
@@ -149,5 +156,7 @@ impl World {
         self.set_tile_map(level_cells);
         self.set_objects(objects);
         self.set_characters(vec![player]);
+        self.is_completed = false;
+        self.level_number = Some(level);
     }
 }

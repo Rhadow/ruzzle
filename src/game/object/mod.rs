@@ -26,12 +26,10 @@ pub trait Object {
         }
         let object = world.get_object_by_position(&next_position);
         let mut has_object = false;
-        let mut can_step_on = false;
-        if let Some(object) = object {
+        if let Some(_) = object {
             has_object = true;
-            can_step_on = object.borrow().can_step_on();
         }
-        !has_object || can_step_on
+        !has_object
     }
     fn can_step_on(&self) -> bool {
         false
