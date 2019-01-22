@@ -67,10 +67,12 @@ impl World {
     pub fn get_object_by_position(&self, position: &Position) -> Option<&RefCell<Box<dyn Object>>> {
         let result = None;
         for object in &self.objects {
-            if object.borrow().is_visible() {
-                let object_position = object.borrow().status_manager().position;
-                if object_position.row() == position.row() && object_position.col() == position.col() {
-                    return Some(object);
+            if object.try_borrow().is_ok() {
+                if object.borrow().is_visible() {
+                    let object_position = object.borrow().status_manager().position;
+                    if object_position.row() == position.row() && object_position.col() == position.col() {
+                        return Some(object);
+                    }
                 }
             }
         }
