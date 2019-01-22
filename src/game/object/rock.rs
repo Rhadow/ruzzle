@@ -11,6 +11,7 @@ pub struct Rock {
     time: f64,
     asset: Asset,
     is_pushable: bool,
+    is_filler: bool,
     status_manager: StatusManager,
 }
 
@@ -29,6 +30,9 @@ impl Object for Rock {
     }
     fn is_pushable(&self) -> bool {
         self.is_pushable
+    }
+    fn is_filler(&self) -> bool {
+        self.is_filler
     }
     fn walk(&mut self, direction: Direction, world: &World) {
         let next_position = self.status_manager.get_next_position_by_direction(&direction);
@@ -63,6 +67,7 @@ impl Rock {
             is_pushable: true,
             status_manager,
             time: 0f64,
+            is_filler: true,
         }
     }
     fn animate_idle (&mut self) {

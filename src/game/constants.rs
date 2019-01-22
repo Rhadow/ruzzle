@@ -25,6 +25,7 @@ pub const ARROW_UP: &str = "ArrowUp";
 pub const ARROW_DOWN: &str = "ArrowDown";
 pub const ARROW_LEFT: &str = "ArrowLeft";
 pub const ARROW_RIGHT: &str = "ArrowRight";
+pub const ACTION_KEY: &str = "z";
 
 // Player
 pub const PLAYER_BASE_X_OFFSET: f64 = 0f64;
@@ -74,3 +75,22 @@ pub const HOLE_SIZE: f64 = 32f64;
 pub const CHEST_X_OFFSET: f64 = 0f64;
 pub const CHEST_Y_OFFSET: f64 = 0f64;
 pub const CHEST_SIZE: f64 = 16f64;
+
+pub const CANNON_DOWN_X_OFFSET: f64 = 10f64;
+pub const CANNON_DOWN_Y_OFFSET: f64 = 22f64;
+pub const CANNON_UP_X_OFFSET: f64 = 10f64;
+pub const CANNON_UP_Y_OFFSET: f64 = 24f64;
+pub const CANNON_LEFT_X_OFFSET: f64 = 16f64;
+pub const CANNON_LEFT_Y_OFFSET: f64 = 28f64;
+pub const CANNON_RIGHT_X_OFFSET: f64 = 14f64;
+pub const CANNON_RIGHT_Y_OFFSET: f64 = 28f64;
+pub const CANNON_VERTICAL_WIDTH: f64 = 16f64;
+pub const CANNON_VERTICAL_HEIGHT: f64 = 32f64;
+pub const CANNON_HORIZONTAL_WIDTH: f64 = 32f64;
+pub const CANNON_HORIZONTAL_HEIGHT: f64 = 16f64;
+pub const CANNON_MOVE_TIME: f64 = 280f64;
+
+pub const PROJECTILE_X_OFFSET: f64 = 12f64;
+pub const PROJECTILE_Y_OFFSET: f64 = 22f64;
+pub const PROJECTILE_SIZE: f64 = 16f64;
+pub const PROJECTILE_MOVE_TIME: f64 = 150f64;

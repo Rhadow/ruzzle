@@ -10,12 +10,14 @@ use crate::game::constants::{
     ARROW_LEFT,
     WORLD_WIDTH_IN_TILES,
     WORLD_HEIGHT_IN_TILES,
+    ACTION_KEY,
 };
 use crate::audio::AudioPlayer;
 
 pub struct GameScene {
     scene_type: SceneType,
     next_scene_type: Option<SceneType>,
+    action_timestamp: f64,
 }
 
 impl Scene for GameScene {
@@ -50,6 +52,7 @@ impl Scene for GameScene {
             self.set_next_scene_type(SceneType::LevelSelection);
         } else {
             self.check_direction_event(controller, world);
+            self.check_action_event(controller, world);
             world.update(now, audio);
         }
     }
@@ -66,6 +69,7 @@ impl GameScene {
         GameScene {
             scene_type: SceneType::Game,
             next_scene_type: None,
+            action_timestamp: 0f64,
         }
     }
     fn check_direction_event(&mut self, controller: &mut Controller, world: &mut World) {
@@ -84,6 +88,16 @@ impl GameScene {
         }
         if let Some(direction_key) = direction_key {
             world.handle_direction_event(direction_key);
+        }
+    }
+    fn check_action_event(&mut self, controller: &mut Controller, world: &mut World) {
+        if let Some(value) = controller.key_map.get(ACTION_KEY) {
+            if let Some(timestamp) = value {
+                if *timestamp != self.action_timestamp {
+                    world.handle_action_event(ACTION_KEY);
+                }
+                self.action_timestamp = *timestamp;
+            }
         }
     }
 }

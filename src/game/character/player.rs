@@ -37,6 +37,7 @@ use crate::game::constants::{
 
 pub struct Player {
     delta_time: f64,
+    delta_rotate_time: f64,
     time: f64,
     asset: Asset,
     status_manager: StatusManager,
@@ -54,16 +55,32 @@ impl Character for Player {
         self.at_exit
     }
     fn walk(&mut self, direction: Direction, world: &World) {
-        self.status_manager.set_direction(direction.clone());
-        let next_position = self.status_manager.get_next_position_by_direction(&direction);
-        if next_position.is_in_tile_map() {
-            let object = world.get_object_by_position(&next_position);
-            match object {
-                Some(object) => {
-                    self.interact(object, next_position, direction, world);
-                },
-                None => {
-                    self.walk_to(next_position, world);
+        if self.status_manager.direction != direction {
+            self.status_manager.set_direction(direction);
+            self.delta_rotate_time = 0f64;
+        } else if self.delta_rotate_time > 55f64 {
+            let next_position = self.status_manager.get_next_position_by_direction(&direction);
+            if next_position.is_in_tile_map() {
+                let object = world.get_object_by_position(&next_position);
+                match object {
+                    Some(object) => {
+                        self.interact(object, next_position, direction, world);
+                    },
+                    None => {
+                        self.walk_to(next_position, world);
+                    }
+                }
+            }
+        }
+    }
+    fn rotate_item(&mut self, world: &World) {
+        let target_position = self.status_manager.get_next_position_by_direction(&self.status_manager.direction);
+        if target_position.is_in_tile_map() {
+            let object = world.get_object_by_position(&target_position);
+            if let Some(object) = object {
+                let mut object = object.borrow_mut();
+                if object.is_rotatable() {
+                    object.rotate();
                 }
             }
         }
@@ -73,6 +90,7 @@ impl Character for Player {
     }
     fn update(&mut self, now: f64, world: &World, audio: &mut Box<dyn AudioPlayer>) {
         self.delta_time += now - self.time;
+        self.delta_rotate_time += now - self.time;
         self.time = now;
         match self.status_manager.direction {
             Direction::Down => self.asset.set_y_offset(PLAYER_BASE_Y_OFFSET + 0f64),
@@ -107,6 +125,7 @@ impl Player {
             status_manager,
             time: now,
             delta_time: 0f64,
+            delta_rotate_time: 0f64,
             at_exit: false,
         }
     }

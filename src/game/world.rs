@@ -17,6 +17,7 @@ use super::constants::{
     ARROW_UP,
     ARROW_RIGHT,
     ARROW_LEFT,
+    ACTION_KEY,
 };
 
 pub struct World {
@@ -140,6 +141,14 @@ impl World {
             if player.status_manager().status == Status::Idle && !player.at_exit() {
                 player.walk(dir, &self);
             }
+        }
+    }
+
+    pub fn handle_action_event(&mut self, key: &str) {
+        let mut player = self.player().borrow_mut();
+        match key {
+            ACTION_KEY => player.rotate_item(self),
+            _ => (),
         }
     }
 

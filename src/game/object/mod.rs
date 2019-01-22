@@ -4,9 +4,13 @@ use crate::audio::AudioPlayer;
 pub mod wall;
 pub mod rock;
 pub mod exit;
+pub mod cannon;
+pub mod projectile;
 pub use self::wall::Wall;
 pub use self::rock::Rock;
 pub use self::exit::Exit;
+pub use self::cannon::Cannon;
+pub use self::projectile::Projectile;
 
 pub trait Object {
     fn asset(&self) -> &Asset;
@@ -34,8 +38,15 @@ pub trait Object {
     fn can_step_on(&self) -> bool {
         false
     }
-    fn is_pushable(&self) -> bool{
+    fn is_pushable(&self) -> bool {
         false
     }
+    fn is_filler(&self) -> bool {
+        false
+    }
+    fn is_rotatable(&self) -> bool {
+        false
+    }
+    fn rotate(&mut self) {}
 }
 

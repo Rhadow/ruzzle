@@ -99,8 +99,11 @@ impl WebClient {
     }
 
     pub fn handle_keydown(&mut self, key: String, time: usize) {
-        if let Some(_) = self.controller.key_map.get(&key) {
-            self.controller.key_map.insert(key, Some(time as f64));
+        let value = self.controller.key_map.get(&key).cloned();
+        if let Some(value) = value {
+            if value == None {
+                self.controller.key_map.insert(key, Some(time as f64));
+            }
         }
     }
 

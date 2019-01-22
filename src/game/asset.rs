@@ -38,6 +38,12 @@ impl Asset {
     pub fn set_y_offset(&mut self, new_y_offset: f64) {
         self.y_offset = new_y_offset;
     }
+    pub fn set_width(&mut self, new_width: f64) {
+        self.width = new_width;
+    }
+    pub fn set_height(&mut self, new_height: f64) {
+        self.height = new_height;
+    }
     pub fn get_width(&self) -> f64 {
         self.width
     }

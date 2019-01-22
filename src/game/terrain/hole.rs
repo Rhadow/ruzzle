@@ -68,7 +68,9 @@ impl Hole {
         let mut player = world.player().borrow_mut();
         if let Some(object) = object {
             let mut object = object.borrow_mut();
-            self.is_filled = true;
+            if object.is_filler() {
+                self.is_filled = true;
+            }
             object.set_visible(false);
             audio.play_sfx(SFX::RockFall);
         }

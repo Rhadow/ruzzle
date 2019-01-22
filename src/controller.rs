@@ -4,6 +4,7 @@ use crate::game::constants::{
     ARROW_UP,
     ARROW_RIGHT,
     ARROW_LEFT,
+    ACTION_KEY,
 };
 
 pub struct Controller {
@@ -28,6 +29,7 @@ impl Controller {
         result.insert(String::from(ARROW_UP), None);
         result.insert(String::from(ARROW_LEFT), None);
         result.insert(String::from(ARROW_RIGHT), None);
+        result.insert(String::from(ACTION_KEY), None);
         return result;
     }
 }

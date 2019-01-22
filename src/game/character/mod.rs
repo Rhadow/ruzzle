@@ -15,4 +15,5 @@ pub trait Character {
     fn at_exit(&self) -> bool;
     fn walk(&mut self, direction: Direction, world: &World);
     fn fall(&mut self);
+    fn rotate_item(&mut self, world: &World);
 }
