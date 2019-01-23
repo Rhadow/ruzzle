@@ -53,6 +53,7 @@ impl WebAudioPlayer {
         sfx_map.insert(String::from("sfx_rock_move"), SFX::RockMove);
         sfx_map.insert(String::from("sfx_dead"), SFX::Dead);
         sfx_map.insert(String::from("sfx_fanfare"), SFX::Fanfare);
+        sfx_map.insert(String::from("sfx_projecting"), SFX::Projecting);
         sfx_map
     }
 }

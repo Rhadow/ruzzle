@@ -14,6 +14,6 @@ pub trait Renderer {
     fn draw_terrain(&self, terrain: &RefCell<Box<dyn Terrain>>);
     fn draw_objects(&self, objects: &Vec<RefCell<Box<dyn Object>>>);
     fn draw_characters(&self, characters: &Vec<RefCell<Box<dyn Character>>>);
-    fn draw_asset_by_coordinate(&self, asset: &Asset, x: f64, y: f64);
+    fn draw_asset_by_coordinate(&self, asset: &Asset, x: f64, y: f64, width: f64, height: f64);
     fn draw_rectangle(&self, x: f64, y: f64, width: f64, height: f64, fill_color: &JsValue);
 }

@@ -68,6 +68,7 @@ loadAssets().then(() => {
             "sfx_rock_move",
             "sfx_dead",
             "sfx_fanfare",
+            "sfx_projecting",
         ]
     });
     bindControllerEvents(webClient);

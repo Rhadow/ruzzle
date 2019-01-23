@@ -2,6 +2,7 @@
 // log_1(&format!("{}", x).into())
 use std::cell::RefCell;
 use super::Character;
+use crate::utils::check_collision;
 use crate::audio::{SFX, AudioPlayer};
 use crate::game::object::Object;
 use crate::game::{
@@ -26,9 +27,9 @@ use crate::game::constants::{
     PLAYER_IDLE_ANIMATION_SPRITE_LENGTH,
     PLAYER_IDLE_ANIMATION_WAITING_TIME,
     PLAYER_PUSHING_X_OFFSET,
-    PLAYER_FALLING_ANIMATION_TIME,
-    PLAYER_FALLING_ANIMATION_SPRITE_LENGTH,
-    PLAYER_FALLING_X_OFFSET,
+    PLAYER_DEAD_ANIMATION_TIME,
+    PLAYER_DEAD_ANIMATION_SPRITE_LENGTH,
+    PLAYER_DEAD_X_OFFSET,
     PLAYER_RESPAWNING_ANIMATION_TIME,
     PLAYER_RESPAWNING_ANIMATION_SPRITE_LENGTH,
     PLAYER_EXITING_ANIMATION_TIME,
@@ -86,12 +87,13 @@ impl Character for Player {
         }
     }
     fn fall(&mut self) {
-        self.status_manager.status = Status::Falling;
+        self.status_manager.status = Status::Dead;
     }
     fn update(&mut self, now: f64, world: &World, audio: &mut Box<dyn AudioPlayer>) {
         self.delta_time += now - self.time;
         self.delta_rotate_time += now - self.time;
         self.time = now;
+        self.handle_collision(world);
         match self.status_manager.direction {
             Direction::Down => self.asset.set_y_offset(PLAYER_BASE_Y_OFFSET + 0f64),
             Direction::Right => self.asset.set_y_offset(PLAYER_BASE_Y_OFFSET + 2f64),
@@ -102,7 +104,7 @@ impl Character for Player {
             Status::Idle => self.animate_idle(),
             Status::Walking => self.animate_moving(audio),
             Status::Pushing => self.animate_moving(audio),
-            Status::Falling => self.animate_falling(audio),
+            Status::Dead => self.animate_dead(audio),
             Status::Respawning => self.animate_respawning(audio),
             Status::Exiting => self.animate_exiting(world, audio),
             Status::LevelComplete => (),
@@ -119,7 +121,7 @@ impl Player {
             PLAYER_WIDTH,
             PLAYER_HEIGHT,
         );
-        let status_manager = StatusManager::new(position, direction);
+        let status_manager = StatusManager::new(position, direction, PLAYER_WIDTH * 2f64, PLAYER_HEIGHT * 2f64);
         Player {
             asset,
             status_manager,
@@ -164,10 +166,10 @@ impl Player {
         }
     }
 
-    fn animate_falling (&mut self, audio: &mut Box<dyn AudioPlayer>) {
-        self.update_falling_sprite();
+    fn animate_dead (&mut self, audio: &mut Box<dyn AudioPlayer>) {
+        self.update_dead_sprite();
         audio.play_sfx(SFX::Dead);
-        if self.delta_time >= PLAYER_FALLING_ANIMATION_TIME {
+        if self.delta_time >= PLAYER_DEAD_ANIMATION_TIME {
             self.status_manager.status = Status::Respawning;
             self.delta_time = 0f64;
             let new_position = self.status_manager.last_position;
@@ -209,12 +211,12 @@ impl Player {
         self.asset.set_x_offset(PLAYER_BASE_X_OFFSET + PLAYER_PUSHING_X_OFFSET + dx as f64);
     }
 
-    fn update_falling_sprite(&mut self) {
-        let sprite_dt = PLAYER_FALLING_ANIMATION_TIME / PLAYER_FALLING_ANIMATION_SPRITE_LENGTH as f64;
-        let dx = (self.delta_time / sprite_dt) as isize % PLAYER_FALLING_ANIMATION_SPRITE_LENGTH;
+    fn update_dead_sprite(&mut self) {
+        let sprite_dt = PLAYER_DEAD_ANIMATION_TIME / PLAYER_DEAD_ANIMATION_SPRITE_LENGTH as f64;
+        let dx = (self.delta_time / sprite_dt) as isize % PLAYER_DEAD_ANIMATION_SPRITE_LENGTH;
         // FIX: The hard coded offsets needs to be removed once formal assets are done.
         if dx == 0 {
-            self.asset.set_x_offset(PLAYER_BASE_X_OFFSET + PLAYER_FALLING_X_OFFSET + dx as f64);
+            self.asset.set_x_offset(PLAYER_BASE_X_OFFSET + PLAYER_DEAD_X_OFFSET + dx as f64);
             self.asset.set_y_offset(PLAYER_BASE_Y_OFFSET);
         } else {
             self.asset.set_x_offset(4f64);
@@ -269,6 +271,19 @@ impl Player {
             if object.borrow().can_move_to(&direction, world) {
                 self.push_object(direction, object, world);
                 self.walk_to(position, world);
+            }
+        }
+    }
+
+    fn handle_collision(&mut self, world: &World) {
+        for object in world.get_objects().iter() {
+            let mut object = object.borrow_mut();
+            if object.is_projectile() {
+                let is_collapsed = check_collision(object.status_manager().coordinate, self.status_manager.coordinate);
+                if is_collapsed {
+                    self.status_manager.status = Status::Dead;
+                    object.set_visible(false);
+                }
             }
         }
     }

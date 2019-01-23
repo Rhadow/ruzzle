@@ -58,10 +58,18 @@ use crate::game::constants::{
     CHEST_X_OFFSET,
     CHEST_Y_OFFSET,
     CHEST_SIZE,
+    CANNON_UP_X_OFFSET,
+    CANNON_UP_Y_OFFSET,
     CANNON_DOWN_X_OFFSET,
     CANNON_DOWN_Y_OFFSET,
+    CANNON_LEFT_X_OFFSET,
+    CANNON_LEFT_Y_OFFSET,
+    CANNON_RIGHT_X_OFFSET,
+    CANNON_RIGHT_Y_OFFSET,
     CANNON_VERTICAL_WIDTH,
     CANNON_VERTICAL_HEIGHT,
+    CANNON_HORIZONTAL_WIDTH,
+    CANNON_HORIZONTAL_HEIGHT,
     PROJECTILE_X_OFFSET,
     PROJECTILE_Y_OFFSET,
     PROJECTILE_SIZE,
@@ -212,12 +220,39 @@ impl LevelManager {
     }
 
     fn create_cannon(&self, position: Position, direction: Direction) -> Option<RefCell<Box<dyn Object>>> {
+
+        let (x, y, w, h) = match direction {
+            Direction::Down => (
+                CANNON_DOWN_X_OFFSET,
+                CANNON_DOWN_Y_OFFSET,
+                CANNON_VERTICAL_WIDTH,
+                CANNON_VERTICAL_HEIGHT
+            ),
+            Direction::Up => (
+                CANNON_UP_X_OFFSET,
+                CANNON_UP_Y_OFFSET,
+                CANNON_VERTICAL_WIDTH,
+                CANNON_VERTICAL_HEIGHT
+            ),
+            Direction::Right => (
+                CANNON_RIGHT_X_OFFSET,
+                CANNON_RIGHT_Y_OFFSET,
+                CANNON_HORIZONTAL_WIDTH,
+                CANNON_HORIZONTAL_HEIGHT
+            ),
+            Direction::Left => (
+                CANNON_LEFT_X_OFFSET,
+                CANNON_LEFT_Y_OFFSET,
+                CANNON_HORIZONTAL_WIDTH,
+                CANNON_HORIZONTAL_HEIGHT
+            ),
+        };
         let asset = Asset::new(
             AssetType::Environment,
-            CANNON_DOWN_X_OFFSET,
-            CANNON_DOWN_Y_OFFSET,
-            CANNON_VERTICAL_WIDTH,
-            CANNON_VERTICAL_HEIGHT,
+            x,
+            y,
+            w,
+            h,
         );
         Some(RefCell::new(Box::new(Cannon::new(position, direction, asset))))
     }
@@ -230,6 +265,6 @@ impl LevelManager {
             PROJECTILE_SIZE,
             PROJECTILE_SIZE,
         );
-        Some(RefCell::new(Box::new(Projectile::new(position, asset))))
+        Some(RefCell::new(Box::new(Projectile::new(position, asset, Direction::Right))))
     }
 }

@@ -3,7 +3,7 @@
 use crate::audio::{SFX, AudioPlayer};
 use super::Terrain;
 use crate::game::{Asset, Direction, StatusManager, Position, World};
-use crate::game::constants::{HOLE_X_OFFSET, HOLE_FILLED_X_OFFSET};
+use crate::game::constants::{HOLE_X_OFFSET, HOLE_FILLED_X_OFFSET, TILE_SIZE};
 
 pub struct Hole {
     delta_time: f64,
@@ -53,7 +53,7 @@ impl Terrain for Hole {
 
 impl Hole {
     pub fn new(position: Position, asset: Asset) -> Hole {
-        let status_manager = StatusManager::new(position, Direction::Down);
+        let status_manager = StatusManager::new(position, Direction::Down, TILE_SIZE, TILE_SIZE);
         Hole {
             asset,
             status_manager,

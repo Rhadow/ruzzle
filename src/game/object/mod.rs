@@ -48,5 +48,12 @@ pub trait Object {
         false
     }
     fn rotate(&mut self) {}
+    fn is_projecting(&self) -> bool {
+        false
+    }
+    fn set_projecting(&mut self, _new_state: bool) {}
+    fn is_projectile(&self) -> bool {
+        false
+    }
 }
 

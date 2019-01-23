@@ -1,6 +1,7 @@
 use super::Object;
 use crate::game::{Asset, Direction, StatusManager, Position, World};
 use crate::game::character::Player;
+use crate::game::constants::TILE_SIZE;
 
 pub struct Exit {
     asset: Asset,
@@ -35,7 +36,7 @@ impl Object for Exit {
 
 impl Exit {
     pub fn new(position: Position, asset: Asset) -> Exit {
-        let status_manager = StatusManager::new(position, Direction::Down);
+        let status_manager = StatusManager::new(position, Direction::Down, TILE_SIZE, TILE_SIZE);
         Exit {
             is_visible: true,
             asset,

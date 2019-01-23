@@ -1,5 +1,6 @@
 use super::Object;
 use crate::game::{Asset, Direction, StatusManager, Position, World};
+use crate::game::constants::TILE_SIZE;
 
 pub struct Wall {
     asset: Asset,
@@ -27,7 +28,7 @@ impl Object for Wall {
 
 impl Wall {
     pub fn new(position: Position, asset: Asset) -> Wall {
-        let status_manager = StatusManager::new(position, Direction::Down);
+        let status_manager = StatusManager::new(position, Direction::Down, TILE_SIZE, TILE_SIZE);
         Wall {
             is_visible: true,
             asset,

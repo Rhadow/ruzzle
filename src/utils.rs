@@ -28,3 +28,7 @@ pub fn coordinate_lerp(start: Coordinate, end: Coordinate, ratio: f64) -> Coordi
     let dy = end.y() - start.y();
     Coordinate(start.x() + ratio * dx, start.y() + ratio * dy)
 }
+
+pub fn check_collision(coordinateA: Coordinate, coordinateB: Coordinate) -> bool {
+    false
+}

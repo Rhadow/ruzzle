@@ -34,7 +34,7 @@ impl Renderer for WebRenderer {
         let terrain = terrain.borrow();
         let asset = terrain.get_asset();
         let (x, y) = (terrain.status_manager().coordinate.x(), terrain.status_manager().coordinate.y());
-        self.draw_asset_by_coordinate(asset, x, y);
+        self.draw_asset_by_coordinate(asset, x, y, TILE_SIZE, TILE_SIZE);
     }
 
     fn draw_objects(&self, objects: &Vec<RefCell<Box<dyn Object>>>) {
@@ -43,7 +43,8 @@ impl Renderer for WebRenderer {
             if object.is_visible() {
                 let asset = object.asset();
                 let (x, y) = (object.status_manager().coordinate.x(), object.status_manager().coordinate.y());
-                self.draw_asset_by_coordinate(asset, x, y);
+                let (w, h) = (object.status_manager().width, object.status_manager().height);
+                self.draw_asset_by_coordinate(asset, x, y, w, h);
             }
         }
     }
@@ -53,11 +54,12 @@ impl Renderer for WebRenderer {
             let character = character.borrow();
             let asset = character.asset();
             let (x, y) = (character.status_manager().coordinate.x(), character.status_manager().coordinate.y());
-            self.draw_asset_by_coordinate(asset, x, y);
+            let (w, h) = (character.status_manager().width, character.status_manager().height);
+            self.draw_asset_by_coordinate(asset, x, y, w, h);
         }
     }
 
-    fn draw_asset_by_coordinate(&self, asset: &Asset, x: f64, y: f64) {
+    fn draw_asset_by_coordinate(&self, asset: &Asset, x: f64, y: f64, width: f64, height: f64) {
         let asset_by_type = self.asset_type_map.get(asset.get_type()).unwrap();
         self.ctx.draw_image_with_html_image_element_and_sw_and_sh_and_dx_and_dy_and_dw_and_dh(
             asset_by_type,
@@ -67,8 +69,8 @@ impl Renderer for WebRenderer {
             asset.get_height(),
             x,
             y,
-            TILE_SIZE,
-            TILE_SIZE,
+            width,
+            height,
         ).unwrap();
     }
 

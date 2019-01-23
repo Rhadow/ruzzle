@@ -3,7 +3,10 @@ use super::Object;
 use crate::audio::{SFX, AudioPlayer};
 use crate::game::{Asset, Direction, StatusManager, Position, World};
 use crate::game::status_manager::Status;
-use crate::game::constants::ROCK_MOVE_TIME;
+use crate::game::constants::{
+    TILE_SIZE,
+    ROCK_MOVE_TIME,
+};
 
 pub struct Rock {
     is_visible: bool,
@@ -59,7 +62,7 @@ impl Object for Rock {
 
 impl Rock {
     pub fn new(position: Position, asset: Asset) -> Rock {
-        let status_manager = StatusManager::new(position, Direction::Down);
+        let status_manager = StatusManager::new(position, Direction::Down, TILE_SIZE, TILE_SIZE);
         Rock {
             is_visible: true,
             asset,

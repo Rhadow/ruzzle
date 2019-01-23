@@ -4,8 +4,15 @@ use std::cell::RefCell;
 use crate::audio::AudioPlayer;
 use super::Tile;
 use super::character::{Character, Player};
-use super::object::Object;
+use super::object::{
+    Object,
+    Projectile,
+};
 use crate::game::level::LevelManager;
+use crate::game::{
+    Asset,
+    AssetType,
+};
 use super::status_manager::{
     Direction,
     Status
@@ -18,6 +25,9 @@ use super::constants::{
     ARROW_RIGHT,
     ARROW_LEFT,
     ACTION_KEY,
+    PROJECTILE_X_OFFSET,
+    PROJECTILE_Y_OFFSET,
+    PROJECTILE_SIZE,
 };
 
 pub struct World {
@@ -110,15 +120,37 @@ impl World {
             .map(|idx| self.objects.remove(idx));
     }
 
+    fn spawn_new_objects(&mut self) {
+        let mut new_objects: Vec<RefCell<Box<dyn Object>>> = vec![];
+        for object in self.objects.iter_mut() {
+            let mut object = object.borrow_mut();
+            if object.is_projecting() {
+                object.set_projecting(false);
+                let asset = Asset::new(
+                    AssetType::Environment,
+                    PROJECTILE_X_OFFSET,
+                    PROJECTILE_Y_OFFSET,
+                    PROJECTILE_SIZE,
+                    PROJECTILE_SIZE,
+                );
+                let position = object.status_manager().position.clone();
+                let direction = object.status_manager().direction.clone();
+                new_objects.push(RefCell::new(Box::new(Projectile::new(position, asset, direction))));
+            }
+        }
+        self.objects.append(&mut new_objects);
+    }
+
     pub fn update(&mut self, now: f64, audio: &mut Box<dyn AudioPlayer>) {
         self.remove_invisible_items();
-        for tile in &self.tile_map {
+        self.spawn_new_objects();
+        for tile in self.tile_map.iter() {
             tile.borrow_mut().update(now, self, audio);
         }
-        for object in &self.objects {
+        for object in self.objects.iter() {
             object.borrow_mut().update(now, self, audio);
         }
-        for character in &self.characters {
+        for character in self.characters.iter() {
             character.borrow_mut().update(now, self, audio);
         }
         if self.player().borrow().status_manager().status == Status::LevelComplete {

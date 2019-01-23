@@ -3,7 +3,10 @@ use super::Object;
 use crate::audio::AudioPlayer;
 use crate::game::{Asset, Direction, StatusManager, Position, World};
 use crate::game::status_manager::Status;
-use crate::game::constants::PROJECTILE_MOVE_TIME;
+use crate::game::constants::{
+    PROJECTILE_SIZE,
+    PROJECTILE_MOVE_TIME,
+};
 
 pub struct Projectile {
     is_visible: bool,
@@ -25,6 +28,9 @@ impl Object for Projectile {
     }
     fn set_visible(&mut self, visible: bool) {
         self.is_visible = visible;
+    }
+    fn is_projectile(&self) -> bool {
+        true
     }
     fn walk(&mut self, direction: Direction, world: &World) {
         if self.can_move_to(&direction, world) {
@@ -50,8 +56,8 @@ impl Object for Projectile {
 }
 
 impl Projectile {
-    pub fn new(position: Position, asset: Asset) -> Projectile {
-        let status_manager = StatusManager::new(position, Direction::Right);
+    pub fn new(position: Position, asset: Asset, direction: Direction) -> Projectile {
+        let status_manager = StatusManager::new(position, direction, PROJECTILE_SIZE * 2f64, PROJECTILE_SIZE * 2f64);
         Projectile {
             is_visible: true,
             asset,
