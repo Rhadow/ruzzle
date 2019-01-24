@@ -68,10 +68,11 @@ impl Hole {
         let mut player = world.player().borrow_mut();
         if let Some(object) = object {
             let mut object = object.borrow_mut();
-            if object.is_filler() {
+            let mut object_attribute = object.attribute_manager();
+            if object_attribute.is_filler {
                 self.is_filled = true;
             }
-            object.set_visible(false);
+            object_attribute.is_visible = false;
             audio.play_sfx(SFX::RockFall);
         }
         if player.status_manager().position == self.status_manager.position {

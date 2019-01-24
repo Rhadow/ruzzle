@@ -39,8 +39,8 @@ impl Renderer for WebRenderer {
 
     fn draw_objects(&self, objects: &Vec<RefCell<Box<dyn Object>>>) {
         for object in objects {
-            let object = object.borrow();
-            if object.is_visible() {
+            let mut object = object.borrow_mut();
+            if object.attribute_manager().is_visible {
                 let asset = object.asset();
                 let (x, y) = (object.status_manager().coordinate.x(), object.status_manager().coordinate.y());
                 let (w, h) = (object.status_manager().width, object.status_manager().height);

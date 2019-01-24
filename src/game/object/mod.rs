@@ -13,11 +13,9 @@ pub use self::projector::Projector;
 pub use self::projectile::Projectile;
 
 pub trait Object {
-    fn id(&self) -> &String;
     fn asset(&self) -> &Asset;
     fn status_manager(&self) -> &StatusManager;
-    fn is_visible(&self) -> bool;
-    fn set_visible(&mut self, _visible: bool);
+    fn attribute_manager(&mut self) -> &mut AttributeManager;
     fn update(&mut self, _now: f64, _world: &World, _audio: &mut Box<dyn AudioPlayer>) {}
     fn walk(&mut self, _direction: Direction, _world: &World) {}
     fn interact(&mut self, _player: &mut Player) {}
@@ -36,25 +34,16 @@ pub trait Object {
         }
         !has_object
     }
-    fn can_step_on(&self) -> bool {
-        false
-    }
-    fn is_pushable(&self) -> bool {
-        false
-    }
-    fn is_filler(&self) -> bool {
-        false
-    }
-    fn is_rotatable(&self) -> bool {
-        false
-    }
     fn rotate(&mut self) {}
-    fn is_projecting(&self) -> bool {
-        false
-    }
-    fn set_projecting(&mut self, _new_state: bool) {}
-    fn is_projectile(&self) -> bool {
-        false
-    }
 }
 
+pub struct AttributeManager {
+    pub id: String,
+    pub is_visible: bool,
+    pub can_step_on: bool,
+    pub is_pushable: bool,
+    pub is_filler: bool,
+    pub is_rotatable: bool,
+    pub is_projecting: bool,
+    pub is_projectile: bool,
+}

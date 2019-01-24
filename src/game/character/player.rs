@@ -83,7 +83,8 @@ impl Character for Player {
             let object = world.get_object_by_position(&target_position);
             if let Some(object) = object {
                 let mut object = object.borrow_mut();
-                if object.is_rotatable() {
+                let is_object_rotatable = object.attribute_manager().is_rotatable;
+                if is_object_rotatable {
                     object.rotate();
                 }
             }
@@ -267,11 +268,14 @@ impl Player {
     }
 
     fn interact(&mut self, object: &RefCell<Box<Object>>, position: Position, direction: Direction, world: &World) {
-        if object.borrow_mut().can_step_on() {
+        let mut object_mut = object.borrow_mut();
+        let can_object_step_on = object_mut.attribute_manager().can_step_on;
+        let is_object_pushable = object_mut.attribute_manager().is_pushable;
+        if can_object_step_on {
             self.walk_to(position, world);
-            object.borrow_mut().interact(self);
-        } else if object.borrow().is_pushable() {
-            if object.borrow().can_move_to(&direction, world) {
+            object_mut.interact(self);
+        } else if is_object_pushable {
+            if object_mut.can_move_to(&direction, world) {
                 self.push_object(direction, object, world);
                 self.walk_to(position, world);
             }
@@ -281,7 +285,8 @@ impl Player {
     fn handle_collision(&mut self, world: &World) {
         for object in world.get_objects().iter() {
             let mut object = object.borrow_mut();
-            if object.is_projectile() {
+            let is_object_projectile = object.attribute_manager().is_projectile;
+            if is_object_projectile {
                 let is_collapsed = check_collision(object.status_manager(), &self.status_manager);
                 if is_collapsed {
                     match self.status_manager.status {
@@ -290,7 +295,7 @@ impl Player {
                         },
                         _ => (),
                     }
-                    object.set_visible(false);
+                    object.attribute_manager().is_visible = false;
                 }
             }
         }

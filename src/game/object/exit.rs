@@ -1,39 +1,29 @@
-use super::Object;
+use super::{AttributeManager, Object};
 use crate::game::{Asset, Direction, StatusManager, Position, World};
 use crate::game::character::Player;
 use crate::game::constants::TILE_SIZE;
 
 pub struct Exit {
-    id: String,
     asset: Asset,
-    is_visible: bool,
     status_manager: StatusManager,
+    attribute_manager: AttributeManager,
 }
 
 impl Object for Exit {
-    fn id(&self) -> &String {
-        &self.id
-    }
     fn asset(&self) -> &Asset {
         &self.asset
-    }
-    fn is_visible(&self) -> bool {
-        self.is_visible
-    }
-    fn set_visible(&mut self, visible: bool) {
-        self.is_visible = visible;
     }
     fn status_manager(&self) -> &StatusManager {
         &self.status_manager
     }
+    fn attribute_manager(&mut self) -> &mut AttributeManager {
+        &mut self.attribute_manager
+    }
     fn can_move_to(&self, _direction: &Direction, _world: &World) -> bool {
         false
     }
-    fn can_step_on(&self) -> bool {
-        true
-    }
     fn interact(&mut self, player: &mut Player) {
-        self.is_visible = false;
+        self.attribute_manager.is_visible = false;
         player.at_exit = true;
     }
 }
@@ -41,11 +31,20 @@ impl Object for Exit {
 impl Exit {
     pub fn new(position: Position, asset: Asset, id: String) -> Exit {
         let status_manager = StatusManager::new(position, Direction::Down, TILE_SIZE, TILE_SIZE);
-        Exit {
+        let attribute_manager = AttributeManager {
             id,
             is_visible: true,
+            can_step_on: true,
+            is_pushable: false,
+            is_filler: false,
+            is_rotatable: false,
+            is_projectile: false,
+            is_projecting: false,
+        };
+        Exit {
             asset,
             status_manager,
+            attribute_manager,
         }
     }
 }

@@ -1,5 +1,5 @@
 // use web_sys::console::log_1;
-use super::Object;
+use super::{AttributeManager, Object};
 use crate::audio::{SFX, AudioPlayer};
 use crate::game::{Asset, Direction, StatusManager, Position, World};
 use crate::game::status_manager::Status;
@@ -21,43 +21,23 @@ use crate::game::constants::{
 };
 
 pub struct Projector {
-    id: String,
-    is_visible: bool,
-    is_projecting: bool,
-    delta_time: f64,
-    projection_timer: f64,
-    time: f64,
     asset: Asset,
     status_manager: StatusManager,
+    attribute_manager: AttributeManager,
+    time: f64,
+    delta_time: f64,
+    projection_timer: f64,
 }
 
 impl Object for Projector {
-    fn id(&self) -> &String {
-        &self.id
-    }
     fn asset(&self) -> &Asset {
         &self.asset
     }
     fn status_manager(&self) -> &StatusManager {
         &self.status_manager
     }
-    fn is_visible(&self) -> bool {
-        self.is_visible
-    }
-    fn set_visible(&mut self, visible: bool) {
-        self.is_visible = visible;
-    }
-    fn is_pushable(&self) -> bool {
-        true
-    }
-    fn is_rotatable(&self) -> bool {
-        true
-    }
-    fn is_projecting(&self) -> bool {
-        self.is_projecting
-    }
-    fn set_projecting(&mut self, new_state: bool) {
-        self.is_projecting = new_state;
+    fn attribute_manager(&mut self) -> &mut AttributeManager {
+        &mut self.attribute_manager
     }
     fn rotate(&mut self) {
         match self.status_manager.direction {
@@ -118,7 +98,7 @@ impl Object for Projector {
         self.projection_timer += now - self.time;
         self.time = now;
         if self.projection_timer >= CANNON_PROJECT_TIME {
-            self.is_projecting = true;
+            self.attribute_manager.is_projecting = true;
             self.projection_timer = 0f64;
             audio.play_sfx(SFX::Projecting);
         }
@@ -133,27 +113,31 @@ impl Object for Projector {
 impl Projector {
     pub fn new(position: Position, direction: Direction, asset: Asset, id: String) -> Projector {
         let width = match direction {
-            Direction::Up => CANNON_VERTICAL_WIDTH,
-            Direction::Down => CANNON_VERTICAL_WIDTH,
-            Direction::Left => CANNON_HORIZONTAL_WIDTH,
-            Direction::Right => CANNON_HORIZONTAL_WIDTH,
+            Direction::Up | Direction::Down => CANNON_VERTICAL_WIDTH,
+            Direction::Left | Direction::Right => CANNON_HORIZONTAL_WIDTH,
         };
         let height = match direction {
-            Direction::Up => CANNON_VERTICAL_HEIGHT,
-            Direction::Down => CANNON_VERTICAL_HEIGHT,
-            Direction::Left => CANNON_HORIZONTAL_HEIGHT,
-            Direction::Right => CANNON_HORIZONTAL_HEIGHT,
+            Direction::Up | Direction::Down => CANNON_VERTICAL_HEIGHT,
+            Direction::Left | Direction::Right => CANNON_HORIZONTAL_HEIGHT,
         };
         let status_manager = StatusManager::new(position, direction, width * 2f64, height * 2f64);
-        Projector {
+        let attribute_manager = AttributeManager {
             id,
             is_visible: true,
+            can_step_on: false,
+            is_pushable: true,
+            is_filler: false,
+            is_rotatable: true,
+            is_projectile: false,
             is_projecting: false,
+        };
+        Projector {
             asset,
+            status_manager,
+            attribute_manager,
+            time: 0f64,
             delta_time: 0f64,
             projection_timer: 0f64,
-            status_manager,
-            time: 0f64,
         }
     }
     fn animate_idle (&mut self) {

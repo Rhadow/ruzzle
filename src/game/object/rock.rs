@@ -1,5 +1,5 @@
 // use web_sys::console::log_1;
-use super::Object;
+use super::{AttributeManager, Object};
 use crate::audio::{SFX, AudioPlayer};
 use crate::game::{Asset, Direction, StatusManager, Position, World};
 use crate::game::status_manager::Status;
@@ -9,37 +9,22 @@ use crate::game::constants::{
 };
 
 pub struct Rock {
-    id: String,
-    is_visible: bool,
-    delta_time: f64,
-    time: f64,
     asset: Asset,
-    is_pushable: bool,
-    is_filler: bool,
     status_manager: StatusManager,
+    attribute_manager: AttributeManager,
+    time: f64,
+    delta_time: f64,
 }
 
 impl Object for Rock {
-    fn id(&self) -> &String {
-        &self.id
-    }
     fn asset(&self) -> &Asset {
         &self.asset
     }
     fn status_manager(&self) -> &StatusManager {
         &self.status_manager
     }
-    fn is_visible(&self) -> bool {
-        self.is_visible
-    }
-    fn set_visible(&mut self, visible: bool) {
-        self.is_visible = visible;
-    }
-    fn is_pushable(&self) -> bool {
-        self.is_pushable
-    }
-    fn is_filler(&self) -> bool {
-        self.is_filler
+    fn attribute_manager(&mut self) -> &mut AttributeManager {
+        &mut self.attribute_manager
     }
     fn walk(&mut self, direction: Direction, world: &World) {
         let next_position = self.status_manager.get_next_position_by_direction(&direction);
@@ -67,15 +52,22 @@ impl Object for Rock {
 impl Rock {
     pub fn new(position: Position, asset: Asset, id: String) -> Rock {
         let status_manager = StatusManager::new(position, Direction::Down, TILE_SIZE, TILE_SIZE);
-        Rock {
+        let attribute_manager = AttributeManager {
             id,
             is_visible: true,
-            asset,
-            delta_time: 0f64,
+            can_step_on: false,
             is_pushable: true,
-            status_manager,
-            time: 0f64,
             is_filler: true,
+            is_rotatable: false,
+            is_projectile: false,
+            is_projecting: false,
+        };
+        Rock {
+            asset,
+            status_manager,
+            attribute_manager,
+            delta_time: 0f64,
+            time: 0f64,
         }
     }
     fn animate_idle (&mut self) {

@@ -78,8 +78,9 @@ impl World {
     pub fn get_object_by_position(&self, position: &Position) -> Option<&RefCell<Box<dyn Object>>> {
         let result = None;
         for object in &self.objects {
-            if object.try_borrow().is_ok() {
-                if object.borrow().is_visible() {
+            if object.try_borrow_mut().is_ok() {
+                let is_object_visible = object.borrow_mut().attribute_manager().is_visible;
+                if is_object_visible {
                     let object_position = object.borrow().status_manager().position;
                     if object_position.row() == position.row() && object_position.col() == position.col() {
                         return Some(object);
@@ -117,7 +118,7 @@ impl World {
 
     fn remove_invisible_items(&mut self) {
         self.objects.iter()
-            .position(|o| !o.borrow().is_visible())
+            .position(|o| !o.borrow_mut().attribute_manager().is_visible)
             .map(|idx| self.objects.remove(idx));
     }
 
@@ -125,8 +126,10 @@ impl World {
         let mut new_objects: Vec<RefCell<Box<dyn Object>>> = vec![];
         for object in self.objects.iter_mut() {
             let mut object = object.borrow_mut();
-            if object.is_projecting() {
-                object.set_projecting(false);
+            let is_object_projecting =  object.attribute_manager().is_projecting;
+            let object_id =  object.attribute_manager().id.clone();
+            if is_object_projecting {
+                object.attribute_manager().is_projecting = false;
                 let asset = Asset::new(
                     AssetType::Environment,
                     PROJECTILE_X_OFFSET,
@@ -140,7 +143,7 @@ impl World {
                     position,
                     asset,
                     direction,
-                    object.id().to_string(),
+                    object_id.to_string(),
                     uuid(),
                 ))));
             }
