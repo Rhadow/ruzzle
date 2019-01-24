@@ -1,6 +1,7 @@
 // use web_sys::console::log_1;
 // log_1(&format!("{}", self.objects.len()).into());
 use std::cell::RefCell;
+use crate::utils::uuid;
 use crate::audio::AudioPlayer;
 use super::Tile;
 use super::character::{Character, Player};
@@ -133,9 +134,15 @@ impl World {
                     PROJECTILE_SIZE,
                     PROJECTILE_SIZE,
                 );
-                let position = object.status_manager().position.clone();
-                let direction = object.status_manager().direction.clone();
-                new_objects.push(RefCell::new(Box::new(Projectile::new(position, asset, direction))));
+                let position = object.status_manager().position;
+                let direction = object.status_manager().direction;
+                new_objects.push(RefCell::new(Box::new(Projectile::new(
+                    position,
+                    asset,
+                    direction,
+                    object.id().to_string(),
+                    uuid(),
+                ))));
             }
         }
         self.objects.append(&mut new_objects);
@@ -172,7 +179,7 @@ impl World {
     fn handle_player_movement(&mut self, direction: Option<Direction>) {
         if let Some(dir) = direction {
             let mut player = self.player().borrow_mut();
-            if player.status_manager().status == Status::Idle && !player.at_exit() {
+            if player.status_manager().status == Status::Idle {
                 player.walk(dir, &self);
             }
         }

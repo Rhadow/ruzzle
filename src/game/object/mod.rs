@@ -4,15 +4,16 @@ use crate::audio::AudioPlayer;
 pub mod wall;
 pub mod rock;
 pub mod exit;
-pub mod cannon;
+pub mod projector;
 pub mod projectile;
 pub use self::wall::Wall;
 pub use self::rock::Rock;
 pub use self::exit::Exit;
-pub use self::cannon::Cannon;
+pub use self::projector::Projector;
 pub use self::projectile::Projectile;
 
 pub trait Object {
+    fn id(&self) -> &String;
     fn asset(&self) -> &Asset;
     fn status_manager(&self) -> &StatusManager;
     fn is_visible(&self) -> bool;

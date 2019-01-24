@@ -4,12 +4,16 @@ use crate::game::character::Player;
 use crate::game::constants::TILE_SIZE;
 
 pub struct Exit {
+    id: String,
     asset: Asset,
     is_visible: bool,
     status_manager: StatusManager,
 }
 
 impl Object for Exit {
+    fn id(&self) -> &String {
+        &self.id
+    }
     fn asset(&self) -> &Asset {
         &self.asset
     }
@@ -35,9 +39,10 @@ impl Object for Exit {
 }
 
 impl Exit {
-    pub fn new(position: Position, asset: Asset) -> Exit {
+    pub fn new(position: Position, asset: Asset, id: String) -> Exit {
         let status_manager = StatusManager::new(position, Direction::Down, TILE_SIZE, TILE_SIZE);
         Exit {
+            id,
             is_visible: true,
             asset,
             status_manager,

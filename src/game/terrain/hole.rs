@@ -15,7 +15,7 @@ pub struct Hole {
 }
 
 impl Terrain for Hole {
-    fn get_asset(&self) -> &Asset {
+    fn asset(&self) -> &Asset {
         &self.asset
     }
     fn status_manager(&self) -> &StatusManager {

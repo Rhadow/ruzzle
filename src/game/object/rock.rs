@@ -9,6 +9,7 @@ use crate::game::constants::{
 };
 
 pub struct Rock {
+    id: String,
     is_visible: bool,
     delta_time: f64,
     time: f64,
@@ -19,6 +20,9 @@ pub struct Rock {
 }
 
 impl Object for Rock {
+    fn id(&self) -> &String {
+        &self.id
+    }
     fn asset(&self) -> &Asset {
         &self.asset
     }
@@ -61,9 +65,10 @@ impl Object for Rock {
 }
 
 impl Rock {
-    pub fn new(position: Position, asset: Asset) -> Rock {
+    pub fn new(position: Position, asset: Asset, id: String) -> Rock {
         let status_manager = StatusManager::new(position, Direction::Down, TILE_SIZE, TILE_SIZE);
         Rock {
+            id,
             is_visible: true,
             asset,
             delta_time: 0f64,
@@ -79,7 +84,7 @@ impl Rock {
     fn animate_walking (&mut self, audio: &mut Box<dyn AudioPlayer>) {
         self.status_manager.set_next_coordinate(self.delta_time, ROCK_MOVE_TIME);
         audio.play_sfx(SFX::RockMove);
-        if self.status_manager.is_coordinate_equal_position() {
+        if self.status_manager.is_arrived_at_position() {
             self.status_manager.status = Status::Idle;
             self.delta_time = 0f64;
         }

@@ -34,6 +34,7 @@ use crate::game::constants::{
     PLAYER_RESPAWNING_ANIMATION_SPRITE_LENGTH,
     PLAYER_EXITING_ANIMATION_TIME,
     PLAYER_EXITING_ANIMATION_SPRITE_LENGTH,
+    PLAYER_ROTATION_LAG,
 };
 
 pub struct Player {
@@ -43,6 +44,7 @@ pub struct Player {
     asset: Asset,
     status_manager: StatusManager,
     pub at_exit: bool,
+    is_falling: bool,
 }
 
 impl Character for Player {
@@ -59,7 +61,8 @@ impl Character for Player {
         if self.status_manager.direction != direction {
             self.status_manager.set_direction(direction);
             self.delta_rotate_time = 0f64;
-        } else if self.delta_rotate_time > 55f64 {
+        }
+        if self.delta_rotate_time > PLAYER_ROTATION_LAG {
             let next_position = self.status_manager.get_next_position_by_direction(&direction);
             if next_position.is_in_tile_map() {
                 let object = world.get_object_by_position(&next_position);
@@ -87,7 +90,8 @@ impl Character for Player {
         }
     }
     fn fall(&mut self) {
-        self.status_manager.status = Status::Dead;
+        self.set_status(Status::Dead);
+        self.is_falling = true;
     }
     fn update(&mut self, now: f64, world: &World, audio: &mut Box<dyn AudioPlayer>) {
         self.delta_time += now - self.time;
@@ -129,12 +133,8 @@ impl Player {
             delta_time: 0f64,
             delta_rotate_time: 0f64,
             at_exit: false,
+            is_falling: false,
         }
-    }
-
-    fn set_idle(&mut self) {
-        self.status_manager.status = Status::Idle;
-        self.delta_time = 0f64;
     }
 
     fn animate_idle (&mut self) {
@@ -156,12 +156,11 @@ impl Player {
             Status::Pushing => self.update_pushing_sprite(),
             _ => (),
         }
-        if self.status_manager.is_coordinate_equal_position() {
+        if self.status_manager.is_arrived_at_position() {
             if self.at_exit {
-                self.status_manager.status = Status::Exiting;
-                self.delta_time = 0f64;
+                self.set_status(Status::Exiting);
             } else {
-                self.set_idle();
+                self.set_status(Status::Idle);
             }
         }
     }
@@ -170,17 +169,22 @@ impl Player {
         self.update_dead_sprite();
         audio.play_sfx(SFX::Dead);
         if self.delta_time >= PLAYER_DEAD_ANIMATION_TIME {
-            self.status_manager.status = Status::Respawning;
-            self.delta_time = 0f64;
-            let new_position = self.status_manager.last_position;
-            self.status_manager.set_position(new_position);
+            self.set_status(Status::Respawning);
+            if self.is_falling {
+                let new_position = self.status_manager.last_position;
+                self.status_manager.set_position(new_position);
+                self.is_falling = false;
+            } else {
+                let position = self.status_manager.position;
+                self.status_manager.set_position(position);
+            }
         }
     }
 
     fn animate_respawning (&mut self, _audio: &mut Box<dyn AudioPlayer>) {
         self.update_respawning_sprite();
         if self.delta_time >= PLAYER_RESPAWNING_ANIMATION_TIME {
-            self.set_idle();
+            self.set_status(Status::Idle);
         }
     }
 
@@ -188,8 +192,7 @@ impl Player {
         self.update_exiting_sprite();
         audio.play_sfx(SFX::Fanfare);
         if self.delta_time >= PLAYER_EXITING_ANIMATION_TIME {
-            self.status_manager.status = Status::LevelComplete;
-            self.delta_time = 0f64;
+            self.set_status(Status::LevelComplete);
         }
     }
 
@@ -259,7 +262,7 @@ impl Player {
     }
 
     fn push_object(&mut self, direction: Direction, object: &RefCell<Box<Object>>, world: &World) {
-        self.status_manager.status = Status::Pushing;
+        self.set_status(Status::Pushing);
         object.borrow_mut().walk(direction, world);
     }
 
@@ -279,12 +282,22 @@ impl Player {
         for object in world.get_objects().iter() {
             let mut object = object.borrow_mut();
             if object.is_projectile() {
-                let is_collapsed = check_collision(object.status_manager().coordinate, self.status_manager.coordinate);
+                let is_collapsed = check_collision(object.status_manager(), &self.status_manager);
                 if is_collapsed {
-                    self.status_manager.status = Status::Dead;
+                    match self.status_manager.status {
+                        Status::Idle | Status::Walking | Status::Pushing => {
+                            self.set_status(Status::Dead);
+                        },
+                        _ => (),
+                    }
                     object.set_visible(false);
                 }
             }
         }
+    }
+
+    fn set_status(&mut self, new_status: Status) {
+        self.delta_time = 0f64;
+        self.status_manager.status = new_status;
     }
 }

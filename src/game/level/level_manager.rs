@@ -12,8 +12,8 @@
     "UN": Cannon facing up,
     "LN": Cannon facing left,
     "RN": Cannon facing right,
-    "P": Projectile,
 */
+use crate::utils::uuid;
 use std::cell::RefCell;
 use crate::game::{
     Asset,
@@ -32,8 +32,7 @@ use crate::game::object::{
     Wall,
     Rock,
     Exit,
-    Cannon,
-    Projectile,
+    Projector,
 };
 use crate::game::constants::{
     WORLD_WIDTH_IN_TILES,
@@ -70,9 +69,6 @@ use crate::game::constants::{
     CANNON_VERTICAL_HEIGHT,
     CANNON_HORIZONTAL_WIDTH,
     CANNON_HORIZONTAL_HEIGHT,
-    PROJECTILE_X_OFFSET,
-    PROJECTILE_Y_OFFSET,
-    PROJECTILE_SIZE,
 };
 use super::level00::LEVEL00;
 use super::level01::LEVEL01;
@@ -134,14 +130,13 @@ impl LevelManager {
             };
 
             let object: Option<RefCell<Box<dyn Object>>> = match String::from(object.trim()).to_uppercase().as_str() {
-                "T" => self.create_tree(position),
-                "R" => self.create_rock(position),
-                "C" => self.create_chest(position),
-                "DN" => self.create_cannon(position, Direction::Down),
-                "UN" => self.create_cannon(position, Direction::Up),
-                "LN" => self.create_cannon(position, Direction::Left),
-                "RN" => self.create_cannon(position, Direction::Right),
-                "P" => self.create_projectile(position),
+                "T" => self.create_tree(position, uuid()),
+                "R" => self.create_rock(position, uuid()),
+                "C" => self.create_chest(position, uuid()),
+                "DN" => self.create_cannon(position, Direction::Down, uuid()),
+                "UN" => self.create_cannon(position, Direction::Up, uuid()),
+                "LN" => self.create_cannon(position, Direction::Left, uuid()),
+                "RN" => self.create_cannon(position, Direction::Right, uuid()),
                 _ => None
             };
 
@@ -186,7 +181,7 @@ impl LevelManager {
         Some(RefCell::new(Box::new(Hole::new(position, asset))))
     }
 
-    fn create_tree(&self, position: Position) -> Option<RefCell<Box<dyn Object>>> {
+    fn create_tree(&self, position: Position, id: String) -> Option<RefCell<Box<dyn Object>>> {
         let asset = Asset::new(
             AssetType::Object,
             TREE_X_OFFSET,
@@ -194,10 +189,10 @@ impl LevelManager {
             TREE_SIZE,
             TREE_SIZE,
         );
-        Some(RefCell::new(Box::new(Wall::new(position, asset))))
+        Some(RefCell::new(Box::new(Wall::new(position, asset, id))))
     }
 
-    fn create_rock(&self, position: Position) -> Option<RefCell<Box<dyn Object>>> {
+    fn create_rock(&self, position: Position, id: String) -> Option<RefCell<Box<dyn Object>>> {
         let asset = Asset::new(
             AssetType::Environment,
             ROCK_X_OFFSET,
@@ -205,10 +200,10 @@ impl LevelManager {
             ROCK_SIZE,
             ROCK_SIZE,
         );
-        Some(RefCell::new(Box::new(Rock::new(position, asset))))
+        Some(RefCell::new(Box::new(Rock::new(position, asset, id))))
     }
 
-    fn create_chest(&self, position: Position) -> Option<RefCell<Box<dyn Object>>> {
+    fn create_chest(&self, position: Position, id: String) -> Option<RefCell<Box<dyn Object>>> {
         let asset = Asset::new(
             AssetType::Object,
             CHEST_X_OFFSET,
@@ -216,11 +211,10 @@ impl LevelManager {
             CHEST_SIZE,
             CHEST_SIZE,
         );
-        Some(RefCell::new(Box::new(Exit::new(position, asset))))
+        Some(RefCell::new(Box::new(Exit::new(position, asset, id))))
     }
 
-    fn create_cannon(&self, position: Position, direction: Direction) -> Option<RefCell<Box<dyn Object>>> {
-
+    fn create_cannon(&self, position: Position, direction: Direction, id: String) -> Option<RefCell<Box<dyn Object>>> {
         let (x, y, w, h) = match direction {
             Direction::Down => (
                 CANNON_DOWN_X_OFFSET,
@@ -254,17 +248,6 @@ impl LevelManager {
             w,
             h,
         );
-        Some(RefCell::new(Box::new(Cannon::new(position, direction, asset))))
-    }
-
-    fn create_projectile(&self, position: Position) -> Option<RefCell<Box<dyn Object>>> {
-        let asset = Asset::new(
-            AssetType::Environment,
-            PROJECTILE_X_OFFSET,
-            PROJECTILE_Y_OFFSET,
-            PROJECTILE_SIZE,
-            PROJECTILE_SIZE,
-        );
-        Some(RefCell::new(Box::new(Projectile::new(position, asset, Direction::Right))))
+        Some(RefCell::new(Box::new(Projector::new(position, direction, asset, id))))
     }
 }

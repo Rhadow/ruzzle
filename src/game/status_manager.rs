@@ -84,7 +84,7 @@ impl StatusManager {
         self.coordinate = coordinate_lerp(src_coordinate, dst_coordinate, distance_ratio);
     }
 
-    pub fn is_coordinate_equal_position(&self) -> bool {
+    pub fn is_arrived_at_position(&self) -> bool {
         self.coordinate == StatusManager::position_to_coordinate(self.position, self.width, self.height)
     }
 

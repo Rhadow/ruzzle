@@ -8,7 +8,7 @@ pub struct Land {
 }
 
 impl Terrain for Land {
-    fn get_asset(&self) -> &Asset {
+    fn asset(&self) -> &Asset {
         &self.asset
     }
     fn status_manager(&self) -> &StatusManager {

@@ -32,7 +32,7 @@ impl Renderer for WebRenderer {
 
     fn draw_terrain(&self, terrain: &RefCell<Box<dyn Terrain>>) {
         let terrain = terrain.borrow();
-        let asset = terrain.get_asset();
+        let asset = terrain.asset();
         let (x, y) = (terrain.status_manager().coordinate.x(), terrain.status_manager().coordinate.y());
         self.draw_asset_by_coordinate(asset, x, y, TILE_SIZE, TILE_SIZE);
     }

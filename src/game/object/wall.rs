@@ -3,12 +3,16 @@ use crate::game::{Asset, Direction, StatusManager, Position, World};
 use crate::game::constants::TILE_SIZE;
 
 pub struct Wall {
+    id: String,
     asset: Asset,
     is_visible: bool,
     status_manager: StatusManager,
 }
 
 impl Object for Wall {
+    fn id(&self) -> &String {
+        &self.id
+    }
     fn asset(&self) -> &Asset {
         &self.asset
     }
@@ -27,9 +31,10 @@ impl Object for Wall {
 }
 
 impl Wall {
-    pub fn new(position: Position, asset: Asset) -> Wall {
+    pub fn new(position: Position, asset: Asset, id: String) -> Wall {
         let status_manager = StatusManager::new(position, Direction::Down, TILE_SIZE, TILE_SIZE);
         Wall {
+            id,
             is_visible: true,
             asset,
             status_manager,

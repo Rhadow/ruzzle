@@ -20,7 +20,8 @@ use crate::game::constants::{
     CANNON_PROJECT_TIME,
 };
 
-pub struct Cannon {
+pub struct Projector {
+    id: String,
     is_visible: bool,
     is_projecting: bool,
     delta_time: f64,
@@ -30,7 +31,10 @@ pub struct Cannon {
     status_manager: StatusManager,
 }
 
-impl Object for Cannon {
+impl Object for Projector {
+    fn id(&self) -> &String {
+        &self.id
+    }
     fn asset(&self) -> &Asset {
         &self.asset
     }
@@ -126,8 +130,8 @@ impl Object for Cannon {
     }
 }
 
-impl Cannon {
-    pub fn new(position: Position, direction: Direction, asset: Asset) -> Cannon {
+impl Projector {
+    pub fn new(position: Position, direction: Direction, asset: Asset, id: String) -> Projector {
         let width = match direction {
             Direction::Up => CANNON_VERTICAL_WIDTH,
             Direction::Down => CANNON_VERTICAL_WIDTH,
@@ -141,7 +145,8 @@ impl Cannon {
             Direction::Right => CANNON_HORIZONTAL_HEIGHT,
         };
         let status_manager = StatusManager::new(position, direction, width * 2f64, height * 2f64);
-        Cannon {
+        Projector {
+            id,
             is_visible: true,
             is_projecting: false,
             asset,
@@ -157,8 +162,8 @@ impl Cannon {
     fn animate_walking (&mut self, audio: &mut Box<dyn AudioPlayer>) {
         self.status_manager.set_next_coordinate(self.delta_time, CANNON_MOVE_TIME);
         audio.play_sfx(SFX::RockMove);
-        self.projection_timer = 0f64;
-        if self.status_manager.is_coordinate_equal_position() {
+        // self.projection_timer = 0f64;
+        if self.status_manager.is_arrived_at_position() {
             self.status_manager.status = Status::Idle;
             self.delta_time = 0f64;
         }
