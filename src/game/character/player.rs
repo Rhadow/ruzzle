@@ -90,15 +90,16 @@ impl Character for Player {
             }
         }
     }
-    fn fall(&mut self) {
+    fn fall(&mut self, audio: &mut Box<dyn AudioPlayer>) {
         self.set_status(Status::Dead);
         self.is_falling = true;
+        audio.play_sfx(SFX::Dead);
     }
     fn update(&mut self, now: f64, world: &World, audio: &mut Box<dyn AudioPlayer>) {
         self.delta_time += now - self.time;
         self.delta_rotate_time += now - self.time;
         self.time = now;
-        self.handle_collision(world);
+        self.handle_collision(world, audio);
         match self.status_manager.direction {
             Direction::Down => self.asset.set_y_offset(PLAYER_BASE_Y_OFFSET + 0f64),
             Direction::Right => self.asset.set_y_offset(PLAYER_BASE_Y_OFFSET + 2f64),
@@ -166,9 +167,8 @@ impl Player {
         }
     }
 
-    fn animate_dead (&mut self, audio: &mut Box<dyn AudioPlayer>) {
+    fn animate_dead (&mut self, _audio: &mut Box<dyn AudioPlayer>) {
         self.update_dead_sprite();
-        audio.play_sfx(SFX::Dead);
         if self.delta_time >= PLAYER_DEAD_ANIMATION_TIME {
             self.set_status(Status::Respawning);
             if self.is_falling {
@@ -262,11 +262,6 @@ impl Player {
         }
     }
 
-    fn push_object(&mut self, direction: Direction, object: &RefCell<Box<Object>>, world: &World) {
-        self.set_status(Status::Pushing);
-        object.borrow_mut().walk(direction, world);
-    }
-
     fn interact(&mut self, object: &RefCell<Box<Object>>, position: Position, direction: Direction, world: &World) {
         let mut object_mut = object.borrow_mut();
         let can_object_step_on = object_mut.attribute_manager().can_step_on;
@@ -276,13 +271,14 @@ impl Player {
             object_mut.interact(self);
         } else if is_object_pushable {
             if object_mut.can_move_to(&direction, world) {
-                self.push_object(direction, object, world);
+                self.set_status(Status::Pushing);
+                object_mut.walk(direction, world);
                 self.walk_to(position, world);
             }
         }
     }
 
-    fn handle_collision(&mut self, world: &World) {
+    fn handle_collision(&mut self, world: &World, audio: &mut Box<dyn AudioPlayer>) {
         for object in world.get_objects().iter() {
             let mut object = object.borrow_mut();
             let is_object_projectile = object.attribute_manager().is_projectile;
@@ -292,6 +288,7 @@ impl Player {
                     match self.status_manager.status {
                         Status::Idle | Status::Walking | Status::Pushing => {
                             self.set_status(Status::Dead);
+                            audio.play_sfx(SFX::Dead);
                         },
                         _ => (),
                     }

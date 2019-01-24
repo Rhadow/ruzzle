@@ -76,7 +76,7 @@ impl Hole {
             audio.play_sfx(SFX::RockFall);
         }
         if player.status_manager().position == self.status_manager.position {
-            player.fall();
+            player.fall(audio);
         }
         self.scheduled_falling_time = None;
     }
