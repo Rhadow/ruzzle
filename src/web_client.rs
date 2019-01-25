@@ -64,7 +64,7 @@ impl WebClient {
                     },
                     SceneType::Game => {
                         next_scene = Some(Box::new(GameScene::new()));
-                        self.audio.play_bgm(BGM::World1);
+                        self.audio.play_bgm(BGM::World0);
                     },
                     SceneType::LevelSelection => {
                         next_scene = Some(Box::new(LevelSelectionScene::new(self.current_level_page)));

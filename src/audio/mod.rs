@@ -4,7 +4,6 @@ pub use self::web_audio_player::WebAudioPlayer;
 #[derive(PartialEq, Copy, Clone, Eq, Hash)]
 pub enum BGM {
     World0,
-    World1,
     LevelSelection,
 }
 
