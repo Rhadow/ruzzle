@@ -1,5 +1,5 @@
 use super::{AttributeManager, Object};
-use crate::game::{Asset, Direction, StatusManager, Position, World};
+use crate::game::{Asset, Direction, StatusManager, Position};
 use crate::game::character::Player;
 use crate::game::constants::TILE_SIZE;
 
@@ -19,9 +19,6 @@ impl Object for Exit {
     fn attribute_manager(&mut self) -> &mut AttributeManager {
         &mut self.attribute_manager
     }
-    fn can_move_to(&self, _direction: &Direction, _world: &World) -> bool {
-        false
-    }
     fn interact(&mut self, player: &mut Player) {
         self.attribute_manager.is_visible = false;
         player.at_exit = true;
@@ -33,13 +30,16 @@ impl Exit {
         let status_manager = StatusManager::new(position, Direction::Down, TILE_SIZE, TILE_SIZE);
         let attribute_manager = AttributeManager {
             id,
-            is_visible: true,
             can_step_on: true,
+            can_fly_through: false,
+            is_visible: true,
             is_pushable: false,
             is_filler: false,
             is_rotatable: false,
             is_projectile: false,
             is_projecting: false,
+            is_burnable: false,
+            burning_level: 0,
         };
         Exit {
             asset,

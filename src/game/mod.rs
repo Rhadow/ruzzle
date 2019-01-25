@@ -18,6 +18,7 @@ pub use self::status_manager::{StatusManager, Direction, Status};
 use self::constants::{
     WORLD_WIDTH_IN_TILES,
     WORLD_HEIGHT_IN_TILES,
+    TILE_SIZE,
 };
 
 #[derive(Clone, Copy, PartialEq)]
@@ -29,6 +30,11 @@ impl Coordinate {
     }
     pub fn y(&self) -> f64 {
         self.1
+    }
+    pub fn is_in_tile_map(&self) -> bool {
+        let x = self.0;
+        let y = self.1;
+        x >= 0f64 && x < (WORLD_WIDTH_IN_TILES as f64 * TILE_SIZE) && y >= 0f64 && y < (WORLD_HEIGHT_IN_TILES as f64 * TILE_SIZE)
     }
 }
 

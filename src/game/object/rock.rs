@@ -54,13 +54,16 @@ impl Rock {
         let status_manager = StatusManager::new(position, Direction::Down, TILE_SIZE, TILE_SIZE);
         let attribute_manager = AttributeManager {
             id,
-            is_visible: true,
             can_step_on: false,
+            can_fly_through: false,
+            is_visible: true,
             is_pushable: true,
             is_filler: true,
             is_rotatable: false,
             is_projectile: false,
             is_projecting: false,
+            is_burnable: false,
+            burning_level: 0,
         };
         Rock {
             asset,

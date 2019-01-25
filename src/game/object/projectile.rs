@@ -7,6 +7,8 @@ use crate::utils::check_collision;
 use crate::game::constants::{
     PROJECTILE_SIZE,
     PROJECTILE_MOVE_TIME,
+    PROJECTILE_BURNING_X_OFFSET,
+    PROJECTILE_BURNING_Y_OFFSET,
 };
 
 pub struct Projectile {
@@ -35,6 +37,11 @@ impl Object for Projectile {
     fn update(&mut self, now: f64, world: &World, audio: &mut Box<dyn AudioPlayer>) {
         self.delta_time += now - self.time;
         self.time = now;
+        if self.attribute_manager.burning_level == 1 {
+            self.asset.set_x_offset(PROJECTILE_BURNING_X_OFFSET);
+            self.asset.set_y_offset(PROJECTILE_BURNING_Y_OFFSET);
+            self.attribute_manager.burning_level += 1;
+        }
         match self.status_manager.status {
             Status::Idle => {
                 let direction = self.status_manager.direction.clone();
@@ -42,26 +49,7 @@ impl Object for Projectile {
                 self.walk(direction, world);
             }
             Status::Walking => {
-                for object in world.get_objects() {
-                    if object.try_borrow_mut().is_ok() {
-                        let mut object = object.borrow_mut();
-                        let is_object_projectile = object.attribute_manager().is_projectile;
-                        let is_object_visible = object.attribute_manager().is_visible;
-                        let object_id = object.attribute_manager().id.clone();
-                        if object_id.to_string() != self.projector_id && is_object_visible {
-                            let is_collided = check_collision(object.status_manager(), &self.status_manager);
-                            if is_collided {
-                                self.attribute_manager.is_visible = false;
-                                if is_object_projectile {
-                                    object.attribute_manager().is_visible = false;
-                                }
-                            }
-                        }
-                    }
-                }
-                if !self.status_manager.position.is_in_tile_map() {
-                    self.attribute_manager.is_visible = false;
-                }
+                self.handle_walking_logic(world);
                 self.animate_walking(audio);
             },
             _ => (),
@@ -74,13 +62,16 @@ impl Projectile {
         let status_manager = StatusManager::new(position, direction, PROJECTILE_SIZE * 2f64, PROJECTILE_SIZE * 2f64);
         let attribute_manager = AttributeManager {
             id,
-            is_visible: true,
             can_step_on: false,
+            can_fly_through: false,
+            is_visible: true,
             is_pushable: false,
             is_filler: false,
             is_rotatable: false,
             is_projectile: true,
             is_projecting: false,
+            is_burnable: true,
+            burning_level: 0,
         };
         Projectile {
             asset,
@@ -96,6 +87,31 @@ impl Projectile {
         if self.status_manager.is_arrived_at_position() {
             self.status_manager.status = Status::Idle;
             self.delta_time = 0f64;
+        }
+    }
+    fn handle_walking_logic(&mut self, world: &World) {
+        for object in world.get_objects() {
+            if object.try_borrow_mut().is_err() {
+                continue;
+            }
+            let mut object = object.borrow_mut();
+            let is_object_projectile = object.attribute_manager().is_projectile;
+            let is_object_visible = object.attribute_manager().is_visible;
+            let object_id = object.attribute_manager().id.clone();
+            let is_object_parent_projector = object_id.to_string() == self.projector_id;
+            if !is_object_parent_projector && is_object_visible {
+                let is_collided = check_collision(object.status_manager(), &self.status_manager);
+                let can_fly_through = object.attribute_manager().can_fly_through;
+                if is_collided && !can_fly_through {
+                    self.attribute_manager.is_visible = false;
+                    if is_object_projectile {
+                        object.attribute_manager().is_visible = false;
+                    }
+                }
+            }
+        }
+        if !self.status_manager.coordinate.is_in_tile_map() {
+            self.attribute_manager.is_visible = false;
         }
     }
 }

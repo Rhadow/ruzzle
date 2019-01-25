@@ -6,11 +6,13 @@ pub mod rock;
 pub mod exit;
 pub mod projector;
 pub mod projectile;
+pub mod fire_source;
 pub use self::wall::Wall;
 pub use self::rock::Rock;
 pub use self::exit::Exit;
 pub use self::projector::Projector;
 pub use self::projectile::Projectile;
+pub use self::fire_source::FireSource;
 
 pub trait Object {
     fn asset(&self) -> &Asset;
@@ -39,11 +41,14 @@ pub trait Object {
 
 pub struct AttributeManager {
     pub id: String,
-    pub is_visible: bool,
     pub can_step_on: bool,
+    pub can_fly_through: bool,
+    pub is_visible: bool,
     pub is_pushable: bool,
     pub is_filler: bool,
     pub is_rotatable: bool,
     pub is_projecting: bool,
     pub is_projectile: bool,
+    pub is_burnable: bool,
+    pub burning_level: isize,
 }

@@ -123,13 +123,16 @@ impl Projector {
         let status_manager = StatusManager::new(position, direction, width * 2f64, height * 2f64);
         let attribute_manager = AttributeManager {
             id,
-            is_visible: true,
             can_step_on: false,
+            can_fly_through: false,
+            is_visible: true,
             is_pushable: true,
             is_filler: false,
             is_rotatable: true,
             is_projectile: false,
             is_projecting: false,
+            is_burnable: false,
+            burning_level: 0,
         };
         Projector {
             asset,

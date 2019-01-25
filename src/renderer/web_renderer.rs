@@ -45,6 +45,9 @@ impl Renderer for WebRenderer {
                 let (x, y) = (object.status_manager().coordinate.x(), object.status_manager().coordinate.y());
                 let (w, h) = (object.status_manager().width, object.status_manager().height);
                 self.draw_asset_by_coordinate(asset, x, y, w, h);
+                // Draw hit box
+                // self.ctx.set_line_width(2f64);
+                // self.ctx.stroke_rect(x, y, w, h);
             }
         }
     }
@@ -88,10 +91,10 @@ impl WebRenderer {
     pub fn new(canvas_id: &str, assets: &WebAssets) -> WebRenderer {
         let document = web_sys::window().unwrap().document().unwrap();
         let canvas: HtmlCanvasElement = document.get_element_by_id(canvas_id).unwrap().dyn_into().unwrap();
-        let is_asset_type_map = WebRenderer::init_id_asset_type_map();
+        let id_asset_type_map = WebRenderer::init_id_asset_type_map();
         let mut asset_type_map = HashMap::new();
         for sprite_id in &assets.sprite {
-            let asset_type = is_asset_type_map.get(sprite_id).unwrap();
+            let asset_type = id_asset_type_map.get(sprite_id).unwrap();
             let asset_element = document.get_element_by_id(sprite_id).unwrap().dyn_into().unwrap();
             asset_type_map.insert(*asset_type, asset_element);
         }

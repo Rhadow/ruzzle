@@ -12,6 +12,7 @@
     "UN": Cannon facing up,
     "LN": Cannon facing left,
     "RN": Cannon facing right,
+    "FS": Fire Source,
 */
 use crate::utils::uuid;
 use std::cell::RefCell;
@@ -33,6 +34,7 @@ use crate::game::object::{
     Rock,
     Exit,
     Projector,
+    FireSource,
 };
 use crate::game::constants::{
     WORLD_WIDTH_IN_TILES,
@@ -69,6 +71,9 @@ use crate::game::constants::{
     CANNON_VERTICAL_HEIGHT,
     CANNON_HORIZONTAL_WIDTH,
     CANNON_HORIZONTAL_HEIGHT,
+    FIRE_SOURCE_X_OFFSET,
+    FIRE_SOURCE_Y_OFFSET,
+    FIRE_SOURCE_SIZE,
 };
 use super::level00::LEVEL00;
 use super::level01::LEVEL01;
@@ -137,6 +142,7 @@ impl LevelManager {
                 "UN" => self.create_cannon(position, Direction::Up, uuid()),
                 "LN" => self.create_cannon(position, Direction::Left, uuid()),
                 "RN" => self.create_cannon(position, Direction::Right, uuid()),
+                "FS" => self.create_fire_source(position, uuid()),
                 _ => None
             };
 
@@ -249,5 +255,15 @@ impl LevelManager {
             h,
         );
         Some(RefCell::new(Box::new(Projector::new(position, direction, asset, id))))
+    }
+    fn create_fire_source(&self, position: Position, id: String) -> Option<RefCell<Box<dyn Object>>> {
+        let asset = Asset::new(
+            AssetType::Object,
+            FIRE_SOURCE_X_OFFSET,
+            FIRE_SOURCE_Y_OFFSET,
+            FIRE_SOURCE_SIZE,
+            FIRE_SOURCE_SIZE,
+        );
+        Some(RefCell::new(Box::new(FireSource::new(position, asset, id))))
     }
 }
