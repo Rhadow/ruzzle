@@ -26,6 +26,9 @@ impl Asset {
     pub fn get_type(&self) -> &AssetType {
         &self.asset_type
     }
+    pub fn set_asset_type(&mut self, new_asset_type: AssetType) {
+        self.asset_type = new_asset_type;
+    }
     pub fn get_x_offset(&self) -> f64 {
         self.x_offset
     }

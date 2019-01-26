@@ -1,6 +1,7 @@
+use web_sys::console::log_1;
 use super::{AttributeManager, Object};
 use crate::audio::AudioPlayer;
-use crate::game::{Asset, Direction, Status, StatusManager, Position, World};
+use crate::game::{Asset, AssetType, Direction, Status, StatusManager, Position, World};
 use crate::game::constants::{
     BREAKABLE_WALL_WIDTH,
     BREAKABLE_WALL_HEIGHT,
@@ -27,7 +28,8 @@ impl Object for BreakableWall {
     fn attribute_manager(&mut self) -> &mut AttributeManager {
         &mut self.attribute_manager
     }
-    fn update(&mut self, _now: f64, _world: &World, audio: &mut Box<dyn AudioPlayer>) {
+    fn update(&mut self, now: f64, _world: &World, audio: &mut Box<dyn AudioPlayer>) {
+        self.status_manager.update_time(now);
         match self.status_manager.status {
             Status::Dead => {
                 self.animate_dead(audio);
@@ -63,6 +65,7 @@ impl BreakableWall {
     }
     fn animate_dead (&mut self, _audio: &mut Box<dyn AudioPlayer>) {
         self.update_dead_sprite();
+        log_1(&format!("{}", self.status_manager.delta_time).into());
         if self.status_manager.delta_time >= SMOKE_ANIMATION_TIME {
             self.attribute_manager.is_visible = false;
         }
@@ -70,6 +73,7 @@ impl BreakableWall {
     fn update_dead_sprite(&mut self) {
         let sprite_dt = SMOKE_ANIMATION_TIME / SMOKE_ANIMATION_SPRITE_LENGTH as f64;
         let dx = (self.status_manager.delta_time / sprite_dt) as isize % SMOKE_ANIMATION_SPRITE_LENGTH;
+        self.asset.set_asset_type(AssetType::Object);
         self.asset.set_x_offset(SMOKE_BASE_X_OFFSET + (dx * 2) as f64);
         self.asset.set_y_offset(SMOKE_BASE_Y_OFFSET);
         self.asset.set_width(SMOKE_SIZE);
