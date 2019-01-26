@@ -6,8 +6,6 @@ use crate::game::{Asset, Direction, StatusManager, Position, World};
 use crate::game::constants::{HOLE_X_OFFSET, HOLE_FILLED_X_OFFSET, TILE_SIZE};
 
 pub struct Hole {
-    delta_time: f64,
-    time: f64,
     scheduled_falling_time: Option<f64>,
     asset: Asset,
     status_manager: StatusManager,
@@ -28,25 +26,24 @@ impl Terrain for Hole {
         self.is_filled
     }
     fn update(&mut self, now: f64, world: &World, audio: &mut Box<dyn AudioPlayer>) {
-        self.delta_time += now - self.time;
-        self.time = now;
+        self.status_manager.update_time(now);
         if !self.is_filled {
             if self.asset.get_x_offset() != HOLE_X_OFFSET {
                 self.asset.set_x_offset(HOLE_X_OFFSET);
             }
             if let Some(scheduled_time) = self.scheduled_falling_time {
-                if self.delta_time >= scheduled_time {
+                if self.status_manager.delta_time >= scheduled_time {
                     self.handle_falling(world, audio);
-                    self.delta_time = 0f64;
+                    self.status_manager.delta_time = 0f64;
                 }
             } else {
-                self.delta_time = 0f64;
+                self.status_manager.delta_time = 0f64;
             }
         } else {
             if self.asset.get_x_offset() != HOLE_FILLED_X_OFFSET {
                 self.asset.set_x_offset(HOLE_FILLED_X_OFFSET);
             }
-            self.delta_time = 0f64;
+            self.status_manager.delta_time = 0f64;
         }
     }
 }
@@ -59,8 +56,6 @@ impl Hole {
             status_manager,
             is_filled: false,
             scheduled_falling_time: None,
-            time: 0f64,
-            delta_time: 0f64,
         }
     }
     fn handle_falling(&mut self, world: &World, audio: &mut Box<dyn AudioPlayer>) {

@@ -81,7 +81,7 @@ impl World {
             if object.try_borrow_mut().is_ok() {
                 let is_object_visible = object.borrow_mut().attribute_manager().is_visible;
                 if is_object_visible {
-                    let object_position = object.borrow().status_manager().position;
+                    let object_position = object.borrow_mut().status_manager().position;
                     if object_position.row() == position.row() && object_position.col() == position.col() {
                         return Some(object);
                     }
@@ -205,7 +205,7 @@ impl World {
         let mut level_manager = LevelManager::new();
         let (level_cells, objects) = level_manager.construct_level(level);
         let player_position = level_manager.get_player_position().unwrap();
-        let player = Box::new(Player::new(player_position, Direction::Down, 0f64)) as Box<dyn Character>;
+        let player = Box::new(Player::new(player_position, Direction::Down)) as Box<dyn Character>;
         self.set_tile_map(level_cells);
         self.set_objects(objects);
         self.set_characters(vec![player]);

@@ -15,6 +15,7 @@ pub const PAGE_BUTTON_HEIGHT: f64 = 30f64;
 pub const WORLD_WIDTH_IN_TILES: usize = 12;
 pub const WORLD_HEIGHT_IN_TILES: usize = 8;
 pub const TOTAL_TILES: usize = WORLD_WIDTH_IN_TILES * WORLD_HEIGHT_IN_TILES;
+pub const MAX_BURNING_LEVEL: isize = 3;
 
 pub const TILE_SIZE: f64 = 64f64;
 pub const ASSET_SIZE: f64 = 16f64;
@@ -61,6 +62,11 @@ pub const WOODEN_PATH_SIZE: f64 = 32f64;
 // Objects
 pub const TREE_X_OFFSET: f64 = 16f64;
 pub const TREE_Y_OFFSET: f64 = 12f64;
+pub const TREE_BURNING_LEVEL_1_X_OFFSET: f64 = 6f64;
+pub const TREE_BURNING_LEVEL_1_Y_OFFSET: f64 = 12f64;
+pub const TREE_BURNING_LEVEL_2_X_OFFSET: f64 = 0f64;
+pub const TREE_BURNING_LEVEL_2_Y_OFFSET: f64 = 10f64;
+pub const TREE_BURN_DOWN_TIME: f64 = 7200f64;
 pub const TREE_SIZE: f64 = 32f64;
 
 pub const ROCK_X_OFFSET: f64 = 35f64;
@@ -99,8 +105,24 @@ pub const PROJECTILE_MOVE_TIME: f64 = 150f64;
 pub const PROJECTILE_BURNING_X_OFFSET: f64 = 0f64;
 pub const PROJECTILE_BURNING_Y_OFFSET: f64 = 4f64;
 
+pub const SMOKE_BASE_X_OFFSET: f64 = 4f64;
+pub const SMOKE_BASE_Y_OFFSET: f64 = 4f64;
+pub const SMOKE_ANIMATION_TIME: f64 = 420f64;
+pub const SMOKE_ANIMATION_SPRITE_LENGTH: isize = 7;
+pub const SMOKE_SIZE: f64 = 32f64;
+
 pub const FIRE_SOURCE_X_OFFSET: f64 = 4f64;
 pub const FIRE_SOURCE_Y_OFFSET: f64 = 3f64;
 pub const FIRE_SOURCE_SIZE: f64 = 16f64;
 pub const FIRE_ANIMATION_TIME: f64 = 500f64;
 pub const FIRE_ANIMATION_SPRITE_LENGTH: isize = 7;
+
+pub const WALL_X_OFFSET: f64 = 8f64;
+pub const WALL_Y_OFFSET: f64 = 31f64;
+pub const WALL_WIDTH: f64 = 32f64;
+pub const WALL_HEIGHT: f64 = 64f64;
+
+pub const BREAKABLE_WALL_X_OFFSET: f64 = 33f64;
+pub const BREAKABLE_WALL_Y_OFFSET: f64 = 0f64;
+pub const BREAKABLE_WALL_WIDTH: f64 = 16f64;
+pub const BREAKABLE_WALL_HEIGHT: f64 = 32f64;

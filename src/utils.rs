@@ -39,6 +39,10 @@ pub fn check_collision(status_a: &StatusManager, status_b: &StatusManager) -> bo
     let (ax2, ay2) = (ax1 + status_a.width, ay1 + status_a.height);
     let (bx1, by1) = (status_b.coordinate.x(), status_b.coordinate.y());
     let (bx2, by2) = (bx1 + status_b.width, by1 + status_b.height);
+    // Exclude corner-only collision
+    if (ax1 == bx2 && ay1 == by2) || (ax2 == bx1 && ay2 == by1) || (ax2 == bx1 && by2 == ay1) || (ax1 == bx2 && ay2 == by1) {
+        return false;
+    }
     let is_x_collide = cmp::max(ax1 as usize, bx1 as usize) <= cmp::min(ax2 as usize, bx2 as usize);
     let is_y_collide = cmp::max(ay1 as usize, by1 as usize) <= cmp::min(ay2 as usize, by2 as usize);
     is_x_collide && is_y_collide

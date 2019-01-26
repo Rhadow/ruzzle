@@ -9,14 +9,17 @@ use crate::game::constants::{
     PROJECTILE_MOVE_TIME,
     PROJECTILE_BURNING_X_OFFSET,
     PROJECTILE_BURNING_Y_OFFSET,
+    SMOKE_ANIMATION_TIME,
+    SMOKE_ANIMATION_SPRITE_LENGTH,
+    SMOKE_BASE_X_OFFSET,
+    SMOKE_BASE_Y_OFFSET,
+    SMOKE_SIZE,
 };
 
 pub struct Projectile {
     asset: Asset,
     status_manager: StatusManager,
     attribute_manager: AttributeManager,
-    time: f64,
-    delta_time: f64,
     projector_id: String,
 }
 
@@ -24,8 +27,8 @@ impl Object for Projectile {
     fn asset(&self) -> &Asset {
         &self.asset
     }
-    fn status_manager(&self) -> &StatusManager {
-        &self.status_manager
+    fn status_manager(&mut self) -> &mut StatusManager {
+        &mut self.status_manager
     }
     fn attribute_manager(&mut self) -> &mut AttributeManager {
         &mut self.attribute_manager
@@ -35,8 +38,7 @@ impl Object for Projectile {
         self.status_manager.walk_to(next_position);
     }
     fn update(&mut self, now: f64, world: &World, audio: &mut Box<dyn AudioPlayer>) {
-        self.delta_time += now - self.time;
-        self.time = now;
+        self.status_manager.update_time(now);
         if self.attribute_manager.burning_level == 1 {
             self.asset.set_x_offset(PROJECTILE_BURNING_X_OFFSET);
             self.asset.set_y_offset(PROJECTILE_BURNING_Y_OFFSET);
@@ -45,12 +47,15 @@ impl Object for Projectile {
         match self.status_manager.status {
             Status::Idle => {
                 let direction = self.status_manager.direction.clone();
-                self.delta_time = 0f64;
+                self.status_manager.delta_time = 0f64;
                 self.walk(direction, world);
             }
             Status::Walking => {
-                self.handle_walking_logic(world);
                 self.animate_walking(audio);
+                self.handle_walking_logic(world);
+            },
+            Status::Dead => {
+                self.animate_dead(audio);
             },
             _ => (),
         }
@@ -71,22 +76,22 @@ impl Projectile {
             is_projectile: true,
             is_projecting: false,
             is_burnable: true,
+            is_breakable: true,
             burning_level: 0,
+            burn_down_time: 0f64,
         };
         Projectile {
             asset,
             status_manager,
             attribute_manager,
-            time: 0f64,
-            delta_time: 0f64,
             projector_id,
         }
     }
     fn animate_walking (&mut self, _audio: &mut Box<dyn AudioPlayer>) {
-        self.status_manager.set_next_coordinate(self.delta_time, PROJECTILE_MOVE_TIME);
+        let delta_time = self.status_manager.delta_time;
+        self.status_manager.set_next_coordinate(delta_time, PROJECTILE_MOVE_TIME);
         if self.status_manager.is_arrived_at_position() {
-            self.status_manager.status = Status::Idle;
-            self.delta_time = 0f64;
+            self.status_manager.set_status(Status::Idle);
         }
     }
     fn handle_walking_logic(&mut self, world: &World) {
@@ -95,23 +100,42 @@ impl Projectile {
                 continue;
             }
             let mut object = object.borrow_mut();
-            let is_object_projectile = object.attribute_manager().is_projectile;
+            let is_object_breakable = object.attribute_manager().is_breakable;
             let is_object_visible = object.attribute_manager().is_visible;
+            let is_object_burnable = object.attribute_manager().is_burnable;
             let object_id = object.attribute_manager().id.clone();
             let is_object_parent_projector = object_id.to_string() == self.projector_id;
             if !is_object_parent_projector && is_object_visible {
                 let is_collided = check_collision(object.status_manager(), &self.status_manager);
                 let can_fly_through = object.attribute_manager().can_fly_through;
                 if is_collided && !can_fly_through {
-                    self.attribute_manager.is_visible = false;
-                    if is_object_projectile {
-                        object.attribute_manager().is_visible = false;
+                    if is_object_breakable {
+                        object.status_manager().set_status(Status::Dead);
                     }
+                    if self.attribute_manager.burning_level > 0 && is_object_burnable {
+                        object.attribute_manager().burning_level += 1;
+                        object.status_manager().delta_time = 0f64;
+                    }
+                    self.status_manager.set_status(Status::Dead);
                 }
             }
         }
         if !self.status_manager.coordinate.is_in_tile_map() {
             self.attribute_manager.is_visible = false;
         }
+    }
+    fn animate_dead (&mut self, _audio: &mut Box<dyn AudioPlayer>) {
+        self.update_dead_sprite();
+        if self.status_manager.delta_time >= SMOKE_ANIMATION_TIME {
+            self.attribute_manager.is_visible = false;
+        }
+    }
+    fn update_dead_sprite(&mut self) {
+        let sprite_dt = SMOKE_ANIMATION_TIME / SMOKE_ANIMATION_SPRITE_LENGTH as f64;
+        let dx = (self.status_manager.delta_time / sprite_dt) as isize % SMOKE_ANIMATION_SPRITE_LENGTH;
+        self.asset.set_x_offset(SMOKE_BASE_X_OFFSET + (dx * 2) as f64);
+        self.asset.set_y_offset(SMOKE_BASE_Y_OFFSET);
+        self.asset.set_width(SMOKE_SIZE);
+        self.asset.set_height(SMOKE_SIZE);
     }
 }

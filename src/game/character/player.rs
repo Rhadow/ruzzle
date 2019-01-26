@@ -38,9 +38,7 @@ use crate::game::constants::{
 };
 
 pub struct Player {
-    delta_time: f64,
     delta_rotate_time: f64,
-    time: f64,
     asset: Asset,
     status_manager: StatusManager,
     pub at_exit: bool,
@@ -91,14 +89,16 @@ impl Character for Player {
         }
     }
     fn fall(&mut self, audio: &mut Box<dyn AudioPlayer>) {
-        self.set_status(Status::Dead);
+        self.status_manager.set_status(Status::Dead);
         self.is_falling = true;
         audio.play_sfx(SFX::Dead);
     }
     fn update(&mut self, now: f64, world: &World, audio: &mut Box<dyn AudioPlayer>) {
-        self.delta_time += now - self.time;
-        self.delta_rotate_time += now - self.time;
-        self.time = now;
+        if self.status_manager.time != 0f64 {
+            self.status_manager.delta_time += now - self.status_manager.time;
+            self.delta_rotate_time += now - self.status_manager.time;
+        }
+        self.status_manager.time = now;
         self.handle_collision(world, audio);
         match self.status_manager.direction {
             Direction::Down => self.asset.set_y_offset(PLAYER_BASE_Y_OFFSET + 0f64),
@@ -119,7 +119,7 @@ impl Character for Player {
 }
 
 impl Player {
-    pub fn new(position: Position, direction: Direction, now: f64) -> Player {
+    pub fn new(position: Position, direction: Direction) -> Player {
         let asset = Asset::new(
             AssetType::Character,
             PLAYER_BASE_X_OFFSET,
@@ -131,8 +131,6 @@ impl Player {
         Player {
             asset,
             status_manager,
-            time: now,
-            delta_time: 0f64,
             delta_rotate_time: 0f64,
             at_exit: false,
             is_falling: false,
@@ -143,16 +141,17 @@ impl Player {
         if self.asset.get_x_offset() != PLAYER_BASE_X_OFFSET {
             self.asset.set_x_offset(PLAYER_BASE_X_OFFSET);
         }
-        if self.delta_time >= PLAYER_IDLE_ANIMATION_WAITING_TIME {
+        if self.status_manager.delta_time >= PLAYER_IDLE_ANIMATION_WAITING_TIME {
             self.update_idle_sprite();
-            if self.delta_time >= PLAYER_IDLE_ANIMATION_WAITING_TIME + PLAYER_IDLE_ANIMATION_TIME {
-                self.delta_time = 0f64;
+            if self.status_manager.delta_time >= PLAYER_IDLE_ANIMATION_WAITING_TIME + PLAYER_IDLE_ANIMATION_TIME {
+                self.status_manager.delta_time = 0f64;
             }
         }
     }
 
     fn animate_moving (&mut self, _audio: &mut Box<dyn AudioPlayer>) {
-        self.status_manager.set_next_coordinate(self.delta_time, PLAYER_MOVE_TIME);
+        let delta_time = self.status_manager.delta_time;
+        self.status_manager.set_next_coordinate(delta_time, PLAYER_MOVE_TIME);
         match self.status_manager.status {
             Status::Walking => self.update_walking_sprite(),
             Status::Pushing => self.update_pushing_sprite(),
@@ -160,17 +159,17 @@ impl Player {
         }
         if self.status_manager.is_arrived_at_position() {
             if self.at_exit {
-                self.set_status(Status::Exiting);
+                self.status_manager.set_status(Status::Exiting);
             } else {
-                self.set_status(Status::Idle);
+                self.status_manager.set_status(Status::Idle);
             }
         }
     }
 
     fn animate_dead (&mut self, _audio: &mut Box<dyn AudioPlayer>) {
         self.update_dead_sprite();
-        if self.delta_time >= PLAYER_DEAD_ANIMATION_TIME {
-            self.set_status(Status::Respawning);
+        if self.status_manager.delta_time >= PLAYER_DEAD_ANIMATION_TIME {
+            self.status_manager.set_status(Status::Respawning);
             if self.is_falling {
                 let new_position = self.status_manager.last_position;
                 self.status_manager.set_position(new_position);
@@ -184,40 +183,40 @@ impl Player {
 
     fn animate_respawning (&mut self, _audio: &mut Box<dyn AudioPlayer>) {
         self.update_respawning_sprite();
-        if self.delta_time >= PLAYER_RESPAWNING_ANIMATION_TIME {
-            self.set_status(Status::Idle);
+        if self.status_manager.delta_time >= PLAYER_RESPAWNING_ANIMATION_TIME {
+            self.status_manager.set_status(Status::Idle);
         }
     }
 
     fn animate_exiting (&mut self, _world: &World, audio: &mut Box<dyn AudioPlayer>) {
         self.update_exiting_sprite();
         audio.play_sfx(SFX::Fanfare);
-        if self.delta_time >= PLAYER_EXITING_ANIMATION_TIME {
-            self.set_status(Status::LevelComplete);
+        if self.status_manager.delta_time >= PLAYER_EXITING_ANIMATION_TIME {
+            self.status_manager.set_status(Status::LevelComplete);
         }
     }
 
     fn update_idle_sprite(&mut self) {
         let sprite_dt = PLAYER_IDLE_ANIMATION_TIME / PLAYER_IDLE_ANIMATION_SPRITE_LENGTH as f64;
-        let dx = (self.delta_time / sprite_dt) as isize % PLAYER_IDLE_ANIMATION_SPRITE_LENGTH;
+        let dx = (self.status_manager.delta_time / sprite_dt) as isize % PLAYER_IDLE_ANIMATION_SPRITE_LENGTH;
         self.asset.set_x_offset(PLAYER_BASE_X_OFFSET + PLAYER_IDLE_X_OFFSET + dx as f64);
     }
 
     fn update_walking_sprite(&mut self) {
         let sprite_dt = PLAYER_WALKING_ANIMATION_TIME / PLAYER_WALKING_ANIMATION_SPRITE_LENGTH as f64;
-        let dx = (self.delta_time / sprite_dt) as isize % PLAYER_WALKING_ANIMATION_SPRITE_LENGTH;
+        let dx = (self.status_manager.delta_time / sprite_dt) as isize % PLAYER_WALKING_ANIMATION_SPRITE_LENGTH;
         self.asset.set_x_offset(PLAYER_BASE_X_OFFSET + dx as f64);
     }
 
     fn update_pushing_sprite(&mut self) {
         let sprite_dt = PLAYER_WALKING_ANIMATION_TIME / PLAYER_WALKING_ANIMATION_SPRITE_LENGTH as f64;
-        let dx = (self.delta_time / sprite_dt) as isize % PLAYER_WALKING_ANIMATION_SPRITE_LENGTH;
+        let dx = (self.status_manager.delta_time / sprite_dt) as isize % PLAYER_WALKING_ANIMATION_SPRITE_LENGTH;
         self.asset.set_x_offset(PLAYER_BASE_X_OFFSET + PLAYER_PUSHING_X_OFFSET + dx as f64);
     }
 
     fn update_dead_sprite(&mut self) {
         let sprite_dt = PLAYER_DEAD_ANIMATION_TIME / PLAYER_DEAD_ANIMATION_SPRITE_LENGTH as f64;
-        let dx = (self.delta_time / sprite_dt) as isize % PLAYER_DEAD_ANIMATION_SPRITE_LENGTH;
+        let dx = (self.status_manager.delta_time / sprite_dt) as isize % PLAYER_DEAD_ANIMATION_SPRITE_LENGTH;
         // FIX: The hard coded offsets needs to be removed once formal assets are done.
         if dx == 0 {
             self.asset.set_x_offset(PLAYER_BASE_X_OFFSET + PLAYER_DEAD_X_OFFSET + dx as f64);
@@ -230,7 +229,7 @@ impl Player {
 
     fn update_exiting_sprite(&mut self) {
         let sprite_dt = PLAYER_EXITING_ANIMATION_TIME / PLAYER_EXITING_ANIMATION_SPRITE_LENGTH as f64;
-        let dx = (self.delta_time / sprite_dt) as isize % PLAYER_EXITING_ANIMATION_SPRITE_LENGTH;
+        let dx = (self.status_manager.delta_time / sprite_dt) as isize % PLAYER_EXITING_ANIMATION_SPRITE_LENGTH;
         // FIX: The hard coded offsets needs to be removed once formal assets are done.
         if dx % 2 == 0 {
             self.asset.set_x_offset(0f64);
@@ -243,14 +242,14 @@ impl Player {
 
     fn update_respawning_sprite(&mut self) {
         let sprite_dt = PLAYER_RESPAWNING_ANIMATION_TIME / PLAYER_RESPAWNING_ANIMATION_SPRITE_LENGTH as f64;
-        let dy = (self.delta_time / sprite_dt) as usize % PLAYER_RESPAWNING_ANIMATION_SPRITE_LENGTH as usize;
+        let dy = (self.status_manager.delta_time / sprite_dt) as usize % PLAYER_RESPAWNING_ANIMATION_SPRITE_LENGTH as usize;
         let y_offset = self.asset.get_y_offset() as usize;
         self.asset.set_x_offset(PLAYER_BASE_X_OFFSET);
-        self.asset.set_y_offset(((y_offset + dy * 2) % 8) as f64);
+        self.asset.set_y_offset(((y_offset + dy * 2) % (PLAYER_RESPAWNING_ANIMATION_SPRITE_LENGTH as usize * 2)) as f64);
     }
 
     fn walk_to(&mut self, position: Position, world: &World) {
-        self.delta_time = 0f64;
+        self.status_manager.delta_time = 0f64;
         self.status_manager.walk_to(position);
         let tile = world.get_tile_by_position(&position).borrow_mut();
         let terrain = tile.terrain();
@@ -271,7 +270,7 @@ impl Player {
             object_mut.interact(self);
         } else if is_object_pushable {
             if object_mut.can_move_to(&direction, world) {
-                self.set_status(Status::Pushing);
+                self.status_manager.set_status(Status::Pushing);
                 object_mut.walk(direction, world);
                 self.walk_to(position, world);
             }
@@ -287,7 +286,7 @@ impl Player {
                 if is_collapsed {
                     match self.status_manager.status {
                         Status::Idle | Status::Walking | Status::Pushing => {
-                            self.set_status(Status::Dead);
+                            self.status_manager.set_status(Status::Dead);
                             audio.play_sfx(SFX::Dead);
                         },
                         _ => (),
@@ -296,10 +295,5 @@ impl Player {
                 }
             }
         }
-    }
-
-    fn set_status(&mut self, new_status: Status) {
-        self.delta_time = 0f64;
-        self.status_manager.status = new_status;
     }
 }

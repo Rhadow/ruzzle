@@ -29,6 +29,8 @@ pub struct StatusManager {
     pub direction: Direction,
     pub width: f64,
     pub height: f64,
+    pub time: f64,
+    pub delta_time: f64,
 }
 
 impl StatusManager {
@@ -42,6 +44,8 @@ impl StatusManager {
             direction,
             width,
             height,
+            time: 0f64,
+            delta_time: 0f64,
         }
     }
     pub fn set_width(&mut self, width: f64) {
@@ -104,5 +108,17 @@ impl StatusManager {
             Direction::Right => (0f64, 1f64),
         };
         Position(self.position.row() + d_row, self.position.col() + d_col)
+    }
+
+    pub fn set_status(&mut self, new_status: Status) {
+        self.delta_time = 0f64;
+        self.status = new_status;
+    }
+
+    pub fn update_time(&mut self, now: f64) {
+        if self.time != 0f64 {
+            self.delta_time += now - self.time;
+        }
+        self.time = now;
     }
 }

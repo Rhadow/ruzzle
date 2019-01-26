@@ -12,16 +12,14 @@ pub struct Rock {
     asset: Asset,
     status_manager: StatusManager,
     attribute_manager: AttributeManager,
-    time: f64,
-    delta_time: f64,
 }
 
 impl Object for Rock {
     fn asset(&self) -> &Asset {
         &self.asset
     }
-    fn status_manager(&self) -> &StatusManager {
-        &self.status_manager
+    fn status_manager(&mut self) -> &mut StatusManager {
+        &mut self.status_manager
     }
     fn attribute_manager(&mut self) -> &mut AttributeManager {
         &mut self.attribute_manager
@@ -39,8 +37,7 @@ impl Object for Rock {
         }
     }
     fn update(&mut self, now: f64, _world: &World, audio: &mut Box<dyn AudioPlayer>) {
-        self.delta_time += now - self.time;
-        self.time = now;
+        self.status_manager.update_time(now);
         match self.status_manager.status {
             Status::Idle => self.animate_idle(),
             Status::Walking => self.animate_walking(audio),
@@ -63,25 +60,25 @@ impl Rock {
             is_projectile: false,
             is_projecting: false,
             is_burnable: false,
+            is_breakable: false,
             burning_level: 0,
+            burn_down_time: 0f64,
         };
         Rock {
             asset,
             status_manager,
             attribute_manager,
-            delta_time: 0f64,
-            time: 0f64,
         }
     }
     fn animate_idle (&mut self) {
-        self.delta_time = 0f64;
+        self.status_manager.delta_time = 0f64;
     }
     fn animate_walking (&mut self, audio: &mut Box<dyn AudioPlayer>) {
-        self.status_manager.set_next_coordinate(self.delta_time, ROCK_MOVE_TIME);
+        let delta_time = self.status_manager.delta_time;
+        self.status_manager.set_next_coordinate(delta_time, ROCK_MOVE_TIME);
         audio.play_sfx(SFX::RockMove);
         if self.status_manager.is_arrived_at_position() {
-            self.status_manager.status = Status::Idle;
-            self.delta_time = 0f64;
+            self.status_manager.set_status(Status::Idle);
         }
     }
 }

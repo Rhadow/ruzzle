@@ -26,7 +26,6 @@ pub struct WebRenderer {
 
 impl Renderer for WebRenderer {
     fn clear_screen(&self) {
-        // log_1(&format!("{}, {}", self.width, self.height).into());
         self.ctx.clear_rect(0f64, 0f64, self.width, self.height);
     }
 
@@ -41,11 +40,11 @@ impl Renderer for WebRenderer {
         for object in objects {
             let mut object = object.borrow_mut();
             if object.attribute_manager().is_visible {
-                let asset = object.asset();
                 let (x, y) = (object.status_manager().coordinate.x(), object.status_manager().coordinate.y());
                 let (w, h) = (object.status_manager().width, object.status_manager().height);
+                let asset = object.asset();
                 self.draw_asset_by_coordinate(asset, x, y, w, h);
-                // Draw hit box
+                // Draw hit box for debugging
                 // self.ctx.set_line_width(2f64);
                 // self.ctx.stroke_rect(x, y, w, h);
             }

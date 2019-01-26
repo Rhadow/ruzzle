@@ -24,8 +24,6 @@ pub struct Projector {
     asset: Asset,
     status_manager: StatusManager,
     attribute_manager: AttributeManager,
-    time: f64,
-    delta_time: f64,
     projection_timer: f64,
 }
 
@@ -33,8 +31,8 @@ impl Object for Projector {
     fn asset(&self) -> &Asset {
         &self.asset
     }
-    fn status_manager(&self) -> &StatusManager {
-        &self.status_manager
+    fn status_manager(&mut self) -> &mut StatusManager {
+        &mut self.status_manager
     }
     fn attribute_manager(&mut self) -> &mut AttributeManager {
         &mut self.attribute_manager
@@ -94,9 +92,11 @@ impl Object for Projector {
         }
     }
     fn update(&mut self, now: f64, _world: &World, audio: &mut Box<dyn AudioPlayer>) {
-        self.delta_time += now - self.time;
-        self.projection_timer += now - self.time;
-        self.time = now;
+        if self.status_manager.time != 0f64 {
+            self.status_manager.delta_time += now - self.status_manager.time;
+            self.projection_timer += now - self.status_manager.time;
+        }
+        self.status_manager.time = now;
         if self.projection_timer >= CANNON_PROJECT_TIME {
             self.attribute_manager.is_projecting = true;
             self.projection_timer = 0f64;
@@ -132,27 +132,27 @@ impl Projector {
             is_projectile: false,
             is_projecting: false,
             is_burnable: false,
+            is_breakable: false,
             burning_level: 0,
+            burn_down_time: 0f64,
         };
         Projector {
             asset,
             status_manager,
             attribute_manager,
-            time: 0f64,
-            delta_time: 0f64,
             projection_timer: 0f64,
         }
     }
     fn animate_idle (&mut self) {
-        self.delta_time = 0f64;
+        self.status_manager.delta_time = 0f64;
     }
     fn animate_walking (&mut self, audio: &mut Box<dyn AudioPlayer>) {
-        self.status_manager.set_next_coordinate(self.delta_time, CANNON_MOVE_TIME);
+        let delta_time = self.status_manager.delta_time;
+        self.status_manager.set_next_coordinate(delta_time, CANNON_MOVE_TIME);
         audio.play_sfx(SFX::RockMove);
         // self.projection_timer = 0f64;
         if self.status_manager.is_arrived_at_position() {
-            self.status_manager.status = Status::Idle;
-            self.delta_time = 0f64;
+            self.status_manager.set_status(Status::Idle);
         }
     }
 }

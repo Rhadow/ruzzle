@@ -8,11 +8,13 @@
     "T": Tree,
     "R": Rock,
     "C": Chest (Exit),
+    "W": Wall,
     "DN": Cannon facing down,
     "UN": Cannon facing up,
     "LN": Cannon facing left,
     "RN": Cannon facing right,
     "FS": Fire Source,
+    "BW": BreakableWall,
 */
 use crate::utils::uuid;
 use std::cell::RefCell;
@@ -30,11 +32,13 @@ use crate::game::terrain::{
 };
 use crate::game::object::{
     Object,
-    Wall,
+    Tree,
     Rock,
     Exit,
     Projector,
     FireSource,
+    Wall,
+    BreakableWall,
 };
 use crate::game::constants::{
     WORLD_WIDTH_IN_TILES,
@@ -74,22 +78,31 @@ use crate::game::constants::{
     FIRE_SOURCE_X_OFFSET,
     FIRE_SOURCE_Y_OFFSET,
     FIRE_SOURCE_SIZE,
+    WALL_X_OFFSET,
+    WALL_Y_OFFSET,
+    WALL_WIDTH,
+    WALL_HEIGHT,
+    BREAKABLE_WALL_X_OFFSET,
+    BREAKABLE_WALL_Y_OFFSET,
+    BREAKABLE_WALL_WIDTH,
+    BREAKABLE_WALL_HEIGHT,
 };
 use super::level00::LEVEL00;
 use super::level01::LEVEL01;
+use super::level02::LEVEL02;
 
 pub type Level = ([&'static str; TOTAL_TILES], [&'static str; TOTAL_TILES], Position);
 pub const LEVELS: [Level; 10] = [
     LEVEL00,
     LEVEL01,
+    LEVEL02,
     LEVEL00,
     LEVEL01,
+    LEVEL02,
     LEVEL00,
     LEVEL01,
+    LEVEL02,
     LEVEL00,
-    LEVEL01,
-    LEVEL00,
-    LEVEL01,
 ];
 
 pub struct LevelManager {
@@ -138,6 +151,8 @@ impl LevelManager {
                 "T" => self.create_tree(position, uuid()),
                 "R" => self.create_rock(position, uuid()),
                 "C" => self.create_chest(position, uuid()),
+                "W" => self.create_wall(position, uuid()),
+                "BW" => self.create_breakable_wall(position, uuid()),
                 "DN" => self.create_cannon(position, Direction::Down, uuid()),
                 "UN" => self.create_cannon(position, Direction::Up, uuid()),
                 "LN" => self.create_cannon(position, Direction::Left, uuid()),
@@ -195,7 +210,7 @@ impl LevelManager {
             TREE_SIZE,
             TREE_SIZE,
         );
-        Some(RefCell::new(Box::new(Wall::new(position, asset, id))))
+        Some(RefCell::new(Box::new(Tree::new(position, asset, id))))
     }
 
     fn create_rock(&self, position: Position, id: String) -> Option<RefCell<Box<dyn Object>>> {
@@ -265,5 +280,25 @@ impl LevelManager {
             FIRE_SOURCE_SIZE,
         );
         Some(RefCell::new(Box::new(FireSource::new(position, asset, id))))
+    }
+    fn create_wall(&self, position: Position, id: String) -> Option<RefCell<Box<dyn Object>>> {
+        let asset = Asset::new(
+            AssetType::Environment,
+            WALL_X_OFFSET,
+            WALL_Y_OFFSET,
+            WALL_WIDTH,
+            WALL_HEIGHT,
+        );
+        Some(RefCell::new(Box::new(Wall::new(position, asset, id))))
+    }
+    fn create_breakable_wall(&self, position: Position, id: String) -> Option<RefCell<Box<dyn Object>>> {
+        let asset = Asset::new(
+            AssetType::Environment,
+            BREAKABLE_WALL_X_OFFSET,
+            BREAKABLE_WALL_Y_OFFSET,
+            BREAKABLE_WALL_WIDTH,
+            BREAKABLE_WALL_HEIGHT,
+        );
+        Some(RefCell::new(Box::new(BreakableWall::new(position, asset, id))))
     }
 }

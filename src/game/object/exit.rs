@@ -13,8 +13,8 @@ impl Object for Exit {
     fn asset(&self) -> &Asset {
         &self.asset
     }
-    fn status_manager(&self) -> &StatusManager {
-        &self.status_manager
+    fn status_manager(&mut self) -> &mut StatusManager {
+        &mut self.status_manager
     }
     fn attribute_manager(&mut self) -> &mut AttributeManager {
         &mut self.attribute_manager
@@ -39,7 +39,9 @@ impl Exit {
             is_projectile: false,
             is_projecting: false,
             is_burnable: false,
+            is_breakable: false,
             burning_level: 0,
+            burn_down_time: 0f64,
         };
         Exit {
             asset,
