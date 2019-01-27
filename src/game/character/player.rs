@@ -281,7 +281,8 @@ impl Player {
         for object in world.get_objects().iter() {
             let mut object = object.borrow_mut();
             let is_object_projectile = object.attribute_manager().is_projectile;
-            if is_object_projectile {
+            let is_object_dead = object.status_manager().status == Status::Dead;
+            if is_object_projectile && !is_object_dead {
                 let is_collapsed = check_collision(object.status_manager(), &self.status_manager);
                 if is_collapsed {
                     match self.status_manager.status {

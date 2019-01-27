@@ -153,25 +153,13 @@ impl GameScene {
         let x1 = x0 + BACK_BUTTON_WIDTH;
         let y1 = WORLD_HEIGHT_IN_TILES as f64 * TILE_SIZE;
         let y0 = y1 - BACK_BUTTON_HEIGHT;
-        let mut result = false;
-
-        if down_x >= x0 && down_x <= x1 && up_x >= x0 && up_x <= x1 &&
-            down_y >= y0 && down_y <= y1 && up_y >= y0 && up_y <= y1 {
-            result = true;
-        }
-        result
+        self.is_mouse_inside_box(down_x, down_y, up_x, up_y, x0, y0, x1, y1)
     }
     fn is_reset_btn_pressed (&self, down_x: f64, down_y: f64, up_x: f64, up_y: f64) -> bool {
         let x0 = WORLD_WIDTH_IN_TILES as f64 * TILE_SIZE;
         let x1 = x0 + RESET_BUTTON_WIDTH;
         let y1 = WORLD_HEIGHT_IN_TILES as f64 * TILE_SIZE - BACK_BUTTON_HEIGHT;
         let y0 = y1 - RESET_BUTTON_HEIGHT;
-        let mut result = false;
-
-        if down_x >= x0 && down_x <= x1 && up_x >= x0 && up_x <= x1 &&
-            down_y >= y0 && down_y <= y1 && up_y >= y0 && up_y <= y1 {
-            result = true;
-        }
-        result
+        self.is_mouse_inside_box(down_x, down_y, up_x, up_y, x0, y0, x1, y1)
     }
 }

@@ -163,25 +163,13 @@ impl LevelSelectionScene {
         let x1 = x0 + PAGE_BUTTON_WIDTH;
         let y0 = self.height / 2f64 - PAGE_BUTTON_HEIGHT;
         let y1 = y0 + PAGE_BUTTON_HEIGHT;
-        let mut result = false;
-
-        if down_x >= x0 && down_x <= x1 && up_x >= x0 && up_x <= x1 &&
-            down_y >= y0 && down_y <= y1 && up_y >= y0 && up_y <= y1 {
-            result = true;
-        }
-        result
+        self.is_mouse_inside_box(down_x, down_y, up_x, up_y, x0, y0, x1, y1)
     }
     fn is_last_page_pressed (&self, down_x: f64, down_y: f64, up_x: f64, up_y: f64) -> bool {
         let x0 = self.horizontal_padding / 2f64 - PAGE_BUTTON_WIDTH;
         let x1 = x0 + PAGE_BUTTON_WIDTH;
         let y0 = self.height / 2f64 - PAGE_BUTTON_HEIGHT;
         let y1 = y0 + PAGE_BUTTON_HEIGHT;
-        let mut result = false;
-
-        if down_x >= x0 && down_x <= x1 && up_x >= x0 && up_x <= x1 &&
-            down_y >= y0 && down_y <= y1 && up_y >= y0 && up_y <= y1 {
-            result = true;
-        }
-        result
+        self.is_mouse_inside_box(down_x, down_y, up_x, up_y, x0, y0, x1, y1)
     }
 }
