@@ -6,8 +6,8 @@ use crate::game::World;
 use crate::game::level::LEVELS;
 use crate::game::constants::{
     TILE_SIZE,
-    WORLD_WIDTH_IN_TILES,
-    WORLD_HEIGHT_IN_TILES,
+    WINDOW_WIDTH_IN_TILES,
+    WINDOW_HEIGHT_IN_TILES,
     LEVEL_BUTTON_WIDTH,
     LEVEL_BUTTON_HEIGHT,
     LEVEL_BUTTON_MARGIN,
@@ -54,8 +54,8 @@ impl Scene for LevelSelectionScene {
     }
     fn on_mouse_up(&mut self, mouse_x: f64, mouse_y: f64, world: &mut World, current_level_page: &mut usize) {
         let mut mouse_down_level = None;
-        let is_next_page_rendered = LEVELS.len() > (self.current_page + 1) * LEVELS_PER_PAGE;
-        let is_last_page_rendered = self.current_page > 0;
+        let is_next_page_btn_rendered = LEVELS.len() > (self.current_page + 1) * LEVELS_PER_PAGE;
+        let is_last_page_btn_rendered = self.current_page > 0;
         if let Some((x, y)) = self.mouse_down_coordinate {
             mouse_down_level = self.calculate_level_from_mouse_position(x, y);
         }
@@ -70,11 +70,11 @@ impl Scene for LevelSelectionScene {
             }
         }
         if let Some((down_x, down_y)) = self.mouse_down_coordinate {
-            if is_next_page_rendered && self.is_next_page_pressed(down_x, down_y, mouse_x, mouse_y) {
+            if is_next_page_btn_rendered && self.is_next_page_pressed(down_x, down_y, mouse_x, mouse_y) {
                 self.current_page += 1;
                 *current_level_page += 1;
             }
-            if is_last_page_rendered && self.is_last_page_pressed(down_x, down_y, mouse_x, mouse_y) {
+            if is_last_page_btn_rendered && self.is_last_page_pressed(down_x, down_y, mouse_x, mouse_y) {
                 self.current_page -= 1;
                 *current_level_page -= 1;
             }
@@ -96,8 +96,8 @@ impl Scene for LevelSelectionScene {
 
 impl LevelSelectionScene {
     pub fn new(current_page: usize) -> LevelSelectionScene {
-        let width = WORLD_WIDTH_IN_TILES as f64 * TILE_SIZE;
-        let height = WORLD_HEIGHT_IN_TILES as f64 * TILE_SIZE;
+        let width = WINDOW_WIDTH_IN_TILES as f64 * TILE_SIZE;
+        let height = WINDOW_HEIGHT_IN_TILES as f64 * TILE_SIZE;
         let horizontal_padding = (width - (LEVELS_PER_PAGE as f64 / ROW_PER_PAGE as f64) * (LEVEL_BUTTON_WIDTH + LEVEL_BUTTON_MARGIN)) / 2f64;
         let vertical_padding = (height - (ROW_PER_PAGE as f64) * (LEVEL_BUTTON_HEIGHT + LEVEL_BUTTON_MARGIN)) / 2f64;
         LevelSelectionScene {

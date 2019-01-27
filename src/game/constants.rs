@@ -12,6 +12,8 @@ pub const PAGE_BUTTON_WIDTH: f64 = 30f64;
 pub const PAGE_BUTTON_HEIGHT: f64 = 30f64;
 
 // Game Scene
+pub const WINDOW_WIDTH_IN_TILES: usize = 13;
+pub const WINDOW_HEIGHT_IN_TILES: usize = 8;
 pub const WORLD_WIDTH_IN_TILES: usize = 12;
 pub const WORLD_HEIGHT_IN_TILES: usize = 8;
 pub const TOTAL_TILES: usize = WORLD_WIDTH_IN_TILES * WORLD_HEIGHT_IN_TILES;
@@ -20,6 +22,11 @@ pub const MAX_BURNING_LEVEL: isize = 3;
 pub const TILE_SIZE: f64 = 64f64;
 pub const ASSET_SIZE: f64 = 16f64;
 pub const FALLING_BUFFER_TIME: f64 = 32f64;
+
+pub const BACK_BUTTON_WIDTH: f64 = 64f64;
+pub const BACK_BUTTON_HEIGHT: f64 = 64f64;
+pub const RESET_BUTTON_WIDTH: f64 = 64f64;
+pub const RESET_BUTTON_HEIGHT: f64 = 64f64;
 
 // Keyboard
 pub const ARROW_UP: &str = "ArrowUp";

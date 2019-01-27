@@ -5,8 +5,8 @@ use crate::renderer::Renderer;
 use crate::game::World;
 use crate::game::constants::{
     TILE_SIZE,
-    WORLD_WIDTH_IN_TILES,
-    WORLD_HEIGHT_IN_TILES,
+    WINDOW_WIDTH_IN_TILES,
+    WINDOW_HEIGHT_IN_TILES,
     START_BUTTON_WIDTH,
     START_BUTTON_HEIGHT,
 };
@@ -44,8 +44,8 @@ impl EntryScene {
     pub fn new() -> EntryScene {
         EntryScene {
             scene_type: SceneType::Entry,
-            width: WORLD_WIDTH_IN_TILES as f64 * TILE_SIZE,
-            height: WORLD_HEIGHT_IN_TILES as f64 * TILE_SIZE,
+            width: WINDOW_WIDTH_IN_TILES as f64 * TILE_SIZE,
+            height: WINDOW_HEIGHT_IN_TILES as f64 * TILE_SIZE,
             next_scene_type: None,
         }
     }
