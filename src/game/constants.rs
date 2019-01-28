@@ -67,8 +67,8 @@ pub const WOODEN_PATH_Y_OFFSET: f64 = 15f64;
 pub const WOODEN_PATH_SIZE: f64 = 32f64;
 
 // Objects
-pub const TREE_X_OFFSET: f64 = 16f64;
-pub const TREE_Y_OFFSET: f64 = 12f64;
+pub const TREE_X_OFFSET: f64 = 0f64;
+pub const TREE_Y_OFFSET: f64 = 0f64;
 pub const TREE_BURNING_LEVEL_1_X_OFFSET: f64 = 6f64;
 pub const TREE_BURNING_LEVEL_1_Y_OFFSET: f64 = 12f64;
 pub const TREE_BURNING_LEVEL_2_X_OFFSET: f64 = 0f64;
@@ -76,8 +76,8 @@ pub const TREE_BURNING_LEVEL_2_Y_OFFSET: f64 = 10f64;
 pub const TREE_BURN_DOWN_TIME: f64 = 7200f64;
 pub const TREE_SIZE: f64 = 32f64;
 
-pub const ROCK_X_OFFSET: f64 = 35f64;
-pub const ROCK_Y_OFFSET: f64 = 8f64;
+pub const ROCK_X_OFFSET: f64 = 0f64;
+pub const ROCK_Y_OFFSET: f64 = 2f64;
 pub const ROCK_SIZE: f64 = 32f64;
 pub const ROCK_MOVE_TIME: f64 = 280f64;
 

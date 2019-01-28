@@ -204,7 +204,7 @@ impl LevelManager {
 
     fn create_tree(&self, position: Position, id: String) -> Option<RefCell<Box<dyn Object>>> {
         let asset = Asset::new(
-            AssetType::Object,
+            AssetType::RuzzleObject,
             TREE_X_OFFSET,
             TREE_Y_OFFSET,
             TREE_SIZE,
@@ -215,7 +215,7 @@ impl LevelManager {
 
     fn create_rock(&self, position: Position, id: String) -> Option<RefCell<Box<dyn Object>>> {
         let asset = Asset::new(
-            AssetType::Environment,
+            AssetType::RuzzleObject,
             ROCK_X_OFFSET,
             ROCK_Y_OFFSET,
             ROCK_SIZE,

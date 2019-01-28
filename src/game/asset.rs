@@ -3,6 +3,7 @@ pub enum AssetType {
     Environment,
     Character,
     Object,
+    RuzzleObject,
 }
 
 pub struct Asset {
