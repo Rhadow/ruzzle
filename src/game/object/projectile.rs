@@ -103,6 +103,7 @@ impl Projectile {
             let is_object_breakable = object.attribute_manager().is_breakable;
             let is_object_visible = object.attribute_manager().is_visible;
             let is_object_burnable = object.attribute_manager().is_burnable;
+            let is_object_burning = object.attribute_manager().burning_level > 0;
             let object_id = object.attribute_manager().id.clone();
             let is_object_parent_projector = object_id.to_string() == self.projector_id;
             if !is_object_parent_projector && is_object_visible {
@@ -112,7 +113,7 @@ impl Projectile {
                     if is_object_breakable {
                         object.status_manager().set_status(Status::Dead);
                     }
-                    if self.attribute_manager.burning_level > 0 && is_object_burnable {
+                    if self.attribute_manager.burning_level > 0 && is_object_burnable && !is_object_burning {
                         object.attribute_manager().burning_level += 1;
                         object.status_manager().delta_time = 0f64;
                     }

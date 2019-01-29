@@ -18,7 +18,7 @@ pub const WINDOW_HEIGHT_IN_TILES: usize = 8;
 pub const WORLD_WIDTH_IN_TILES: usize = 12;
 pub const WORLD_HEIGHT_IN_TILES: usize = 8;
 pub const TOTAL_TILES: usize = WORLD_WIDTH_IN_TILES * WORLD_HEIGHT_IN_TILES;
-pub const MAX_BURNING_LEVEL: isize = 4;
+pub const MAX_BURNING_LEVEL: isize = 3;
 
 pub const TILE_SIZE: f64 = 64f64;
 pub const ASSET_SIZE: f64 = 16f64;
@@ -70,13 +70,11 @@ pub const WOODEN_PATH_SIZE: f64 = 32f64;
 // Objects
 pub const TREE_X_OFFSET: f64 = 0f64;
 pub const TREE_Y_OFFSET: f64 = 0f64;
-pub const TREE_BURNING_X_OFFSET: f64 = 6f64;
-pub const TREE_BURNING_Y_OFFSET: f64 = 12f64;
-pub const TREE_BURNING_END_X_OFFSET: f64 = 0f64;
-pub const TREE_BURNING_END_Y_OFFSET: f64 = 10f64;
-pub const TREE_ASH_X_OFFSET: f64 = 0f64;
-pub const TREE_ASH_Y_OFFSET: f64 = 10f64;
-pub const TREE_BURN_DOWN_TIME: f64 = 10_000f64;
+pub const TREE_BURNING_X_OFFSET: f64 = 0f64;
+pub const TREE_BURNING_Y_OFFSET: f64 = 4f64;
+pub const TREE_BURNING_END_X_OFFSET: f64 = 2f64;
+pub const TREE_BURNING_END_Y_OFFSET: f64 = 4f64;
+pub const TREE_BURN_DOWN_TIME: f64 = 9900f64;
 pub const TREE_SIZE: f64 = 32f64;
 
 pub const ROCK_X_OFFSET: f64 = 0f64;

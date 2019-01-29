@@ -8,8 +8,6 @@ use crate::game::constants::{
     TREE_BURNING_Y_OFFSET,
     TREE_BURNING_END_X_OFFSET,
     TREE_BURNING_END_Y_OFFSET,
-    TREE_ASH_X_OFFSET,
-    TREE_ASH_Y_OFFSET,
     MAX_BURNING_LEVEL,
     TREE_BURN_DOWN_TIME,
 };
@@ -111,10 +109,10 @@ impl Tree {
                 }
             }
         }
-        if self.status_manager.delta_time > dt_per_burning_level && self.attribute_manager.burning_level < MAX_BURNING_LEVEL {
+        if self.status_manager.delta_time > dt_per_burning_level {
             self.attribute_manager.burning_level += 1;
             self.status_manager.delta_time = 0f64;
-            if self.attribute_manager.burning_level >= MAX_BURNING_LEVEL {
+            if self.attribute_manager.burning_level > MAX_BURNING_LEVEL {
                 self.attribute_manager.is_visible = false;
             }
         }
