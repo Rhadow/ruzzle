@@ -64,7 +64,7 @@ impl Object for Projectile {
 
 impl Projectile {
     pub fn new(position: Position, asset: Asset, direction: Direction, projector_id: String, id: String) -> Projectile {
-        let status_manager = StatusManager::new(position, direction, PROJECTILE_SIZE * 2f64, PROJECTILE_SIZE * 2f64);
+        let status_manager = StatusManager::new(position, direction, PROJECTILE_SIZE, PROJECTILE_SIZE);
         let attribute_manager = AttributeManager {
             id,
             can_step_on: false,

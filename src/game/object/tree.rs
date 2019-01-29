@@ -4,10 +4,12 @@ use crate::utils::check_collision;
 use crate::audio::AudioPlayer;
 use crate::game::constants::{
     TILE_SIZE,
-    TREE_BURNING_LEVEL_1_X_OFFSET,
-    TREE_BURNING_LEVEL_1_Y_OFFSET,
-    TREE_BURNING_LEVEL_2_X_OFFSET,
-    TREE_BURNING_LEVEL_2_Y_OFFSET,
+    TREE_BURNING_X_OFFSET,
+    TREE_BURNING_Y_OFFSET,
+    TREE_BURNING_END_X_OFFSET,
+    TREE_BURNING_END_Y_OFFSET,
+    TREE_ASH_X_OFFSET,
+    TREE_ASH_Y_OFFSET,
     MAX_BURNING_LEVEL,
     TREE_BURN_DOWN_TIME,
 };
@@ -70,16 +72,13 @@ impl Tree {
     }
     fn animate_burning(&mut self) {
         match self.attribute_manager.burning_level {
-            1 => {
-                self.asset.set_x_offset(TREE_BURNING_LEVEL_1_X_OFFSET);
-                self.asset.set_y_offset(TREE_BURNING_LEVEL_1_Y_OFFSET);
-            },
-            2 => {
-                self.asset.set_x_offset(TREE_BURNING_LEVEL_2_X_OFFSET);
-                self.asset.set_y_offset(TREE_BURNING_LEVEL_2_Y_OFFSET);
+            1 | 2 => {
+                self.asset.set_x_offset(TREE_BURNING_X_OFFSET);
+                self.asset.set_y_offset(TREE_BURNING_Y_OFFSET);
             },
             3 => {
-                self.attribute_manager.is_visible = false;
+                self.asset.set_x_offset(TREE_BURNING_END_X_OFFSET);
+                self.asset.set_y_offset(TREE_BURNING_END_Y_OFFSET);
             },
             _ => (),
         }
@@ -115,8 +114,8 @@ impl Tree {
         if self.status_manager.delta_time > dt_per_burning_level && self.attribute_manager.burning_level < MAX_BURNING_LEVEL {
             self.attribute_manager.burning_level += 1;
             self.status_manager.delta_time = 0f64;
-            if self.attribute_manager.burning_level > 1 {
-                self.attribute_manager.can_fly_through = true;
+            if self.attribute_manager.burning_level >= MAX_BURNING_LEVEL {
+                self.attribute_manager.is_visible = false;
             }
         }
     }

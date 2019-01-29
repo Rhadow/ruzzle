@@ -131,7 +131,7 @@ impl World {
             if is_object_projecting {
                 object.attribute_manager().is_projecting = false;
                 let asset = Asset::new(
-                    AssetType::Object,
+                    AssetType::RuzzleObject,
                     PROJECTILE_X_OFFSET,
                     PROJECTILE_Y_OFFSET,
                     PROJECTILE_SIZE,

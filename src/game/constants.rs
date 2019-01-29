@@ -1,6 +1,7 @@
 // Entry Scene
 pub const START_BUTTON_WIDTH: f64 = 100f64;
 pub const START_BUTTON_HEIGHT: f64 = 20f64;
+pub const START_BUTTON_FLASH_FREQUENCY: f64 = 1500f64;
 
 // Level Selection Scene
 pub const LEVEL_BUTTON_WIDTH: f64 = 80f64;
@@ -17,7 +18,7 @@ pub const WINDOW_HEIGHT_IN_TILES: usize = 8;
 pub const WORLD_WIDTH_IN_TILES: usize = 12;
 pub const WORLD_HEIGHT_IN_TILES: usize = 8;
 pub const TOTAL_TILES: usize = WORLD_WIDTH_IN_TILES * WORLD_HEIGHT_IN_TILES;
-pub const MAX_BURNING_LEVEL: isize = 3;
+pub const MAX_BURNING_LEVEL: isize = 4;
 
 pub const TILE_SIZE: f64 = 64f64;
 pub const ASSET_SIZE: f64 = 16f64;
@@ -69,11 +70,13 @@ pub const WOODEN_PATH_SIZE: f64 = 32f64;
 // Objects
 pub const TREE_X_OFFSET: f64 = 0f64;
 pub const TREE_Y_OFFSET: f64 = 0f64;
-pub const TREE_BURNING_LEVEL_1_X_OFFSET: f64 = 6f64;
-pub const TREE_BURNING_LEVEL_1_Y_OFFSET: f64 = 12f64;
-pub const TREE_BURNING_LEVEL_2_X_OFFSET: f64 = 0f64;
-pub const TREE_BURNING_LEVEL_2_Y_OFFSET: f64 = 10f64;
-pub const TREE_BURN_DOWN_TIME: f64 = 7200f64;
+pub const TREE_BURNING_X_OFFSET: f64 = 6f64;
+pub const TREE_BURNING_Y_OFFSET: f64 = 12f64;
+pub const TREE_BURNING_END_X_OFFSET: f64 = 0f64;
+pub const TREE_BURNING_END_Y_OFFSET: f64 = 10f64;
+pub const TREE_ASH_X_OFFSET: f64 = 0f64;
+pub const TREE_ASH_Y_OFFSET: f64 = 10f64;
+pub const TREE_BURN_DOWN_TIME: f64 = 10_000f64;
 pub const TREE_SIZE: f64 = 32f64;
 
 pub const ROCK_X_OFFSET: f64 = 0f64;
@@ -105,11 +108,11 @@ pub const CANNON_HORIZONTAL_HEIGHT: f64 = 32f64;
 pub const CANNON_MOVE_TIME: f64 = 280f64;
 pub const CANNON_PROJECT_TIME: f64 = 5000f64;
 
-pub const PROJECTILE_X_OFFSET: f64 = 17f64;
-pub const PROJECTILE_Y_OFFSET: f64 = 1f64;
-pub const PROJECTILE_SIZE: f64 = 16f64;
+pub const PROJECTILE_X_OFFSET: f64 = 0f64;
+pub const PROJECTILE_Y_OFFSET: f64 = 4f64;
+pub const PROJECTILE_SIZE: f64 = 32f64;
 pub const PROJECTILE_MOVE_TIME: f64 = 150f64;
-pub const PROJECTILE_BURNING_X_OFFSET: f64 = 0f64;
+pub const PROJECTILE_BURNING_X_OFFSET: f64 = 2f64;
 pub const PROJECTILE_BURNING_Y_OFFSET: f64 = 4f64;
 
 pub const SMOKE_BASE_X_OFFSET: f64 = 4f64;
