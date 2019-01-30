@@ -263,7 +263,7 @@ impl LevelManager {
             ),
         };
         let asset = Asset::new(
-            AssetType::Environment,
+            AssetType::RuzzleObject,
             x,
             y,
             w,

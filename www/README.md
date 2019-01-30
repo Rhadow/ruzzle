@@ -15,8 +15,6 @@ Sprites to draw:
 - wall
 - breakable wall
 - fire source
-- projectile
-- fire projectile
 - projector
 - fixed location projector
 - fixed rotation projector
@@ -25,6 +23,7 @@ Sprites to draw:
 - main character idle
 - main character walk
 - main character push
+- smoke effect
 
 UI to draw:
 - level selection btn

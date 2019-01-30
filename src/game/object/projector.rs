@@ -6,18 +6,15 @@ use crate::game::status_manager::Status;
 use crate::game::constants::{
     CANNON_MOVE_TIME,
     CANNON_UP_X_OFFSET,
-    CANNON_UP_Y_OFFSET,
     CANNON_DOWN_X_OFFSET,
-    CANNON_DOWN_Y_OFFSET,
     CANNON_LEFT_X_OFFSET,
-    CANNON_LEFT_Y_OFFSET,
     CANNON_RIGHT_X_OFFSET,
-    CANNON_RIGHT_Y_OFFSET,
     CANNON_VERTICAL_WIDTH,
     CANNON_VERTICAL_HEIGHT,
     CANNON_HORIZONTAL_WIDTH,
     CANNON_HORIZONTAL_HEIGHT,
     CANNON_PROJECT_TIME,
+    CANNON_ROTATION_ANIMATION_TIME,
 };
 
 pub struct Projector {
@@ -39,44 +36,22 @@ impl Object for Projector {
     }
     fn rotate(&mut self) {
         match self.status_manager.direction {
-            Direction::Up => self.status_manager.direction = Direction::Right,
-            Direction::Right => self.status_manager.direction = Direction::Down,
-            Direction::Down => self.status_manager.direction = Direction::Left,
-            Direction::Left => self.status_manager.direction = Direction::Up,
-        }
-        match self.status_manager.direction {
-            Direction::Down => {
-                self.asset.set_x_offset(CANNON_DOWN_X_OFFSET);
-                self.asset.set_y_offset(CANNON_DOWN_Y_OFFSET);
-                self.asset.set_width(CANNON_VERTICAL_WIDTH);
-                self.asset.set_height(CANNON_VERTICAL_HEIGHT);
-                self.status_manager.set_width(CANNON_VERTICAL_WIDTH * 2f64);
-                self.status_manager.set_height(CANNON_VERTICAL_HEIGHT * 2f64);
-            }
             Direction::Up => {
-                self.asset.set_x_offset(CANNON_UP_X_OFFSET);
-                self.asset.set_y_offset(CANNON_UP_Y_OFFSET);
-                self.asset.set_width(CANNON_VERTICAL_WIDTH);
-                self.asset.set_height(CANNON_VERTICAL_HEIGHT);
-                self.status_manager.set_width(CANNON_VERTICAL_WIDTH * 2f64);
-                self.status_manager.set_height(CANNON_VERTICAL_HEIGHT * 2f64);
-            }
+                self.asset.set_x_offset(CANNON_UP_X_OFFSET + 2f64);
+                self.status_manager.direction = Direction::Right;
+            },
             Direction::Right => {
-                self.asset.set_x_offset(CANNON_RIGHT_X_OFFSET);
-                self.asset.set_y_offset(CANNON_RIGHT_Y_OFFSET);
-                self.asset.set_width(CANNON_HORIZONTAL_WIDTH);
-                self.asset.set_height(CANNON_HORIZONTAL_HEIGHT);
-                self.status_manager.set_width(CANNON_HORIZONTAL_WIDTH * 2f64);
-                self.status_manager.set_height(CANNON_HORIZONTAL_HEIGHT * 2f64);
-            }
+                self.asset.set_x_offset(CANNON_RIGHT_X_OFFSET + 2f64);
+                self.status_manager.direction = Direction::Down;
+            },
+            Direction::Down => {
+                self.asset.set_x_offset(CANNON_DOWN_X_OFFSET + 2f64);
+                self.status_manager.direction = Direction::Left;
+            },
             Direction::Left => {
-                self.asset.set_x_offset(CANNON_LEFT_X_OFFSET);
-                self.asset.set_y_offset(CANNON_LEFT_Y_OFFSET);
-                self.asset.set_width(CANNON_HORIZONTAL_WIDTH);
-                self.asset.set_height(CANNON_HORIZONTAL_HEIGHT);
-                self.status_manager.set_width(CANNON_HORIZONTAL_WIDTH * 2f64);
-                self.status_manager.set_height(CANNON_HORIZONTAL_HEIGHT * 2f64);
-            }
+                self.asset.set_x_offset(CANNON_LEFT_X_OFFSET + 2f64);
+                self.status_manager.direction = Direction::Up;
+            },
         }
     }
     fn walk(&mut self, direction: Direction, world: &World) {
@@ -144,7 +119,20 @@ impl Projector {
         }
     }
     fn animate_idle (&mut self) {
-        self.status_manager.delta_time = 0f64;
+        let asset_x_offset = match self.status_manager.direction {
+            Direction::Up => CANNON_UP_X_OFFSET,
+            Direction::Right => CANNON_RIGHT_X_OFFSET,
+            Direction::Down => CANNON_DOWN_X_OFFSET,
+            Direction::Left => CANNON_LEFT_X_OFFSET,
+        };
+        if self.asset.get_x_offset() != asset_x_offset {
+            if self.status_manager.delta_time >= CANNON_ROTATION_ANIMATION_TIME {
+                self.asset.set_x_offset(asset_x_offset);
+                self.status_manager.delta_time = 0f64;
+            }
+        } else {
+            self.status_manager.delta_time = 0f64;
+        }
     }
     fn animate_walking (&mut self, audio: &mut Box<dyn AudioPlayer>) {
         let delta_time = self.status_manager.delta_time;

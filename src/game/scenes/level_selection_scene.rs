@@ -15,6 +15,32 @@ use crate::game::constants::{
     ROW_PER_PAGE,
     PAGE_BUTTON_WIDTH,
     PAGE_BUTTON_HEIGHT,
+    DIGIT_WIDTH,
+    DIGIT_HEIGHT,
+    ZERO_X_OFFSET,
+    ZERO_Y_OFFSET,
+    ONE_X_OFFSET,
+    ONE_Y_OFFSET,
+    TWO_X_OFFSET,
+    TWO_Y_OFFSET,
+    THREE_X_OFFSET,
+    THREE_Y_OFFSET,
+    FOUR_X_OFFSET,
+    FOUR_Y_OFFSET,
+    FIVE_X_OFFSET,
+    FIVE_Y_OFFSET,
+    SIX_X_OFFSET,
+    SIX_Y_OFFSET,
+    SEVEN_X_OFFSET,
+    SEVEN_Y_OFFSET,
+    EIGHT_X_OFFSET,
+    EIGHT_Y_OFFSET,
+    NINE_X_OFFSET,
+    NINE_Y_OFFSET,
+};
+use crate::game::{
+    Asset,
+    AssetType,
 };
 
 pub struct LevelSelectionScene {
@@ -39,11 +65,7 @@ impl Scene for LevelSelectionScene {
         for (index, level) in levels.iter().enumerate() {
             let x = self.horizontal_padding + (index % (LEVELS_PER_PAGE / ROW_PER_PAGE)) as f64 * (LEVEL_BUTTON_WIDTH + LEVEL_BUTTON_MARGIN);
             let y = self.vertical_padding + (index as isize / (LEVELS_PER_PAGE / ROW_PER_PAGE) as isize) as f64 * (LEVEL_BUTTON_HEIGHT + LEVEL_BUTTON_MARGIN);
-            let mut level_fill_color = JsValue::from_str("#d4ce46");
-            if completed_levels[*level] {
-                level_fill_color = JsValue::from_str("#cc0000");
-            }
-            renderer.draw_rectangle(x, y, LEVEL_BUTTON_WIDTH, LEVEL_BUTTON_HEIGHT, &level_fill_color);
+            self.draw_level_block(renderer, x, y, *level, completed_levels);
         }
         if self.current_page > 0 {
             self.render_last_page_button(renderer);
@@ -171,5 +193,43 @@ impl LevelSelectionScene {
         let y0 = self.height / 2f64 - PAGE_BUTTON_HEIGHT;
         let y1 = y0 + PAGE_BUTTON_HEIGHT;
         self.is_mouse_inside_box(down_x, down_y, up_x, up_y, x0, y0, x1, y1)
+    }
+
+    fn draw_level_block(&self, renderer: &Renderer, x: f64, y: f64, level: usize, completed_levels: &Vec<bool>) {
+        let mut level_fill_color = JsValue::from_str("#d4ce46");
+        if completed_levels[level] {
+            level_fill_color = JsValue::from_str("#cc0000");
+        }
+        renderer.draw_rectangle(x, y, LEVEL_BUTTON_WIDTH, LEVEL_BUTTON_HEIGHT, &level_fill_color);
+        let level = level + 1;
+        let num_digits = level.to_string().len() as f64;
+        let digit_x_start = x + (LEVEL_BUTTON_WIDTH - num_digits * DIGIT_WIDTH) / 2f64;
+        for (index, num) in level.to_string().chars().enumerate() {
+            let digit_y = y + (LEVEL_BUTTON_HEIGHT - DIGIT_HEIGHT) / 2f64;
+            let digit_x = digit_x_start + index as f64 * DIGIT_WIDTH;
+            let num = match num {
+                '0' => Some((ZERO_X_OFFSET, ZERO_Y_OFFSET)),
+                '1' => Some((ONE_X_OFFSET, ONE_Y_OFFSET)),
+                '2' => Some((TWO_X_OFFSET, TWO_Y_OFFSET)),
+                '3' => Some((THREE_X_OFFSET, THREE_Y_OFFSET)),
+                '4' => Some((FOUR_X_OFFSET, FOUR_Y_OFFSET)),
+                '5' => Some((FIVE_X_OFFSET, FIVE_Y_OFFSET)),
+                '6' => Some((SIX_X_OFFSET, SIX_Y_OFFSET)),
+                '7' => Some((SEVEN_X_OFFSET, SEVEN_Y_OFFSET)),
+                '8' => Some((EIGHT_X_OFFSET, EIGHT_Y_OFFSET)),
+                '9' => Some((NINE_X_OFFSET, NINE_Y_OFFSET)),
+                _ => None,
+            };
+            if let Some((num_x_offet, num_y_offset)) = num {
+                let asset = Asset::new(
+                    AssetType::Object,
+                    num_x_offet,
+                    num_y_offset,
+                    DIGIT_WIDTH,
+                    DIGIT_HEIGHT,
+                );
+                renderer.draw_asset_by_coordinate(&asset, digit_x, digit_y, DIGIT_WIDTH, DIGIT_HEIGHT);
+            }
+        }
     }
 }
