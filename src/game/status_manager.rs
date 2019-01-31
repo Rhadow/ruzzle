@@ -10,7 +10,7 @@ pub enum Direction {
     Right,
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Copy, Clone)]
 pub enum Status {
     Idle,
     Walking,

@@ -13,7 +13,6 @@ use crate::game::constants::{
     CANNON_VERTICAL_HEIGHT,
     CANNON_HORIZONTAL_WIDTH,
     CANNON_HORIZONTAL_HEIGHT,
-    CANNON_PROJECT_TIME,
     CANNON_ROTATION_ANIMATION_TIME,
 };
 
@@ -22,6 +21,7 @@ pub struct Projector {
     status_manager: StatusManager,
     attribute_manager: AttributeManager,
     projection_timer: f64,
+    projection_cycle_time: f64,
 }
 
 impl Object for Projector {
@@ -72,7 +72,7 @@ impl Object for Projector {
             self.projection_timer += now - self.status_manager.time;
         }
         self.status_manager.time = now;
-        if self.projection_timer >= CANNON_PROJECT_TIME {
+        if self.projection_timer >= self.projection_cycle_time {
             self.attribute_manager.is_projecting = true;
             self.projection_timer = 0f64;
             audio.play_sfx(SFX::Projecting);
@@ -86,7 +86,7 @@ impl Object for Projector {
 }
 
 impl Projector {
-    pub fn new(position: Position, direction: Direction, asset: Asset, id: String) -> Projector {
+    pub fn new(position: Position, direction: Direction, asset: Asset, id: String, projection_cycle_time: f64) -> Projector {
         let width = match direction {
             Direction::Up | Direction::Down => CANNON_VERTICAL_WIDTH,
             Direction::Left | Direction::Right => CANNON_HORIZONTAL_WIDTH,
@@ -116,6 +116,7 @@ impl Projector {
             status_manager,
             attribute_manager,
             projection_timer: 0f64,
+            projection_cycle_time,
         }
     }
     fn animate_idle (&mut self) {

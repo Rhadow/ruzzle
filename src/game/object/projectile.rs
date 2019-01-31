@@ -109,15 +109,20 @@ impl Projectile {
             if !is_object_parent_projector && is_object_visible {
                 let is_collided = check_collision(object.status_manager(), &self.status_manager);
                 let can_fly_through = object.attribute_manager().can_fly_through;
-                if is_collided && !can_fly_through {
+                if is_collided {
                     if is_object_breakable {
                         object.status_manager().set_status(Status::Dead);
                     }
                     if self.attribute_manager.burning_level > 0 && is_object_burnable && !is_object_burning {
                         object.attribute_manager().burning_level += 1;
-                        object.status_manager().delta_time = 0f64;
+                        let object_status = object.status_manager().status.clone();
+                        if object_status != Status::Walking {
+                            object.status_manager().delta_time = 0f64;
+                        }
                     }
-                    self.status_manager.set_status(Status::Dead);
+                    if !can_fly_through {
+                        self.status_manager.set_status(Status::Dead);
+                    }
                 }
             }
         }

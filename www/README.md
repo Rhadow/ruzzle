@@ -15,15 +15,17 @@ Sprites to draw:
 - wall
 - breakable wall
 - fire source
-- projector
 - fixed location projector
 - fixed rotation projector
 - burning tree
-- ash
 - main character idle
 - main character walk
 - main character push
+- main character death
 - smoke effect
+- grass tile
+- hole tile
+- hole filled tile
 
 UI to draw:
 - level selection btn
@@ -33,5 +35,10 @@ UI to draw:
 - numbers
 - background
 
-Program:
-level design
+
+Level Design:
+- double fast cannon shoot, player use stone to block cannon
+- fire tutorial, cornered fire source, player needs to get to fire first then move in front of cannon
+- movable fire container, need to chain fire, also add dodging hole
+
+- stone bridge

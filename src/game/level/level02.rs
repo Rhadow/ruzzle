@@ -3,7 +3,7 @@ use crate::game::Position;
 
 const TERRAINS: [&str; TOTAL_TILES] = [
     "G ","G ","G ","G ","G ","G ","G ","G ","G ","G ","G ","G ",
-    "G ","G ","G ","G ","G ","G ","H ","G ","G ","G ","G ","G ",
+    "G ","G ","G ","G ","G ","G ","G ","G ","G ","G ","G ","G ",
     "G ","G ","G ","G ","G ","G ","G ","G ","G ","G ","G ","G ",
     "G ","G ","G ","G ","G ","G ","G ","G ","G ","G ","G ","G ",
     "G ","G ","G ","G ","G ","G ","G ","G ","G ","G ","G ","G ",
@@ -13,16 +13,16 @@ const TERRAINS: [&str; TOTAL_TILES] = [
 ];
 
 const OBJECTS: [&str; TOTAL_TILES] = [
-    "  ","  ","T ","T ","  ","T ","  ","  ","  ","  ","  ","T ",
-    "  ","  ","  ","  ","  ","  ","  ","  ","  ","  ","T ","T ",
-    "  ","RN","FS","R ","FS","T ","  ","R ","  ","T ","T ","  ",
-    "  ","  ","  ","  ","  ","  ","  ","  ","BW","T ","C ","  ",
-    "  ","  ","FS","  ","  ","  ","  ","  ","W ","T ","  ","T ",
-    "  ","  ","  ","  ","  ","  ","  ","  ","W ","T ","R ","T ",
-    "  ","T ","T ","  ","  ","  ","DN","  ","  ","  ","T ","T ",
-    "  ","  ","  ","  ","  ","  ","  ","  ","  ","  ","  ","T ",
+    "RS","  ","  ","  ","  ","T ","T ","T ","T ","T ","  ","  ",
+    "W ","  ","T ","  ","  ","R ","  ","R ","  ","  ","  ","  ",
+    "W ","  ","T ","T ","  ","R ","R ","  ","R ","  ","  ","  ",
+    "W ","  ","  ","  ","  ","  ","R ","  ","R ","  ","W ","W ",
+    "W ","  ","T ","T ","  ","R ","R ","  ","R ","  ","W ","T ",
+    "W ","  ","T ","T ","T ","R ","  ","R ","T ","T ","T ","C ",
+    "W ","  ","T ","T ","  ","T ","T ","T ","  ","T ","T ","  ",
+    "RF","  ","  ","  ","  ","  ","  ","  ","  ","  ","  ","  ",
 ];
 
-const PLAYER_POSITION: Position = Position(1f64, 3f64);
+const PLAYER_POSITION: Position = Position(1f64, 11f64);
 
 pub const LEVEL02: ([&str; TOTAL_TILES], [&str; TOTAL_TILES], Position) = (TERRAINS, OBJECTS, PLAYER_POSITION);

@@ -9,11 +9,16 @@
     "R": Rock,
     "C": Chest (Exit),
     "W": Wall,
-    "DN": Cannon facing down,
-    "UN": Cannon facing up,
-    "LN": Cannon facing left,
-    "RN": Cannon facing right,
-    "FS": Fire Source,
+    "DS": Slow cannon facing down,
+    "US": Slow cannon facing up,
+    "LS": Slow cannon facing left,
+    "RS": Slow cannon facing right,
+    "DF": Fast cannon facing down,
+    "UF": Fast cannon facing up,
+    "LF": Fast cannon facing left,
+    "RF": Fast cannon facing right,
+    "BF": Burning Fire Source,
+    "NF": Non-Burning Fire Source,
     "BW": BreakableWall,
 */
 use crate::utils::uuid;
@@ -75,6 +80,8 @@ use crate::game::constants::{
     CANNON_VERTICAL_HEIGHT,
     CANNON_HORIZONTAL_WIDTH,
     CANNON_HORIZONTAL_HEIGHT,
+    SLOW_CANNON_PROJECT_CYCLE,
+    FAST_CANNON_PROJECT_CYCLE,
     FIRE_SOURCE_X_OFFSET,
     FIRE_SOURCE_Y_OFFSET,
     FIRE_SOURCE_SIZE,
@@ -90,19 +97,20 @@ use crate::game::constants::{
 use super::level00::LEVEL00;
 use super::level01::LEVEL01;
 use super::level02::LEVEL02;
+use super::level03::LEVEL03;
 
 pub type Level = ([&'static str; TOTAL_TILES], [&'static str; TOTAL_TILES], Position);
 pub const LEVELS: [Level; 10] = [
     LEVEL00,
     LEVEL01,
     LEVEL02,
+    LEVEL03,
     LEVEL00,
     LEVEL01,
     LEVEL02,
+    LEVEL03,
     LEVEL00,
     LEVEL01,
-    LEVEL02,
-    LEVEL00,
 ];
 
 pub struct LevelManager {
@@ -153,11 +161,16 @@ impl LevelManager {
                 "C" => self.create_chest(position, uuid()),
                 "W" => self.create_wall(position, uuid()),
                 "BW" => self.create_breakable_wall(position, uuid()),
-                "DN" => self.create_cannon(position, Direction::Down, uuid()),
-                "UN" => self.create_cannon(position, Direction::Up, uuid()),
-                "LN" => self.create_cannon(position, Direction::Left, uuid()),
-                "RN" => self.create_cannon(position, Direction::Right, uuid()),
-                "FS" => self.create_fire_source(position, uuid()),
+                "DS" => self.create_cannon(position, Direction::Down, uuid(), SLOW_CANNON_PROJECT_CYCLE),
+                "US" => self.create_cannon(position, Direction::Up, uuid(), SLOW_CANNON_PROJECT_CYCLE),
+                "LS" => self.create_cannon(position, Direction::Left, uuid(), SLOW_CANNON_PROJECT_CYCLE),
+                "RS" => self.create_cannon(position, Direction::Right, uuid(), SLOW_CANNON_PROJECT_CYCLE),
+                "DF" => self.create_cannon(position, Direction::Down, uuid(), FAST_CANNON_PROJECT_CYCLE),
+                "UF" => self.create_cannon(position, Direction::Up, uuid(), FAST_CANNON_PROJECT_CYCLE),
+                "LF" => self.create_cannon(position, Direction::Left, uuid(), FAST_CANNON_PROJECT_CYCLE),
+                "RF" => self.create_cannon(position, Direction::Right, uuid(), FAST_CANNON_PROJECT_CYCLE),
+                "BF" => self.create_fire_source(position, uuid(), 1),
+                "NF" => self.create_fire_source(position, uuid(), 0),
                 _ => None
             };
 
@@ -235,7 +248,7 @@ impl LevelManager {
         Some(RefCell::new(Box::new(Exit::new(position, asset, id))))
     }
 
-    fn create_cannon(&self, position: Position, direction: Direction, id: String) -> Option<RefCell<Box<dyn Object>>> {
+    fn create_cannon(&self, position: Position, direction: Direction, id: String, projection_cycle_time: f64) -> Option<RefCell<Box<dyn Object>>> {
         let (x, y, w, h) = match direction {
             Direction::Down => (
                 CANNON_DOWN_X_OFFSET,
@@ -269,9 +282,9 @@ impl LevelManager {
             w,
             h,
         );
-        Some(RefCell::new(Box::new(Projector::new(position, direction, asset, id))))
+        Some(RefCell::new(Box::new(Projector::new(position, direction, asset, id, projection_cycle_time))))
     }
-    fn create_fire_source(&self, position: Position, id: String) -> Option<RefCell<Box<dyn Object>>> {
+    fn create_fire_source(&self, position: Position, id: String, burning_level: isize) -> Option<RefCell<Box<dyn Object>>> {
         let asset = Asset::new(
             AssetType::Object,
             FIRE_SOURCE_X_OFFSET,
@@ -279,7 +292,7 @@ impl LevelManager {
             FIRE_SOURCE_SIZE,
             FIRE_SOURCE_SIZE,
         );
-        Some(RefCell::new(Box::new(FireSource::new(position, asset, id))))
+        Some(RefCell::new(Box::new(FireSource::new(position, asset, id, burning_level))))
     }
     fn create_wall(&self, position: Position, id: String) -> Option<RefCell<Box<dyn Object>>> {
         let asset = Asset::new(
