@@ -58,6 +58,7 @@ loadAssets().then(() => {
             "object",
             "character",
             "ruzzle_object",
+            "ruzzle_ui",
         ],
         "bgm": [
             "bgm_0",

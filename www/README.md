@@ -12,11 +12,7 @@ TODO:
 
 Sprites to draw:
 
-- wall
-- breakable wall
 - fire source
-- fixed location projector
-- fixed rotation projector
 - burning tree
 - main character idle
 - main character walk
@@ -27,11 +23,12 @@ Sprites to draw:
 - hole tile
 - hole filled tile
 
+- fixed location projector?
+- fixed rotation projector?
+
 UI to draw:
 - level selection btn
 - level selection complete btn
-- reset btn
-- back btn
 - numbers
 - background
 

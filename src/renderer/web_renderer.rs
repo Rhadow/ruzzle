@@ -112,6 +112,7 @@ impl WebRenderer {
         asset_type_map.insert(String::from("object"), AssetType::Object);
         asset_type_map.insert(String::from("character"), AssetType::Character);
         asset_type_map.insert(String::from("ruzzle_object"), AssetType::RuzzleObject);
+        asset_type_map.insert(String::from("ruzzle_ui"), AssetType::RuzzleUI);
         asset_type_map
     }
 }
