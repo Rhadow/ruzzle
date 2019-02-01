@@ -57,3 +57,17 @@ pub fn uuid() -> String {
     }
     result
 }
+
+pub fn get_object_coverage(parent_status: &StatusManager, object_status: &StatusManager) -> f64 {
+    let (ax1, ay1) = (parent_status.coordinate.x(), parent_status.coordinate.y());
+    let (ax2, ay2) = (ax1 + parent_status.width, ay1 + parent_status.height);
+    let (bx1, by1) = (object_status.coordinate.x(), object_status.coordinate.y());
+    let (bx2, by2) = (bx1 + object_status.width, by1 + object_status.height);
+    let x_diff = cmp::min(ax2 as usize, bx2 as usize) as f64 - cmp::max(ax1 as usize, bx1 as usize) as f64;
+    let y_diff = cmp::min(ay2 as usize, by2 as usize) as f64 - cmp::max(ay1 as usize, by1 as usize) as f64;
+    if x_diff < 0f64 || y_diff < 0f64 {
+        0f64
+    } else {
+        (x_diff * y_diff) / ((bx2 - bx1) * (by2 - by1))
+    }
+}

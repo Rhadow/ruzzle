@@ -5,15 +5,11 @@ use crate::game::{Asset, Direction, StatusManager, Position, World};
 use crate::game::status_manager::Status;
 use crate::game::constants::{
     CANNON_MOVE_TIME,
+    CANNON_WIDTH,
+    CANNON_HEIGHT,
     CANNON_UP_X_OFFSET,
-    CANNON_DOWN_X_OFFSET,
-    CANNON_LEFT_X_OFFSET,
-    CANNON_RIGHT_X_OFFSET,
-    CANNON_VERTICAL_WIDTH,
-    CANNON_VERTICAL_HEIGHT,
-    CANNON_HORIZONTAL_WIDTH,
-    CANNON_HORIZONTAL_HEIGHT,
     CANNON_ROTATION_ANIMATION_TIME,
+    CANNON_ROTATION_ANIMATION_SPRITE_LENGTH,
 };
 
 pub struct Projector {
@@ -25,46 +21,14 @@ pub struct Projector {
 }
 
 impl Object for Projector {
-    fn asset(&self) -> &Asset {
-        &self.asset
+    fn asset(&mut self) -> &mut Asset {
+        &mut self.asset
     }
     fn status_manager(&mut self) -> &mut StatusManager {
         &mut self.status_manager
     }
     fn attribute_manager(&mut self) -> &mut AttributeManager {
         &mut self.attribute_manager
-    }
-    fn rotate(&mut self) {
-        match self.status_manager.direction {
-            Direction::Up => {
-                self.asset.set_x_offset(CANNON_UP_X_OFFSET + 2f64);
-                self.status_manager.direction = Direction::Right;
-            },
-            Direction::Right => {
-                self.asset.set_x_offset(CANNON_RIGHT_X_OFFSET + 2f64);
-                self.status_manager.direction = Direction::Down;
-            },
-            Direction::Down => {
-                self.asset.set_x_offset(CANNON_DOWN_X_OFFSET + 2f64);
-                self.status_manager.direction = Direction::Left;
-            },
-            Direction::Left => {
-                self.asset.set_x_offset(CANNON_LEFT_X_OFFSET + 2f64);
-                self.status_manager.direction = Direction::Up;
-            },
-        }
-    }
-    fn walk(&mut self, direction: Direction, world: &World) {
-        let next_position = self.status_manager.get_next_position_by_direction(&direction);
-        self.status_manager.walk_to(next_position);
-        let tile = world.get_tile_by_position(&next_position).borrow_mut();
-        let terrain = tile.terrain();
-        if let Some(terrain) = terrain {
-            let mut terrain = terrain.borrow_mut();
-            if !terrain.is_filled() {
-                terrain.set_falling_schedule(CANNON_MOVE_TIME);
-            }
-        }
     }
     fn update(&mut self, now: f64, _world: &World, audio: &mut Box<dyn AudioPlayer>) {
         if self.status_manager.time != 0f64 {
@@ -87,15 +51,7 @@ impl Object for Projector {
 
 impl Projector {
     pub fn new(position: Position, direction: Direction, asset: Asset, id: String, projection_cycle_time: f64) -> Projector {
-        let width = match direction {
-            Direction::Up | Direction::Down => CANNON_VERTICAL_WIDTH,
-            Direction::Left | Direction::Right => CANNON_HORIZONTAL_WIDTH,
-        };
-        let height = match direction {
-            Direction::Up | Direction::Down => CANNON_VERTICAL_HEIGHT,
-            Direction::Left | Direction::Right => CANNON_HORIZONTAL_HEIGHT,
-        };
-        let status_manager = StatusManager::new(position, direction, width * 2f64, height * 2f64);
+        let status_manager = StatusManager::new(position, direction, CANNON_WIDTH, CANNON_HEIGHT);
         let attribute_manager = AttributeManager {
             id,
             can_step_on: false,
@@ -120,16 +76,20 @@ impl Projector {
         }
     }
     fn animate_idle (&mut self) {
-        let asset_x_offset = match self.status_manager.direction {
-            Direction::Up => CANNON_UP_X_OFFSET,
-            Direction::Right => CANNON_RIGHT_X_OFFSET,
-            Direction::Down => CANNON_DOWN_X_OFFSET,
-            Direction::Left => CANNON_LEFT_X_OFFSET,
-        };
-        if self.asset.get_x_offset() != asset_x_offset {
+        let direction = self.status_manager().direction;
+        let target_x_offset = self.asset.get_x_offset_by_direction(direction);
+        let current_x_offset = self.asset.get_x_offset();
+        if current_x_offset != target_x_offset {
             if self.status_manager.delta_time >= CANNON_ROTATION_ANIMATION_TIME {
-                self.asset.set_x_offset(asset_x_offset);
+                self.asset.set_x_offset(target_x_offset);
                 self.status_manager.delta_time = 0f64;
+            } else {
+                let x_offset = if target_x_offset - 2f64 >= 0f64 {
+                    target_x_offset - 2f64
+                 } else {
+                    CANNON_UP_X_OFFSET + (CANNON_ROTATION_ANIMATION_SPRITE_LENGTH * 2) as f64 - 2f64
+                 };
+                self.asset.set_x_offset(x_offset);
             }
         } else {
             self.status_manager.delta_time = 0f64;

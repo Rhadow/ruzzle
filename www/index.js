@@ -37,10 +37,13 @@ function loadAssets() {
 
 function bindControllerEvents(webClient) {
     document.getElementById("canvas").addEventListener("mousedown", (e) => {
-        webClient.handle_mousedown(e.offsetX, e.offsetY);
+        webClient.handle_mouse_down(e.offsetX, e.offsetY);
     });
     document.getElementById("canvas").addEventListener("mouseup", (e) => {
-        webClient.handle_mouseup(e.offsetX, e.offsetY);
+        webClient.handle_mouse_up(e.offsetX, e.offsetY);
+    });
+    document.getElementById("canvas").addEventListener("mousemove", (e) => {
+        webClient.handle_mouse_move(e.offsetX, e.offsetY);
     });
     window.addEventListener("keydown", (e) => {
         webClient.handle_keydown(e.key, performance.now());

@@ -1,4 +1,4 @@
-use web_sys::console::log_1;
+// use web_sys::console::log_1;
 use super::{AttributeManager, Object};
 use crate::audio::AudioPlayer;
 use crate::game::{Asset, AssetType, Direction, Status, StatusManager, Position, World};
@@ -19,8 +19,8 @@ pub struct BreakableWall {
 }
 
 impl Object for BreakableWall {
-    fn asset(&self) -> &Asset {
-        &self.asset
+    fn asset(&mut self) -> &mut Asset {
+        &mut self.asset
     }
     fn status_manager(&mut self) -> &mut StatusManager {
         &mut self.status_manager
@@ -65,7 +65,6 @@ impl BreakableWall {
     }
     fn animate_dead (&mut self, _audio: &mut Box<dyn AudioPlayer>) {
         self.update_dead_sprite();
-        log_1(&format!("{}", self.status_manager.delta_time).into());
         if self.status_manager.delta_time >= SMOKE_ANIMATION_TIME {
             self.attribute_manager.is_visible = false;
         }

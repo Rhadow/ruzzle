@@ -20,6 +20,7 @@
     "BF": Burning Fire Source,
     "NF": Non-Burning Fire Source,
     "BW": BreakableWall,
+    "SP": Spawning point,
 */
 use crate::utils::uuid;
 use std::cell::RefCell;
@@ -44,6 +45,7 @@ use crate::game::object::{
     FireSource,
     Wall,
     BreakableWall,
+    SpawningPoint,
 };
 use crate::game::constants::{
     WORLD_WIDTH_IN_TILES,
@@ -76,10 +78,8 @@ use crate::game::constants::{
     CANNON_LEFT_Y_OFFSET,
     CANNON_RIGHT_X_OFFSET,
     CANNON_RIGHT_Y_OFFSET,
-    CANNON_VERTICAL_WIDTH,
-    CANNON_VERTICAL_HEIGHT,
-    CANNON_HORIZONTAL_WIDTH,
-    CANNON_HORIZONTAL_HEIGHT,
+    CANNON_WIDTH,
+    CANNON_HEIGHT,
     SLOW_CANNON_PROJECT_CYCLE,
     FAST_CANNON_PROJECT_CYCLE,
     FIRE_SOURCE_X_OFFSET,
@@ -93,6 +93,10 @@ use crate::game::constants::{
     BREAKABLE_WALL_Y_OFFSET,
     BREAKABLE_WALL_WIDTH,
     BREAKABLE_WALL_HEIGHT,
+    SPAWNING_POINT_X_OFFSET,
+    SPAWNING_POINT_Y_OFFSET,
+    SPAWNING_POINT_WIDTH,
+    SPAWNING_POINT_HEIGHT,
 };
 use super::level00::LEVEL00;
 use super::level01::LEVEL01;
@@ -171,6 +175,7 @@ impl LevelManager {
                 "RF" => self.create_cannon(position, Direction::Right, uuid(), FAST_CANNON_PROJECT_CYCLE),
                 "BF" => self.create_fire_source(position, uuid(), 1),
                 "NF" => self.create_fire_source(position, uuid(), 0),
+                "SP" => self.create_spawning_point(position, uuid()),
                 _ => None
             };
 
@@ -189,6 +194,8 @@ impl LevelManager {
             GRASS_LAND_Y_OFFSET,
             GRASS_LAND_SIZE,
             GRASS_LAND_SIZE,
+            None,
+            None,
         );
         Some(RefCell::new(Box::new(Land::new(position, asset))))
     }
@@ -200,6 +207,8 @@ impl LevelManager {
             WOODEN_PATH_Y_OFFSET,
             WOODEN_PATH_SIZE,
             WOODEN_PATH_SIZE,
+            None,
+            None,
         );
         Some(RefCell::new(Box::new(Land::new(position, asset))))
     }
@@ -211,6 +220,8 @@ impl LevelManager {
             HOLE_Y_OFFSET,
             HOLE_SIZE,
             HOLE_SIZE,
+            None,
+            None,
         );
         Some(RefCell::new(Box::new(Hole::new(position, asset))))
     }
@@ -222,6 +233,8 @@ impl LevelManager {
             TREE_Y_OFFSET,
             TREE_SIZE,
             TREE_SIZE,
+            None,
+            None,
         );
         Some(RefCell::new(Box::new(Tree::new(position, asset, id))))
     }
@@ -233,6 +246,8 @@ impl LevelManager {
             ROCK_Y_OFFSET,
             ROCK_SIZE,
             ROCK_SIZE,
+            None,
+            None,
         );
         Some(RefCell::new(Box::new(Rock::new(position, asset, id))))
     }
@@ -244,43 +259,39 @@ impl LevelManager {
             CHEST_Y_OFFSET,
             CHEST_SIZE,
             CHEST_SIZE,
+            None,
+            None,
         );
         Some(RefCell::new(Box::new(Exit::new(position, asset, id))))
     }
 
     fn create_cannon(&self, position: Position, direction: Direction, id: String, projection_cycle_time: f64) -> Option<RefCell<Box<dyn Object>>> {
-        let (x, y, w, h) = match direction {
+        let (x, y) = match direction {
             Direction::Down => (
                 CANNON_DOWN_X_OFFSET,
                 CANNON_DOWN_Y_OFFSET,
-                CANNON_VERTICAL_WIDTH,
-                CANNON_VERTICAL_HEIGHT
             ),
             Direction::Up => (
                 CANNON_UP_X_OFFSET,
                 CANNON_UP_Y_OFFSET,
-                CANNON_VERTICAL_WIDTH,
-                CANNON_VERTICAL_HEIGHT
             ),
             Direction::Right => (
                 CANNON_RIGHT_X_OFFSET,
                 CANNON_RIGHT_Y_OFFSET,
-                CANNON_HORIZONTAL_WIDTH,
-                CANNON_HORIZONTAL_HEIGHT
             ),
             Direction::Left => (
                 CANNON_LEFT_X_OFFSET,
                 CANNON_LEFT_Y_OFFSET,
-                CANNON_HORIZONTAL_WIDTH,
-                CANNON_HORIZONTAL_HEIGHT
             ),
         };
         let asset = Asset::new(
             AssetType::RuzzleObject,
             x,
             y,
-            w,
-            h,
+            CANNON_WIDTH,
+            CANNON_HEIGHT,
+            Some((CANNON_UP_X_OFFSET, CANNON_RIGHT_X_OFFSET, CANNON_DOWN_X_OFFSET, CANNON_LEFT_X_OFFSET)),
+            Some((CANNON_UP_Y_OFFSET, CANNON_RIGHT_Y_OFFSET, CANNON_DOWN_Y_OFFSET, CANNON_LEFT_Y_OFFSET)),
         );
         Some(RefCell::new(Box::new(Projector::new(position, direction, asset, id, projection_cycle_time))))
     }
@@ -291,27 +302,45 @@ impl LevelManager {
             FIRE_SOURCE_Y_OFFSET,
             FIRE_SOURCE_SIZE,
             FIRE_SOURCE_SIZE,
+            None,
+            None,
         );
         Some(RefCell::new(Box::new(FireSource::new(position, asset, id, burning_level))))
     }
     fn create_wall(&self, position: Position, id: String) -> Option<RefCell<Box<dyn Object>>> {
         let asset = Asset::new(
-            AssetType::Environment,
+            AssetType::RuzzleObject,
             WALL_X_OFFSET,
             WALL_Y_OFFSET,
             WALL_WIDTH,
             WALL_HEIGHT,
+            None,
+            None,
         );
         Some(RefCell::new(Box::new(Wall::new(position, asset, id))))
     }
     fn create_breakable_wall(&self, position: Position, id: String) -> Option<RefCell<Box<dyn Object>>> {
         let asset = Asset::new(
-            AssetType::Environment,
+            AssetType::RuzzleObject,
             BREAKABLE_WALL_X_OFFSET,
             BREAKABLE_WALL_Y_OFFSET,
             BREAKABLE_WALL_WIDTH,
             BREAKABLE_WALL_HEIGHT,
+            None,
+            None,
         );
         Some(RefCell::new(Box::new(BreakableWall::new(position, asset, id))))
+    }
+    fn create_spawning_point(&self, position: Position, id: String) -> Option<RefCell<Box<dyn Object>>> {
+        let asset = Asset::new(
+            AssetType::Environment,
+            SPAWNING_POINT_X_OFFSET,
+            SPAWNING_POINT_Y_OFFSET,
+            SPAWNING_POINT_WIDTH,
+            SPAWNING_POINT_HEIGHT,
+            None,
+            None,
+        );
+        Some(RefCell::new(Box::new(SpawningPoint::new(position, asset, id))))
     }
 }

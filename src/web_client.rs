@@ -84,18 +84,24 @@ impl WebClient {
         self.current_scene.render(&self.renderer, &self.world, &self.completed_levels);
     }
 
-    pub fn handle_mousedown(&mut self, x: usize, y: usize) {
+    pub fn handle_mouse_down(&mut self, x: usize, y: usize) {
         self.controller.is_mouse_down = true;
         self.controller.mouse_x = x as f64;
         self.controller.mouse_y = y as f64;
         self.current_scene.on_mouse_down(x as f64, y as f64, &mut self.world);
     }
 
-    pub fn handle_mouseup(&mut self, x: usize, y: usize) {
+    pub fn handle_mouse_up(&mut self, x: usize, y: usize) {
         self.controller.is_mouse_down = false;
         self.controller.mouse_x = x as f64;
         self.controller.mouse_y = y as f64;
         self.current_scene.on_mouse_up(x as f64, y as f64, &mut self.world, &mut self.current_level_page);
+    }
+
+    pub fn handle_mouse_move(&mut self, x: usize, y: usize) {
+        self.controller.mouse_x = x as f64;
+        self.controller.mouse_y = y as f64;
+        self.current_scene.on_mouse_move(x as f64, y as f64, &mut self.world);
     }
 
     pub fn handle_keydown(&mut self, key: String, time: usize) {

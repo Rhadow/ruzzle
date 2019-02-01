@@ -31,6 +31,7 @@ pub struct StatusManager {
     pub height: f64,
     pub time: f64,
     pub delta_time: f64,
+    pub initial_position: Position,
 }
 
 impl StatusManager {
@@ -46,6 +47,7 @@ impl StatusManager {
             height,
             time: 0f64,
             delta_time: 0f64,
+            initial_position: position,
         }
     }
     pub fn set_width(&mut self, width: f64) {

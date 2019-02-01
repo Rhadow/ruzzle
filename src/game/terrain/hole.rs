@@ -1,12 +1,15 @@
 // use web_sys::console::log_1;
 // log_1(&format!("{}", self.objects.len()).into());
-use crate::audio::{SFX, AudioPlayer};
+use std::cell::RefCell;
+use crate::audio::{AudioPlayer};
 use super::Terrain;
-use crate::game::{Asset, Direction, StatusManager, Position, World};
-use crate::game::constants::{HOLE_X_OFFSET, HOLE_FILLED_X_OFFSET, TILE_SIZE};
+use crate::game::{Asset, Direction, Status, StatusManager, Position, World};
+use crate::game::constants::{HOLE_X_OFFSET, HOLE_FILLED_X_OFFSET, TILE_SIZE, HOLE_FALL_THRESHOLD};
+use crate::game::character::Character;
+use crate::game::object::Object;
+use crate::utils::get_object_coverage;
 
 pub struct Hole {
-    scheduled_falling_time: Option<f64>,
     asset: Asset,
     status_manager: StatusManager,
     is_filled: bool,
@@ -19,31 +22,28 @@ impl Terrain for Hole {
     fn status_manager(&self) -> &StatusManager {
         &self.status_manager
     }
-    fn set_falling_schedule(&mut self, dt: f64) {
-        self.scheduled_falling_time = Some(dt);
-    }
     fn is_filled(&self) -> bool {
         self.is_filled
     }
-    fn update(&mut self, now: f64, world: &World, audio: &mut Box<dyn AudioPlayer>) {
-        self.status_manager.update_time(now);
+    fn update(&mut self, _now: f64, world: &World, audio: &mut Box<dyn AudioPlayer>) {
         if !self.is_filled {
             if self.asset.get_x_offset() != HOLE_X_OFFSET {
                 self.asset.set_x_offset(HOLE_X_OFFSET);
             }
-            if let Some(scheduled_time) = self.scheduled_falling_time {
-                if self.status_manager.delta_time >= scheduled_time {
-                    self.handle_falling(world, audio);
-                    self.status_manager.delta_time = 0f64;
+            for obj in world.get_objects().iter() {
+                if get_object_coverage(&self.status_manager, obj.borrow_mut().status_manager()) >= HOLE_FALL_THRESHOLD {
+                    self.handle_object_falling(obj, audio);
                 }
-            } else {
-                self.status_manager.delta_time = 0f64;
+            }
+            for character in world.get_characters().iter() {
+                if get_object_coverage(&self.status_manager, character.borrow_mut().status_manager()) >= HOLE_FALL_THRESHOLD {
+                    self.handle_character_falling(character, audio);
+                }
             }
         } else {
             if self.asset.get_x_offset() != HOLE_FILLED_X_OFFSET {
                 self.asset.set_x_offset(HOLE_FILLED_X_OFFSET);
             }
-            self.status_manager.delta_time = 0f64;
         }
     }
 }
@@ -55,24 +55,27 @@ impl Hole {
             asset,
             status_manager,
             is_filled: false,
-            scheduled_falling_time: None,
         }
     }
-    fn handle_falling(&mut self, world: &World, audio: &mut Box<dyn AudioPlayer>) {
-        let object = world.get_object_by_position(&self.status_manager.position);
-        let mut player = world.player().borrow_mut();
-        if let Some(object) = object {
-            let mut object = object.borrow_mut();
-            let mut object_attribute = object.attribute_manager();
+    fn handle_character_falling(&mut self, character: &RefCell<Box<dyn Character>>, audio: &mut Box<dyn AudioPlayer>) {
+        let mut character = character.borrow_mut();
+        let character_status = character.status_manager().status;
+        let is_character_recovering = character_status == Status::Dead || character_status == Status::Respawning;
+        if !is_character_recovering {
+            character.handle_fall(audio);
+        }
+    }
+    fn handle_object_falling(&mut self, object: &RefCell<Box<dyn Object>>, audio: &mut Box<dyn AudioPlayer>) {
+        let mut object = object.borrow_mut();
+        {
+            let object_attribute = object.attribute_manager();
+            if object_attribute.is_projectile {
+                return;
+            }
             if object_attribute.is_filler {
                 self.is_filled = true;
             }
-            object_attribute.is_visible = false;
-            audio.play_sfx(SFX::RockFall);
         }
-        if player.status_manager().position == self.status_manager.position {
-            player.fall(audio);
-        }
-        self.scheduled_falling_time = None;
+        object.handle_fall(audio);
     }
 }

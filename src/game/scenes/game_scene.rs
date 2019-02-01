@@ -2,7 +2,7 @@
 use wasm_bindgen::prelude::JsValue;
 use super::{SceneType, Scene};
 use crate::renderer::Renderer;
-use crate::game::World;
+use crate::game::{Asset, AssetType, World};
 use crate::controller::Controller;
 use crate::game::constants::{
     ARROW_DOWN,
@@ -13,10 +13,12 @@ use crate::game::constants::{
     WORLD_HEIGHT_IN_TILES,
     ACTION_KEY,
     TILE_SIZE,
-    BACK_BUTTON_WIDTH,
-    BACK_BUTTON_HEIGHT,
-    RESET_BUTTON_WIDTH,
-    RESET_BUTTON_HEIGHT,
+    BACK_BUTTON_X_OFFSET,
+    BACK_BUTTON_Y_OFFSET,
+    BACK_BUTTON_SIZE,
+    RESET_BUTTON_X_OFFSET,
+    RESET_BUTTON_Y_OFFSET,
+    RESET_BUTTON_SIZE,
 };
 use crate::audio::AudioPlayer;
 
@@ -25,6 +27,8 @@ pub struct GameScene {
     next_scene_type: Option<SceneType>,
     action_timestamp: f64,
     mouse_down_coordinate: Option<(f64, f64)>,
+    reset_btn_asset: Asset,
+    back_btn_asset: Asset,
 }
 
 impl Scene for GameScene {
@@ -76,15 +80,50 @@ impl Scene for GameScene {
             self.mouse_down_coordinate = Some((mouse_x, mouse_y));
         }
     }
+    fn on_mouse_move(&mut self, mouse_x: f64, mouse_y: f64, world: &mut World) {
+        let is_menu_disabled = world.player().borrow().at_exit();
+        if !is_menu_disabled {
+            if self.is_back_btn_hovered(mouse_x, mouse_y) {
+                self.back_btn_asset.set_x_offset(BACK_BUTTON_X_OFFSET + 2f64);
+            } else {
+                self.back_btn_asset.set_x_offset(BACK_BUTTON_X_OFFSET);
+            }
+            if self.is_reset_btn_hovered(mouse_x, mouse_y) {
+                self.reset_btn_asset.set_x_offset(RESET_BUTTON_X_OFFSET + 2f64);
+            } else {
+                self.reset_btn_asset.set_x_offset(RESET_BUTTON_X_OFFSET);
+            }
+        }
+    }
 }
 
 impl GameScene {
     pub fn new() -> GameScene {
+        let reset_btn_asset = Asset::new(
+            AssetType::RuzzleUI,
+            RESET_BUTTON_X_OFFSET,
+            RESET_BUTTON_Y_OFFSET,
+            RESET_BUTTON_SIZE,
+            RESET_BUTTON_SIZE,
+            None,
+            None,
+        );
+        let back_btn_asset = Asset::new(
+            AssetType::RuzzleUI,
+            BACK_BUTTON_X_OFFSET,
+            BACK_BUTTON_Y_OFFSET,
+            BACK_BUTTON_SIZE,
+            BACK_BUTTON_SIZE,
+            None,
+            None,
+        );
         GameScene {
             scene_type: SceneType::Game,
             next_scene_type: None,
             action_timestamp: 0f64,
             mouse_down_coordinate: None,
+            reset_btn_asset,
+            back_btn_asset,
         }
     }
     fn check_direction_event(&mut self, controller: &mut Controller, world: &mut World) {
@@ -132,34 +171,31 @@ impl GameScene {
         renderer.draw_characters(characters);
     }
     fn render_menu(&self, renderer: &Renderer) {
-        for col in 0..WORLD_HEIGHT_IN_TILES {
-            let x = WORLD_WIDTH_IN_TILES as f64 * TILE_SIZE;
-            let y = col as f64 * TILE_SIZE;
-            let menu_background_color = JsValue::from_str("#393852");
-            let reset_btn_color = JsValue::from_str("#ff4711");
-            let back_btn_color = JsValue::from_str("#4782c9");
-            let mut color = menu_background_color;
-            if col == WORLD_HEIGHT_IN_TILES - 1 {
-                color = back_btn_color;
-            } else if col == WORLD_HEIGHT_IN_TILES - 2 {
-                color = reset_btn_color;
-            }
-            renderer.draw_rectangle(x, y, TILE_SIZE, TILE_SIZE, &color);
-        }
+        let x = WORLD_WIDTH_IN_TILES as f64 * TILE_SIZE;
+        let y = 0f64;
+        let menu_background_color = JsValue::from_str("#555555");
+        renderer.draw_rectangle(x, y, TILE_SIZE, TILE_SIZE * WORLD_HEIGHT_IN_TILES as f64, &menu_background_color);
+        renderer.draw_asset_by_coordinate(&self.reset_btn_asset, x, TILE_SIZE * (WORLD_HEIGHT_IN_TILES - 2) as f64, RESET_BUTTON_SIZE, RESET_BUTTON_SIZE);
+        renderer.draw_asset_by_coordinate(&self.back_btn_asset, x, TILE_SIZE * (WORLD_HEIGHT_IN_TILES - 1) as f64, RESET_BUTTON_SIZE, RESET_BUTTON_SIZE);
     }
-
     fn is_back_btn_pressed (&self, down_x: f64, down_y: f64, up_x: f64, up_y: f64) -> bool {
-        let x0 = WORLD_WIDTH_IN_TILES as f64 * TILE_SIZE;
-        let x1 = x0 + BACK_BUTTON_WIDTH;
-        let y1 = WORLD_HEIGHT_IN_TILES as f64 * TILE_SIZE;
-        let y0 = y1 - BACK_BUTTON_HEIGHT;
-        self.is_mouse_inside_box(down_x, down_y, up_x, up_y, x0, y0, x1, y1)
+        self.is_back_btn_hovered(down_x, down_y) && self.is_back_btn_hovered(up_x, up_y)
     }
     fn is_reset_btn_pressed (&self, down_x: f64, down_y: f64, up_x: f64, up_y: f64) -> bool {
+        self.is_reset_btn_hovered(down_x, down_y) && self.is_reset_btn_hovered(up_x, up_y)
+    }
+    fn is_back_btn_hovered (&self, x: f64, y: f64) -> bool {
         let x0 = WORLD_WIDTH_IN_TILES as f64 * TILE_SIZE;
-        let x1 = x0 + RESET_BUTTON_WIDTH;
-        let y1 = WORLD_HEIGHT_IN_TILES as f64 * TILE_SIZE - BACK_BUTTON_HEIGHT;
-        let y0 = y1 - RESET_BUTTON_HEIGHT;
-        self.is_mouse_inside_box(down_x, down_y, up_x, up_y, x0, y0, x1, y1)
+        let x1 = x + BACK_BUTTON_SIZE;
+        let y1 = WORLD_HEIGHT_IN_TILES as f64 * TILE_SIZE;
+        let y0 = y1 - BACK_BUTTON_SIZE;
+        self.is_mouse_inside_box(x, y, x0, y0, x1, y1)
+    }
+    fn is_reset_btn_hovered (&self, x: f64, y: f64) -> bool {
+        let x0 = WORLD_WIDTH_IN_TILES as f64 * TILE_SIZE;
+        let x1 = x0 + RESET_BUTTON_SIZE;
+        let y1 = WORLD_HEIGHT_IN_TILES as f64 * TILE_SIZE - BACK_BUTTON_SIZE;
+        let y0 = y1 - RESET_BUTTON_SIZE;
+        self.is_mouse_inside_box(x, y, x0, y0, x1, y1)
     }
 }

@@ -20,9 +20,9 @@ const OBJECTS: [&str; TOTAL_TILES] = [
     "  ","  ","NF","  ","  ","  ","  ","  ","W ","T ","  ","T ",
     "  ","  ","  ","  ","  ","  ","  ","  ","W ","T ","R ","T ",
     "  ","T ","T ","  ","  ","  ","DF","  ","  ","  ","T ","T ",
-    "  ","  ","  ","  ","  ","  ","  ","  ","  ","  ","  ","T ",
+    "SP","  ","  ","  ","  ","  ","  ","  ","  ","  ","  ","T ",
 ];
 
-const PLAYER_POSITION: Position = Position(1f64, 11f64);
+const PLAYER_POSITION: Position = Position(7f64, 0f64);
 
 pub const LEVEL03: ([&str; TOTAL_TILES], [&str; TOTAL_TILES], Position) = (TERRAINS, OBJECTS, PLAYER_POSITION);

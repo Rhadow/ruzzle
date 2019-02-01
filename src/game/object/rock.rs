@@ -15,26 +15,14 @@ pub struct Rock {
 }
 
 impl Object for Rock {
-    fn asset(&self) -> &Asset {
-        &self.asset
+    fn asset(&mut self) -> &mut Asset {
+        &mut self.asset
     }
     fn status_manager(&mut self) -> &mut StatusManager {
         &mut self.status_manager
     }
     fn attribute_manager(&mut self) -> &mut AttributeManager {
         &mut self.attribute_manager
-    }
-    fn walk(&mut self, direction: Direction, world: &World) {
-        let next_position = self.status_manager.get_next_position_by_direction(&direction);
-        self.status_manager.walk_to(next_position);
-        let tile = world.get_tile_by_position(&next_position).borrow_mut();
-        let terrain = tile.terrain();
-        if let Some(terrain) = terrain {
-            let mut terrain = terrain.borrow_mut();
-            if !terrain.is_filled() {
-                terrain.set_falling_schedule(ROCK_MOVE_TIME);
-            }
-        }
     }
     fn update(&mut self, now: f64, _world: &World, audio: &mut Box<dyn AudioPlayer>) {
         self.status_manager.update_time(now);

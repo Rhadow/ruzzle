@@ -136,6 +136,8 @@ impl World {
                     PROJECTILE_Y_OFFSET,
                     PROJECTILE_SIZE,
                     PROJECTILE_SIZE,
+                    None,
+                    None,
                 );
                 let position = object.status_manager().position;
                 let direction = object.status_manager().direction;

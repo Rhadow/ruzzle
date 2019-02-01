@@ -185,14 +185,14 @@ impl LevelSelectionScene {
         let x1 = x0 + PAGE_BUTTON_WIDTH;
         let y0 = self.height / 2f64 - PAGE_BUTTON_HEIGHT;
         let y1 = y0 + PAGE_BUTTON_HEIGHT;
-        self.is_mouse_inside_box(down_x, down_y, up_x, up_y, x0, y0, x1, y1)
+        self.is_pressed_inside_box(down_x, down_y, up_x, up_y, x0, y0, x1, y1)
     }
     fn is_last_page_pressed (&self, down_x: f64, down_y: f64, up_x: f64, up_y: f64) -> bool {
         let x0 = self.horizontal_padding / 2f64 - PAGE_BUTTON_WIDTH;
         let x1 = x0 + PAGE_BUTTON_WIDTH;
         let y0 = self.height / 2f64 - PAGE_BUTTON_HEIGHT;
         let y1 = y0 + PAGE_BUTTON_HEIGHT;
-        self.is_mouse_inside_box(down_x, down_y, up_x, up_y, x0, y0, x1, y1)
+        self.is_pressed_inside_box(down_x, down_y, up_x, up_y, x0, y0, x1, y1)
     }
 
     fn draw_level_block(&self, renderer: &Renderer, x: f64, y: f64, level: usize, completed_levels: &Vec<bool>) {
@@ -220,13 +220,15 @@ impl LevelSelectionScene {
                 '9' => Some((NINE_X_OFFSET, NINE_Y_OFFSET)),
                 _ => None,
             };
-            if let Some((num_x_offet, num_y_offset)) = num {
+            if let Some((num_x_offset, num_y_offset)) = num {
                 let asset = Asset::new(
                     AssetType::Object,
-                    num_x_offet,
+                    num_x_offset,
                     num_y_offset,
                     DIGIT_WIDTH,
                     DIGIT_HEIGHT,
+                    None,
+                    None,
                 );
                 renderer.draw_asset_by_coordinate(&asset, digit_x, digit_y, DIGIT_WIDTH, DIGIT_HEIGHT);
             }

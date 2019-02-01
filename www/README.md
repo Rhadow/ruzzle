@@ -12,6 +12,7 @@ TODO:
 
 Sprites to draw:
 
+- spawing point
 - fire source
 - burning tree
 - main character idle
@@ -32,6 +33,7 @@ UI to draw:
 - numbers
 - background
 
+Programming:
 
 Level Design:
 - double fast cannon shoot, player use stone to block cannon

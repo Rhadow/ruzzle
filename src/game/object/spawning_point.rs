@@ -1,17 +1,16 @@
 use super::{AttributeManager, Object};
 use crate::game::{Asset, Direction, StatusManager, Position};
 use crate::game::constants::{
-    WALL_WIDTH,
-    WALL_HEIGHT,
+    TILE_SIZE,
 };
 
-pub struct Wall {
+pub struct SpawningPoint {
     asset: Asset,
     status_manager: StatusManager,
     attribute_manager: AttributeManager,
 }
 
-impl Object for Wall {
+impl Object for SpawningPoint {
     fn asset(&mut self) -> &mut Asset {
         &mut self.asset
     }
@@ -23,16 +22,16 @@ impl Object for Wall {
     }
 }
 
-impl Wall {
-    pub fn new(position: Position, asset: Asset, id: String) -> Wall {
-        let status_manager = StatusManager::new(position, Direction::Down, WALL_WIDTH, WALL_HEIGHT);
+impl SpawningPoint {
+    pub fn new(position: Position, asset: Asset, id: String) -> SpawningPoint {
+        let status_manager = StatusManager::new(position, Direction::Down, TILE_SIZE, TILE_SIZE);
         let attribute_manager = AttributeManager {
             id,
-            can_step_on: false,
-            can_fly_through: false,
+            can_step_on: true,
+            can_fly_through: true,
             is_visible: true,
             is_pushable: false,
-            is_filler: true,
+            is_filler: false,
             is_rotatable: false,
             is_projectile: false,
             is_projecting: false,
@@ -41,7 +40,7 @@ impl Wall {
             burning_level: 0,
             burn_down_time: 0f64,
         };
-        Wall {
+        SpawningPoint {
             asset,
             status_manager,
             attribute_manager,

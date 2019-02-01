@@ -10,8 +10,8 @@ pub struct Exit {
 }
 
 impl Object for Exit {
-    fn asset(&self) -> &Asset {
-        &self.asset
+    fn asset(&mut self) -> &mut Asset {
+        &mut self.asset
     }
     fn status_manager(&mut self) -> &mut StatusManager {
         &mut self.status_manager
