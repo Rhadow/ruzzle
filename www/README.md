@@ -9,10 +9,10 @@ A puzzle game inspired by Breath of the wild made by rust and webassembly.
 * Sound effects by phoenix1291
 
 TODO:
+http://blog.studiominiboss.com/pixelart
 
 Sprites to draw:
 
-- spawing point
 - fire source
 - burning tree
 - main character idle
@@ -23,6 +23,7 @@ Sprites to draw:
 - grass tile
 - hole tile
 - hole filled tile
+- exit
 
 - fixed location projector?
 - fixed rotation projector?
