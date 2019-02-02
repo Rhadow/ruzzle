@@ -21,8 +21,6 @@ Sprites to draw:
 - main character death
 - smoke effect
 - grass tile
-- hole tile
-- hole filled tile
 - exit
 
 - fixed location projector?

@@ -118,9 +118,9 @@ pub const ROCK_Y_OFFSET: f64 = 2f64;
 pub const ROCK_SIZE: f64 = 32f64;
 pub const ROCK_MOVE_TIME: f64 = 280f64;
 
-pub const HOLE_X_OFFSET: f64 = 35f64;
-pub const HOLE_FILLED_X_OFFSET: f64 = 33f64;
-pub const HOLE_Y_OFFSET: f64 = 3f64;
+pub const HOLE_X_OFFSET: f64 = 0f64;
+pub const HOLE_FILLED_X_OFFSET: f64 = 2f64;
+pub const HOLE_Y_OFFSET: f64 = 0f64;
 pub const HOLE_SIZE: f64 = 32f64;
 pub const HOLE_FALL_THRESHOLD: f64 = 0.9f64;
 

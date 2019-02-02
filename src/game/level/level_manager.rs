@@ -240,7 +240,7 @@ impl LevelManager {
 
     fn create_hole(&self, position: Position) -> Option<RefCell<Box<dyn Terrain>>> {
         let asset = Asset::new(
-            AssetType::Environment,
+            AssetType::RuzzleEnvironment,
             HOLE_X_OFFSET,
             HOLE_Y_OFFSET,
             HOLE_SIZE,

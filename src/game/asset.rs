@@ -7,6 +7,7 @@ pub enum AssetType {
     Object,
     RuzzleObject,
     RuzzleUI,
+    RuzzleEnvironment,
 }
 
 pub struct Asset {
