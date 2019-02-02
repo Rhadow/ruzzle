@@ -1,6 +1,10 @@
+// use web_sys::console::log_1;
 use crate::game::{Asset, Direction, StatusManager, Status, World};
 use crate::game::character::Player;
 use crate::audio::{SFX, AudioPlayer};
+use crate::utils::check_collision;
+use crate::game::constants::MAX_BURNING_LEVEL;
+
 pub mod tree;
 pub mod rock;
 pub mod exit;
@@ -25,11 +29,11 @@ pub trait Object {
     fn status_manager(&mut self) -> &mut StatusManager;
     fn attribute_manager(&mut self) -> &mut AttributeManager;
     fn update(&mut self, _now: f64, _world: &World, _audio: &mut Box<dyn AudioPlayer>) {}
+    fn interact(&mut self, _player: &mut Player) {}
     fn handle_fall(&mut self, audio: &mut Box<dyn AudioPlayer>) {
         self.attribute_manager().is_visible = false;
         audio.play_sfx(SFX::RockFall);
     }
-    fn interact(&mut self, _player: &mut Player) {}
     fn walk(&mut self, direction: Direction, _world: &World) {
         let next_position = self.status_manager().get_next_position_by_direction(&direction);
         self.status_manager().walk_to(next_position);
@@ -65,6 +69,43 @@ pub trait Object {
             },
         }
     }
+    fn handle_ignite(&mut self) {
+        let is_burning = self.attribute_manager().burning_level > 0;
+        let is_burnable = self.attribute_manager().is_burnable;
+        let ignite_timer = self.status_manager().ignite_timer;
+        let ignite_time = self.attribute_manager().ignite_time;
+        if is_burnable && !is_burning {
+            // Ignite timer are calculated through frames instead of millisecond, think of it as temperature
+            self.status_manager().ignite_timer = ignite_timer + 1f64;
+            if self.status_manager().ignite_timer >= ignite_time {
+                self.attribute_manager().burning_level = 1;
+                self.status_manager().burning_timer = 0f64;
+            }
+        }
+    }
+    fn handle_fire_logic(&mut self, world: &World) {
+        let dt_per_burning_level = self.attribute_manager().burn_down_time / MAX_BURNING_LEVEL as f64;
+        for object in world.get_objects() {
+            if object.try_borrow_mut().is_err() {
+                continue;
+            }
+            let mut object = object.borrow_mut();
+            let is_object_visible = object.attribute_manager().is_visible;
+            if is_object_visible {
+                let is_collided = check_collision(object.status_manager(), &self.status_manager());
+                if is_collided {
+                    object.handle_ignite();
+                }
+            }
+        }
+        if self.status_manager().burning_timer > dt_per_burning_level {
+            self.attribute_manager().burning_level += 1;
+            self.status_manager().burning_timer = 0f64;
+            if self.attribute_manager().burning_level > MAX_BURNING_LEVEL {
+                self.attribute_manager().is_visible = false;
+            }
+        }
+    }
 }
 
 pub struct AttributeManager {
@@ -81,4 +122,5 @@ pub struct AttributeManager {
     pub is_breakable: bool,
     pub burning_level: isize,
     pub burn_down_time: f64,
+    pub ignite_time: f64,
 }

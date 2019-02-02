@@ -2,14 +2,14 @@ use crate::game::constants::TOTAL_TILES;
 use crate::game::Position;
 
 const TERRAINS: [&str; TOTAL_TILES] = [
-    "G ","G ","G ","G ","G ","G ","G ","G ","G ","G ","G ","G ",
-    "G ","H ","G ","G ","G ","G ","G ","G ","G ","G ","G ","G ",
-    "G ","G ","G ","G ","G ","G ","G ","G ","G ","G ","G ","G ",
-    "G ","WP","G ","WP","WP","WP","WP","WP","G ","G ","G ","G ",
-    "G ","G ","G ","G ","G ","G ","G ","WP","WP","G ","G ","G ",
-    "H ","WP","G ","G ","G ","G ","G ","G ","WP","G ","G ","G ",
-    "G ","G ","G ","G ","G ","G ","G ","G ","WP","WP","WP","WP",
-    "G ","G ","G ","G ","G ","G ","G ","G ","G ","G ","G ","G ",
+    "G1","G1","G1","G1","G1","G1","G1","G1","G1","G1","G1","G1",
+    "G1","H ","G1","G1","G1","G1","G1","G1","G1","G1","G1","G1",
+    "G1","G1","G1","G1","G1","G1","G1","G1","G1","G1","G1","G1",
+    "G1","WP","G1","WP","WP","WP","WP","WP","G1","G1","G1","G1",
+    "G1","G1","G1","G1","G1","G1","G1","WP","WP","G1","G1","G1",
+    "H ","WP","G1","G1","G1","G1","G1","G1","WP","G1","G1","G1",
+    "G1","G1","G1","G1","G1","G1","G1","G1","WP","WP","WP","WP",
+    "G1","G1","G1","G1","G1","G1","G1","G1","G1","G1","G1","G1",
 ];
 
 const OBJECTS: [&str; TOTAL_TILES] = [

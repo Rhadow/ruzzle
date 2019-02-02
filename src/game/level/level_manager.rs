@@ -1,6 +1,9 @@
 /*
     Environment:
-    "G" : GrassLand,
+    "G1" : GrassLand1,
+    "G2" : GrassLand2,
+    "G3" : GrassLand3,
+    "G4" : GrassLand4,
     "WP": WoodenPath,
     "H" : Hole,
 
@@ -51,8 +54,14 @@ use crate::game::constants::{
     WORLD_WIDTH_IN_TILES,
     TOTAL_TILES,
     // Terrain
-    GRASS_LAND_X_OFFSET,
-    GRASS_LAND_Y_OFFSET,
+    GRASS_LAND_ONE_X_OFFSET,
+    GRASS_LAND_ONE_Y_OFFSET,
+    GRASS_LAND_TWO_X_OFFSET,
+    GRASS_LAND_TWO_Y_OFFSET,
+    GRASS_LAND_THREE_X_OFFSET,
+    GRASS_LAND_THREE_Y_OFFSET,
+    GRASS_LAND_FOUR_X_OFFSET,
+    GRASS_LAND_FOUR_Y_OFFSET,
     GRASS_LAND_SIZE,
     WOODEN_PATH_X_OFFSET,
     WOODEN_PATH_Y_OFFSET,
@@ -82,8 +91,10 @@ use crate::game::constants::{
     CANNON_HEIGHT,
     SLOW_CANNON_PROJECT_CYCLE,
     FAST_CANNON_PROJECT_CYCLE,
-    FIRE_SOURCE_X_OFFSET,
-    FIRE_SOURCE_Y_OFFSET,
+    FIRE_SOURCE_OFF_X_OFFSET,
+    FIRE_SOURCE_OFF_Y_OFFSET,
+    FIRE_SOURCE_ON_X_OFFSET,
+    FIRE_SOURCE_ON_Y_OFFSET,
     FIRE_SOURCE_SIZE,
     WALL_X_OFFSET,
     WALL_Y_OFFSET,
@@ -153,7 +164,10 @@ impl LevelManager {
             let position = self.index_to_position(i);
 
             let terrain: Option<RefCell<Box<dyn Terrain>>> = match String::from(terrain.trim()).to_uppercase().as_str() {
-                "G" => self.create_grass_land(position),
+                "G1" => self.create_grass_land(position, 1),
+                "G2" => self.create_grass_land(position, 2),
+                "G3" => self.create_grass_land(position, 3),
+                "G4" => self.create_grass_land(position, 4),
                 "WP" => self.create_wooden_path(position),
                 "H" => self.create_hole(position),
                 _ => None
@@ -187,17 +201,28 @@ impl LevelManager {
         (tiles, all_objects)
     }
 
-    fn create_grass_land(&self, position: Position) -> Option<RefCell<Box<dyn Terrain>>> {
-        let asset = Asset::new(
-            AssetType::Environment,
-            GRASS_LAND_X_OFFSET,
-            GRASS_LAND_Y_OFFSET,
-            GRASS_LAND_SIZE,
-            GRASS_LAND_SIZE,
-            None,
-            None,
-        );
-        Some(RefCell::new(Box::new(Land::new(position, asset))))
+    fn create_grass_land(&self, position: Position, land_type: i8) -> Option<RefCell<Box<dyn Terrain>>> {
+        let offsets = match land_type {
+            1 => Some((GRASS_LAND_ONE_X_OFFSET, GRASS_LAND_ONE_Y_OFFSET)),
+            2 => Some((GRASS_LAND_TWO_X_OFFSET, GRASS_LAND_TWO_Y_OFFSET)),
+            3 => Some((GRASS_LAND_THREE_X_OFFSET, GRASS_LAND_THREE_Y_OFFSET)),
+            4 => Some((GRASS_LAND_FOUR_X_OFFSET, GRASS_LAND_FOUR_Y_OFFSET)),
+            _ => None
+        };
+        if let Some((x_offset, y_offset)) = offsets {
+            let asset = Asset::new(
+                AssetType::Environment,
+                x_offset,
+                y_offset,
+                GRASS_LAND_SIZE,
+                GRASS_LAND_SIZE,
+                None,
+                None,
+            );
+            Some(RefCell::new(Box::new(Land::new(position, asset))))
+        } else {
+            None
+        }
     }
 
     fn create_wooden_path(&self, position: Position) -> Option<RefCell<Box<dyn Terrain>>> {
@@ -297,9 +322,9 @@ impl LevelManager {
     }
     fn create_fire_source(&self, position: Position, id: String, burning_level: isize) -> Option<RefCell<Box<dyn Object>>> {
         let asset = Asset::new(
-            AssetType::Object,
-            FIRE_SOURCE_X_OFFSET,
-            FIRE_SOURCE_Y_OFFSET,
+            AssetType::RuzzleObject,
+            if burning_level > 0 { FIRE_SOURCE_ON_X_OFFSET } else {FIRE_SOURCE_OFF_X_OFFSET},
+            if burning_level > 0 { FIRE_SOURCE_ON_Y_OFFSET } else {FIRE_SOURCE_OFF_Y_OFFSET},
             FIRE_SOURCE_SIZE,
             FIRE_SOURCE_SIZE,
             None,
@@ -333,7 +358,7 @@ impl LevelManager {
     }
     fn create_spawning_point(&self, position: Position, id: String) -> Option<RefCell<Box<dyn Object>>> {
         let asset = Asset::new(
-            AssetType::Environment,
+            AssetType::RuzzleObject,
             SPAWNING_POINT_X_OFFSET,
             SPAWNING_POINT_Y_OFFSET,
             SPAWNING_POINT_WIDTH,

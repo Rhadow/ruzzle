@@ -75,6 +75,7 @@ impl Projectile {
             is_breakable: true,
             burning_level: 0,
             burn_down_time: 0f64,
+            ignite_time: 0f64,
         };
         Projectile {
             asset,
@@ -145,7 +146,7 @@ impl Projectile {
                 }
                 if self.attribute_manager.burning_level > 0 && is_object_burnable && !is_object_burning {
                     object.attribute_manager().burning_level += 1;
-                    let object_status = object.status_manager().status.clone();
+                    let object_status = object.status_manager().status;
                     if object_status != Status::Walking {
                         object.status_manager().delta_time = 0f64;
                     }

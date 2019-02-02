@@ -1,6 +1,5 @@
 use super::{AttributeManager, Object};
 use crate::game::{Asset, Direction, Status, StatusManager, Position, World};
-use crate::utils::check_collision;
 use crate::audio::AudioPlayer;
 use crate::game::constants::{
     TILE_SIZE,
@@ -8,8 +7,8 @@ use crate::game::constants::{
     TREE_BURNING_Y_OFFSET,
     TREE_BURNING_END_X_OFFSET,
     TREE_BURNING_END_Y_OFFSET,
-    MAX_BURNING_LEVEL,
     TREE_BURN_DOWN_TIME,
+    TREE_IGNITE_FRAMES,
 };
 
 pub struct Tree {
@@ -34,10 +33,11 @@ impl Object for Tree {
             Status::Idle => {
                 if self.attribute_manager.burning_level > 0 {
                     self.animate_burning();
-                    self.handle_burning_logic(world);
+                    self.handle_fire_logic(world);
                 } else {
-                    self.status_manager.delta_time = 0f64;
+                    self.status_manager.burning_timer = 0f64;
                 }
+                self.status_manager.delta_time = 0f64;
             }
             _ => (),
         }
@@ -61,6 +61,7 @@ impl Tree {
             is_breakable: false,
             burning_level: 0,
             burn_down_time: TREE_BURN_DOWN_TIME,
+            ignite_time: TREE_IGNITE_FRAMES,
         };
         Tree {
             attribute_manager,
@@ -79,42 +80,6 @@ impl Tree {
                 self.asset.set_y_offset(TREE_BURNING_END_Y_OFFSET);
             },
             _ => (),
-        }
-    }
-
-    fn handle_burning_logic(&mut self, world: &World) {
-        let dt_per_burning_level = self.attribute_manager.burn_down_time / MAX_BURNING_LEVEL as f64;
-        for object in world.get_objects() {
-            if object.try_borrow_mut().is_err() {
-                continue;
-            }
-            let mut object = object.borrow_mut();
-            let is_object_burnable = object.attribute_manager().is_burnable;
-            let is_object_visible = object.attribute_manager().is_visible;
-            let is_object_burning = object.attribute_manager().burning_level > 0;
-            let is_object_projectile = object.attribute_manager().is_projectile;
-            if is_object_visible {
-                let is_collided = check_collision(object.status_manager(), &self.status_manager);
-                if is_collided && is_object_burnable && !is_object_burning {
-                    if is_object_projectile {
-                        object.attribute_manager().burning_level = 1;
-                    } else {
-                        let object_dt_per_burning_level = object.attribute_manager().burn_down_time / MAX_BURNING_LEVEL as f64;
-                        if self.status_manager.delta_time > object_dt_per_burning_level {
-                            object.attribute_manager().burning_level = 1;
-                            object.status_manager().delta_time = 0f64;
-                        }
-                    }
-
-                }
-            }
-        }
-        if self.status_manager.delta_time > dt_per_burning_level {
-            self.attribute_manager.burning_level += 1;
-            self.status_manager.delta_time = 0f64;
-            if self.attribute_manager.burning_level > MAX_BURNING_LEVEL {
-                self.attribute_manager.is_visible = false;
-            }
         }
     }
 }

@@ -51,6 +51,7 @@ impl Rock {
             is_breakable: false,
             burning_level: 0,
             burn_down_time: 0f64,
+            ignite_time: 0f64,
         };
         Rock {
             asset,

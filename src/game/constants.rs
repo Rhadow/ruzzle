@@ -88,8 +88,14 @@ pub const PLAYER_EXITING_ANIMATION_SPRITE_LENGTH: isize = 4;
 pub const PLAYER_ROTATION_LAG: f64 = 55f64;
 
 // Terrains
-pub const GRASS_LAND_X_OFFSET: f64 = 7f64;
-pub const GRASS_LAND_Y_OFFSET: f64 = 9f64;
+pub const GRASS_LAND_ONE_X_OFFSET: f64 = 7f64;
+pub const GRASS_LAND_ONE_Y_OFFSET: f64 = 9f64;
+pub const GRASS_LAND_TWO_X_OFFSET: f64 = 7f64;
+pub const GRASS_LAND_TWO_Y_OFFSET: f64 = 9f64;
+pub const GRASS_LAND_THREE_X_OFFSET: f64 = 7f64;
+pub const GRASS_LAND_THREE_Y_OFFSET: f64 = 9f64;
+pub const GRASS_LAND_FOUR_X_OFFSET: f64 = 7f64;
+pub const GRASS_LAND_FOUR_Y_OFFSET: f64 = 9f64;
 pub const GRASS_LAND_SIZE: f64 = 32f64;
 
 pub const WOODEN_PATH_X_OFFSET: f64 = 13f64;
@@ -103,7 +109,8 @@ pub const TREE_BURNING_X_OFFSET: f64 = 0f64;
 pub const TREE_BURNING_Y_OFFSET: f64 = 4f64;
 pub const TREE_BURNING_END_X_OFFSET: f64 = 2f64;
 pub const TREE_BURNING_END_Y_OFFSET: f64 = 4f64;
-pub const TREE_BURN_DOWN_TIME: f64 = 9900f64;
+pub const TREE_BURN_DOWN_TIME: f64 = 9_900f64;
+pub const TREE_IGNITE_FRAMES: f64 = 200f64;
 pub const TREE_SIZE: f64 = 32f64;
 
 pub const ROCK_X_OFFSET: f64 = 0f64;
@@ -150,12 +157,15 @@ pub const SMOKE_ANIMATION_TIME: f64 = 420f64;
 pub const SMOKE_ANIMATION_SPRITE_LENGTH: isize = 7;
 pub const SMOKE_SIZE: f64 = 32f64;
 
-pub const FIRE_SOURCE_X_OFFSET: f64 = 4f64;
-pub const FIRE_SOURCE_Y_OFFSET: f64 = 3f64;
-pub const FIRE_SOURCE_SIZE: f64 = 16f64;
+pub const FIRE_SOURCE_OFF_X_OFFSET: f64 = 0f64;
+pub const FIRE_SOURCE_OFF_Y_OFFSET: f64 = 8f64;
+pub const FIRE_SOURCE_ON_X_OFFSET: f64 = 2f64;
+pub const FIRE_SOURCE_ON_Y_OFFSET: f64 = 8f64;
+pub const FIRE_SOURCE_SIZE: f64 = 32f64;
 pub const FIRE_SOURCE_MOVE_TIME: f64 = 280f64;
+pub const FIRE_SOURCE_IGNITE_FRAMES: f64 = 60f64;
 pub const FIRE_ANIMATION_TIME: f64 = 500f64;
-pub const FIRE_ANIMATION_SPRITE_LENGTH: isize = 7;
+pub const FIRE_ANIMATION_SPRITE_LENGTH: isize = 1;
 
 pub const WALL_X_OFFSET: f64 = 2f64;
 pub const WALL_Y_OFFSET: f64 = 2f64;
@@ -167,7 +177,7 @@ pub const BREAKABLE_WALL_Y_OFFSET: f64 = 2f64;
 pub const BREAKABLE_WALL_WIDTH: f64 = 32f64;
 pub const BREAKABLE_WALL_HEIGHT: f64 = 32f64;
 
-pub const SPAWNING_POINT_X_OFFSET: f64 = 0f64;
-pub const SPAWNING_POINT_Y_OFFSET: f64 = 3f64;
+pub const SPAWNING_POINT_X_OFFSET: f64 = 6f64;
+pub const SPAWNING_POINT_Y_OFFSET: f64 = 2f64;
 pub const SPAWNING_POINT_WIDTH: f64 = 32f64;
 pub const SPAWNING_POINT_HEIGHT: f64 = 32f64;
