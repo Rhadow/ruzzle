@@ -1,4 +1,5 @@
 // use web_sys::console::log_1;
+// use crate::game::constants::TOTAL_TILES;
 use std::cmp;
 use crate::game::{
     Coordinate,
@@ -71,3 +72,20 @@ pub fn get_object_coverage(parent_status: &StatusManager, object_status: &Status
         (x_diff * y_diff) / ((bx2 - bx1) * (by2 - by1))
     }
 }
+
+// pub fn terrain_generator() -> Vec<&'static str> {
+//     let mut result = vec![];
+//     for _ in 0..TOTAL_TILES {
+//         let idx = js_sys::Math::random();
+//         if idx < 0.4 {
+//             result.push("G3");
+//         } else if idx < 0.8 {
+//             result.push("G4");
+//         } else if idx < 0.9 {
+//             result.push("G2");
+//         } else {
+//             result.push("G1");
+//         }
+//     }
+//     result
+// }

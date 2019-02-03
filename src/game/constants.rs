@@ -88,14 +88,14 @@ pub const PLAYER_EXITING_ANIMATION_SPRITE_LENGTH: isize = 4;
 pub const PLAYER_ROTATION_LAG: f64 = 55f64;
 
 // Terrains
-pub const GRASS_LAND_ONE_X_OFFSET: f64 = 7f64;
-pub const GRASS_LAND_ONE_Y_OFFSET: f64 = 9f64;
-pub const GRASS_LAND_TWO_X_OFFSET: f64 = 7f64;
-pub const GRASS_LAND_TWO_Y_OFFSET: f64 = 9f64;
-pub const GRASS_LAND_THREE_X_OFFSET: f64 = 7f64;
-pub const GRASS_LAND_THREE_Y_OFFSET: f64 = 9f64;
-pub const GRASS_LAND_FOUR_X_OFFSET: f64 = 7f64;
-pub const GRASS_LAND_FOUR_Y_OFFSET: f64 = 9f64;
+pub const GRASS_LAND_ONE_X_OFFSET: f64 = 0f64;
+pub const GRASS_LAND_ONE_Y_OFFSET: f64 = 2f64;
+pub const GRASS_LAND_TWO_X_OFFSET: f64 = 2f64;
+pub const GRASS_LAND_TWO_Y_OFFSET: f64 = 2f64;
+pub const GRASS_LAND_THREE_X_OFFSET: f64 = 4f64;
+pub const GRASS_LAND_THREE_Y_OFFSET: f64 = 2f64;
+pub const GRASS_LAND_FOUR_X_OFFSET: f64 = 6f64;
+pub const GRASS_LAND_FOUR_Y_OFFSET: f64 = 2f64;
 pub const GRASS_LAND_SIZE: f64 = 32f64;
 
 pub const WOODEN_PATH_X_OFFSET: f64 = 13f64;

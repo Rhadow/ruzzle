@@ -211,7 +211,7 @@ impl LevelManager {
         };
         if let Some((x_offset, y_offset)) = offsets {
             let asset = Asset::new(
-                AssetType::Environment,
+                AssetType::RuzzleEnvironment,
                 x_offset,
                 y_offset,
                 GRASS_LAND_SIZE,

@@ -1,4 +1,6 @@
 // use web_sys::console::log_1;
+// use crate::utils::terrain_generator;
+// log_1(&format!("{:?}", terrain_generator()).into());
 use wasm_bindgen::prelude::*;
 use utils::set_panic_hook;
 use web_sys::Performance;

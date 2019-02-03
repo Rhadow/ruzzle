@@ -20,7 +20,6 @@ Sprites to draw:
 - main character push
 - main character death
 - smoke effect
-- grass tile
 - exit
 
 - fixed location projector?
