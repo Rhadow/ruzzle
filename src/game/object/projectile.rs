@@ -1,4 +1,5 @@
 // use web_sys::console::log_1;
+use std::f64::INFINITY;
 use super::{AttributeManager, Object};
 use crate::audio::AudioPlayer;
 use crate::game::{Asset, Direction, StatusManager, Position, World};
@@ -35,10 +36,11 @@ impl Object for Projectile {
     }
     fn update(&mut self, now: f64, world: &World, audio: &mut Box<dyn AudioPlayer>) {
         self.status_manager.update_time(now);
-        if self.attribute_manager.burning_level == 1 {
-            self.asset.set_x_offset(PROJECTILE_BURNING_X_OFFSET);
-            self.asset.set_y_offset(PROJECTILE_BURNING_Y_OFFSET);
-            self.attribute_manager.burning_level += 1;
+        if self.attribute_manager.burning_level > 0 {
+            self.handle_fire_logic(world);
+            self.animate_burning();
+        } else {
+            self.status_manager.animation_timer = 0f64;
         }
         match self.status_manager.status {
             Status::Idle => {
@@ -74,8 +76,10 @@ impl Projectile {
             is_burnable: true,
             is_breakable: true,
             burning_level: 0,
-            burn_down_time: 0f64,
-            ignite_time: 0f64,
+            burn_down_time: INFINITY,
+            burning_point: 0f64,
+            temperature: 0f64,
+            heat: INFINITY,
         };
         Projectile {
             asset,
@@ -83,6 +87,10 @@ impl Projectile {
             attribute_manager,
             projector_id,
         }
+    }
+    fn animate_burning (&mut self) {
+        self.asset.set_x_offset(PROJECTILE_BURNING_X_OFFSET);
+        self.asset.set_y_offset(PROJECTILE_BURNING_Y_OFFSET);
     }
     fn animate_walking (&mut self, _audio: &mut Box<dyn AudioPlayer>) {
         let delta_time = self.status_manager.delta_time;
@@ -134,8 +142,6 @@ impl Projectile {
             let mut object = object.borrow_mut();
             let is_object_breakable = object.attribute_manager().is_breakable;
             let is_object_visible = object.attribute_manager().is_visible;
-            let is_object_burnable = object.attribute_manager().is_burnable;
-            let is_object_burning = object.attribute_manager().burning_level > 0;
             let object_id = object.attribute_manager().id.clone();
             let is_object_parent_projector = object_id.to_string() == self.projector_id;
             let is_collided = check_collision(object.status_manager(), &self.status_manager);
@@ -143,13 +149,6 @@ impl Projectile {
             if is_collided && !is_object_parent_projector && is_object_visible {
                 if is_object_breakable {
                     object.status_manager().set_status(Status::Dead);
-                }
-                if self.attribute_manager.burning_level > 0 && is_object_burnable && !is_object_burning {
-                    object.attribute_manager().burning_level += 1;
-                    let object_status = object.status_manager().status;
-                    if object_status != Status::Walking {
-                        object.status_manager().delta_time = 0f64;
-                    }
                 }
                 if !can_fly_through {
                     self.status_manager.set_status(Status::Dead);

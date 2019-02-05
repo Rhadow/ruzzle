@@ -30,17 +30,13 @@ impl Object for FireSource {
         &mut self.status_manager
     }
     fn update(&mut self, now: f64, world: &World, audio: &mut Box<dyn AudioPlayer>) {
-        if self.status_manager.time != 0f64 {
-            self.status_manager.delta_time += now - self.status_manager.time;
-            self.animation_timer += now - self.status_manager.time;
-        }
-        self.status_manager.time = now;
+        self.status_manager.update_time(now);
         if self.attribute_manager.burning_level > 0 {
             self.handle_fire_logic(world);
             self.animate_flame();
         } else {
             self.asset.set_x_offset(FIRE_SOURCE_OFF_X_OFFSET);
-            self.status_manager.burning_timer = 0f64;
+            self.status_manager.animation_timer = 0f64;
         }
         match self.status_manager.status {
             Status::Idle => self.animate_idle(),
@@ -67,7 +63,9 @@ impl FireSource {
             is_breakable: false,
             burning_level,
             burn_down_time: INFINITY,
-            ignite_time: FIRE_SOURCE_IGNITE_FRAMES,
+            burning_point: FIRE_SOURCE_IGNITE_FRAMES,
+            temperature: 0f64,
+            heat: 1f64,
         };
         FireSource {
             attribute_manager,

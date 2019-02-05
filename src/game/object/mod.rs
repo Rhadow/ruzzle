@@ -69,17 +69,17 @@ pub trait Object {
             },
         }
     }
-    fn handle_ignite(&mut self) {
+    fn handle_ignite(&mut self, fire_source_heat: f64) {
         let is_burning = self.attribute_manager().burning_level > 0;
         let is_burnable = self.attribute_manager().is_burnable;
-        let ignite_timer = self.status_manager().ignite_timer;
-        let ignite_time = self.attribute_manager().ignite_time;
+        let temperature = self.attribute_manager().temperature;
+        let burning_point = self.attribute_manager().burning_point;
         if is_burnable && !is_burning {
-            // Ignite timer are calculated through frames instead of millisecond, think of it as temperature
-            self.status_manager().ignite_timer = ignite_timer + 1f64;
-            if self.status_manager().ignite_timer >= ignite_time {
+            // Ignition are calculated through frames instead of millisecond, represented as temperature
+            self.attribute_manager().temperature = temperature + fire_source_heat;
+            if self.attribute_manager().temperature >= burning_point {
                 self.attribute_manager().burning_level = 1;
-                self.status_manager().burning_timer = 0f64;
+                self.status_manager().animation_timer = 0f64;
             }
         }
     }
@@ -91,16 +91,14 @@ pub trait Object {
             }
             let mut object = object.borrow_mut();
             let is_object_visible = object.attribute_manager().is_visible;
-            if is_object_visible {
-                let is_collided = check_collision(object.status_manager(), &self.status_manager());
-                if is_collided {
-                    object.handle_ignite();
-                }
+            let is_collided = check_collision(object.status_manager(), &self.status_manager());
+            if is_object_visible && is_collided {
+                object.handle_ignite(self.attribute_manager().heat);
             }
         }
-        if self.status_manager().burning_timer > dt_per_burning_level {
+        if self.status_manager().animation_timer > dt_per_burning_level {
             self.attribute_manager().burning_level += 1;
-            self.status_manager().burning_timer = 0f64;
+            self.status_manager().animation_timer = 0f64;
             if self.attribute_manager().burning_level > MAX_BURNING_LEVEL {
                 self.attribute_manager().is_visible = false;
             }
@@ -122,5 +120,7 @@ pub struct AttributeManager {
     pub is_breakable: bool,
     pub burning_level: isize,
     pub burn_down_time: f64,
-    pub ignite_time: f64,
+    pub burning_point: f64,
+    pub temperature: f64,
+    pub heat: f64,
 }

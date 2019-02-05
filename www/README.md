@@ -13,8 +13,8 @@ http://blog.studiominiboss.com/pixelart
 
 Sprites to draw:
 
-- fire source
-- burning tree
+- fire source animation
+- burning tree animation
 - main character idle
 - main character walk
 - main character push

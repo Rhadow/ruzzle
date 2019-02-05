@@ -29,14 +29,14 @@ impl Object for Tree {
     }
     fn update(&mut self, now: f64, world: &World, _audio: &mut Box<dyn AudioPlayer>) {
         self.status_manager.update_time(now);
+        if self.attribute_manager.burning_level > 0 {
+            self.handle_fire_logic(world);
+            self.animate_burning();
+        } else {
+            self.status_manager.animation_timer = 0f64;
+        }
         match self.status_manager.status {
             Status::Idle => {
-                if self.attribute_manager.burning_level > 0 {
-                    self.animate_burning();
-                    self.handle_fire_logic(world);
-                } else {
-                    self.status_manager.burning_timer = 0f64;
-                }
                 self.status_manager.delta_time = 0f64;
             }
             _ => (),
@@ -61,7 +61,9 @@ impl Tree {
             is_breakable: false,
             burning_level: 0,
             burn_down_time: TREE_BURN_DOWN_TIME,
-            ignite_time: TREE_IGNITE_FRAMES,
+            burning_point: TREE_IGNITE_FRAMES,
+            temperature: 0f64,
+            heat: 1f64,
         };
         Tree {
             attribute_manager,

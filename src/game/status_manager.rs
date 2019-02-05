@@ -32,8 +32,7 @@ pub struct StatusManager {
     pub height: f64,
     pub time: f64,
     pub delta_time: f64,
-    pub burning_timer: f64,
-    pub ignite_timer: f64,
+    pub animation_timer: f64,
 }
 
 impl StatusManager {
@@ -50,8 +49,7 @@ impl StatusManager {
             height,
             time: 0f64,
             delta_time: 0f64,
-            burning_timer: 0f64,
-            ignite_timer: 0f64,
+            animation_timer: 0f64,
         }
     }
     pub fn set_width(&mut self, width: f64) {
@@ -124,7 +122,7 @@ impl StatusManager {
     pub fn update_time(&mut self, now: f64) {
         if self.time != 0f64 {
             self.delta_time += now - self.time;
-            self.burning_timer += now - self.time;
+            self.animation_timer += now - self.time;
         }
         self.time = now;
     }

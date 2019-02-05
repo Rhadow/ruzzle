@@ -31,16 +31,10 @@ impl Object for Projector {
         &mut self.attribute_manager
     }
     fn update(&mut self, now: f64, _world: &World, audio: &mut Box<dyn AudioPlayer>) {
-        if self.status_manager.time != 0f64 {
-            self.status_manager.delta_time += now - self.status_manager.time;
-            self.projection_timer += now - self.status_manager.time;
-        }
-        self.status_manager.time = now;
-        if self.projection_timer >= self.projection_cycle_time {
-            self.attribute_manager.is_projecting = true;
-            self.projection_timer = 0f64;
-            audio.play_sfx(SFX::Projecting);
-        }
+        self.projection_timer += now - self.status_manager.time;
+        self.status_manager.update_time(now);
+        self.handle_projection(audio);
+        self.update_rotation_animation();
         match self.status_manager.status {
             Status::Idle => self.animate_idle(),
             Status::Walking => self.animate_walking(audio),
@@ -66,7 +60,9 @@ impl Projector {
             is_breakable: false,
             burning_level: 0,
             burn_down_time: 0f64,
-            ignite_time: 0f64,
+            burning_point: 0f64,
+            temperature: 0f64,
+            heat: 1f64,
         };
         Projector {
             asset,
@@ -77,13 +73,25 @@ impl Projector {
         }
     }
     fn animate_idle (&mut self) {
+        self.status_manager.delta_time = 0f64;
+    }
+    fn animate_walking (&mut self, audio: &mut Box<dyn AudioPlayer>) {
+        let delta_time = self.status_manager.delta_time;
+        self.status_manager.set_next_coordinate(delta_time, CANNON_MOVE_TIME);
+        audio.play_sfx(SFX::RockMove);
+        // self.projection_timer = 0f64;
+        if self.status_manager.is_arrived_at_position() {
+            self.status_manager.set_status(Status::Idle);
+        }
+    }
+    fn update_rotation_animation(&mut self) {
         let direction = self.status_manager().direction;
         let target_x_offset = self.asset.get_x_offset_by_direction(direction);
         let current_x_offset = self.asset.get_x_offset();
         if current_x_offset != target_x_offset {
-            if self.status_manager.delta_time >= CANNON_ROTATION_ANIMATION_TIME {
+            if self.status_manager.animation_timer >= CANNON_ROTATION_ANIMATION_TIME {
                 self.asset.set_x_offset(target_x_offset);
-                self.status_manager.delta_time = 0f64;
+                self.status_manager.animation_timer = 0f64;
             } else {
                 let x_offset = if target_x_offset - 2f64 >= 0f64 {
                     target_x_offset - 2f64
@@ -93,16 +101,14 @@ impl Projector {
                 self.asset.set_x_offset(x_offset);
             }
         } else {
-            self.status_manager.delta_time = 0f64;
+            self.status_manager.animation_timer = 0f64;
         }
     }
-    fn animate_walking (&mut self, audio: &mut Box<dyn AudioPlayer>) {
-        let delta_time = self.status_manager.delta_time;
-        self.status_manager.set_next_coordinate(delta_time, CANNON_MOVE_TIME);
-        audio.play_sfx(SFX::RockMove);
-        // self.projection_timer = 0f64;
-        if self.status_manager.is_arrived_at_position() {
-            self.status_manager.set_status(Status::Idle);
+    fn handle_projection(&mut self, audio: &mut Box<dyn AudioPlayer>) {
+        if self.projection_timer >= self.projection_cycle_time {
+            self.attribute_manager.is_projecting = true;
+            self.projection_timer = 0f64;
+            audio.play_sfx(SFX::Projecting);
         }
     }
 }
