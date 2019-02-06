@@ -20,7 +20,6 @@ Sprites to draw:
 - main character push
 - main character death
 - smoke effect
-- exit
 
 - fixed location projector?
 - fixed rotation projector?
@@ -40,3 +39,4 @@ Level Design:
 - 04: fire tutorial (50%)
 - 05: fire medium (movable fire container, need to chain fire) (first use fire cannon to clear out first area, then the tree will ignite second fire source, player push fire source directly to a tree, tree needs a smoke effect when fire source is close by)
 - 06: stone hole hard (done)
+- 07: a cross road divide level into 4 areas and involve each element in game
