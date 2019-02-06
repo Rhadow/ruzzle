@@ -111,21 +111,22 @@ use crate::game::constants::{
 };
 use super::level00::LEVEL00;
 use super::level01::LEVEL01;
-use super::level02::LEVEL02;
 use super::level03::LEVEL03;
+use super::level04::LEVEL04;
+use super::level06::LEVEL06;
 
 pub type Level = ([&'static str; TOTAL_TILES], [&'static str; TOTAL_TILES], Position);
 pub const LEVELS: [Level; 10] = [
     LEVEL00,
     LEVEL01,
-    LEVEL02,
-    LEVEL03,
     LEVEL00,
-    LEVEL01,
-    LEVEL02,
     LEVEL03,
+    LEVEL04,
     LEVEL00,
-    LEVEL01,
+    LEVEL06,
+    LEVEL00,
+    LEVEL00,
+    LEVEL00,
 ];
 
 pub struct LevelManager {

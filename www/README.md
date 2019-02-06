@@ -34,8 +34,9 @@ UI to draw:
 Programming:
 
 Level Design:
-- double fast cannon shoot, player use stone to block cannon
-- fire tutorial, cornered fire source, player needs to get to fire first then move in front of cannon
-- movable fire container, need to chain fire, also add dodging hole
-
-- stone bridge
+- 01: stone, hole tutorial (done)
+- 02: stone, hole medium + cannon tutorial (3 stone in a row + cannon blocking)
+- 03: cannon stone medium (50%)
+- 04: fire tutorial (50%)
+- 05: fire medium (movable fire container, need to chain fire) (first use fire cannon to clear out first area, then the tree will ignite second fire source, player push fire source directly to a tree, tree needs a smoke effect when fire source is close by)
+- 06: stone hole hard (done)

@@ -25,4 +25,4 @@ const OBJECTS: [&str; TOTAL_TILES] = [
 
 const PLAYER_POSITION: Position = Position(1f64, 11f64);
 
-pub const LEVEL02: ([&str; TOTAL_TILES], [&str; TOTAL_TILES], Position) = (TERRAINS, OBJECTS, PLAYER_POSITION);
+pub const LEVEL06: ([&str; TOTAL_TILES], [&str; TOTAL_TILES], Position) = (TERRAINS, OBJECTS, PLAYER_POSITION);
