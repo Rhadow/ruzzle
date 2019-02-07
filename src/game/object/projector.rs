@@ -31,7 +31,9 @@ impl Object for Projector {
         &mut self.attribute_manager
     }
     fn update(&mut self, now: f64, _world: &World, audio: &mut Box<dyn AudioPlayer>) {
-        self.projection_timer += now - self.status_manager.time;
+        if self.status_manager.time != 0f64 {
+            self.projection_timer += now - self.status_manager.time;
+        }
         self.status_manager.update_time(now);
         self.handle_projection(audio);
         self.update_rotation_animation();

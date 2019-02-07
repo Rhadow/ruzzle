@@ -280,7 +280,7 @@ impl LevelManager {
 
     fn create_chest(&self, position: Position, id: String) -> Option<RefCell<Box<dyn Object>>> {
         let asset = Asset::new(
-            AssetType::Object,
+            AssetType::RuzzleObject,
             CHEST_X_OFFSET,
             CHEST_Y_OFFSET,
             CHEST_SIZE,

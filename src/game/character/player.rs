@@ -43,10 +43,10 @@ use crate::game::constants::{
 };
 
 pub struct Player {
-    delta_rotate_time: f64,
     asset: Asset,
     status_manager: StatusManager,
     pub at_exit: bool,
+    delta_rotate_time: f64,
 }
 
 impl Character for Player {
@@ -98,10 +98,9 @@ impl Character for Player {
     }
     fn update(&mut self, now: f64, world: &World, audio: &mut Box<dyn AudioPlayer>) {
         if self.status_manager.time != 0f64 {
-            self.status_manager.delta_time += now - self.status_manager.time;
             self.delta_rotate_time += now - self.status_manager.time;
         }
-        self.status_manager.time = now;
+        self.status_manager.update_time(now);
         match self.status_manager.direction {
             Direction::Down => self.asset.set_y_offset(PLAYER_DOWN_Y_OFFSET),
             Direction::Right => self.asset.set_y_offset(PLAYER_RIGHT_Y_OFFSET),

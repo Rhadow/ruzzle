@@ -3,6 +3,11 @@ pub const START_BUTTON_WIDTH: f64 = 100f64;
 pub const START_BUTTON_HEIGHT: f64 = 20f64;
 pub const START_BUTTON_FLASH_FREQUENCY: f64 = 1500f64;
 
+pub const TITLE_X_OFFSET: f64 = 0f64;
+pub const TITLE_Y_OFFSET: f64 = 2f64;
+pub const TITLE_WIDTH: f64 = 64f64;
+pub const TITLE_HEIGHT: f64 = 32f64;
+
 // Level Selection Scene
 pub const LEVEL_BUTTON_WIDTH: f64 = 40f64;
 pub const LEVEL_BUTTON_HEIGHT: f64 = 40f64;
@@ -124,9 +129,9 @@ pub const HOLE_Y_OFFSET: f64 = 0f64;
 pub const HOLE_SIZE: f64 = 32f64;
 pub const HOLE_FALL_THRESHOLD: f64 = 0.9f64;
 
-pub const CHEST_X_OFFSET: f64 = 0f64;
-pub const CHEST_Y_OFFSET: f64 = 0f64;
-pub const CHEST_SIZE: f64 = 16f64;
+pub const CHEST_X_OFFSET: f64 = 8f64;
+pub const CHEST_Y_OFFSET: f64 = 2f64;
+pub const CHEST_SIZE: f64 = 32f64;
 
 pub const CANNON_UP_X_OFFSET: f64 = 0f64;
 pub const CANNON_UP_Y_OFFSET: f64 = 6f64;
