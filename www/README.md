@@ -22,7 +22,6 @@ Sprites to draw:
 - main character walk
 - main character push
 - main character death
-- smoke effect
 
 - fixed location projector?
 - fixed rotation projector?
@@ -30,7 +29,6 @@ Sprites to draw:
 UI to draw:
 - level selection btn
 - level selection complete btn
-- numbers
 - background
 
 Programming:
