@@ -16,7 +16,6 @@ http://blog.studiominiboss.com/pixelart
 
 Sprites to draw:
 
-- fire source animation
 - burning tree animation
 - main character idle
 - main character walk
@@ -27,8 +26,6 @@ Sprites to draw:
 - fixed rotation projector?
 
 UI to draw:
-- level selection btn
-- level selection complete btn
 - background
 
 Programming:
