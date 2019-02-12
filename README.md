@@ -16,7 +16,6 @@ http://blog.studiominiboss.com/pixelart
 
 Sprites to draw:
 
-- burning tree animation
 - main character idle
 - main character walk
 - main character push

@@ -116,10 +116,12 @@ pub const WOODEN_PATH_SIZE: f64 = 32f64;
 // Objects
 pub const TREE_X_OFFSET: f64 = 0f64;
 pub const TREE_Y_OFFSET: f64 = 0f64;
-pub const TREE_BURNING_X_OFFSET: f64 = 0f64;
-pub const TREE_BURNING_Y_OFFSET: f64 = 4f64;
-pub const TREE_BURNING_END_X_OFFSET: f64 = 2f64;
-pub const TREE_BURNING_END_Y_OFFSET: f64 = 4f64;
+pub const TREE_BURNING_X_OFFSET: f64 = 2f64;
+pub const TREE_BURNING_Y_OFFSET: f64 = 0f64;
+pub const TREE_BURNING_ANIMATION_TIME: f64 = 350f64;
+pub const TREE_BURNING_ANIMATION_SPRITE_LENGTH: isize = 2;
+pub const TREE_BURNING_END_X_OFFSET: f64 = 6f64;
+pub const TREE_BURNING_END_Y_OFFSET: f64 = 0f64;
 pub const TREE_BURN_DOWN_TIME: f64 = 9_900f64;
 pub const TREE_IGNITE_FRAMES: f64 = 200f64;
 pub const TREE_SIZE: f64 = 32f64;

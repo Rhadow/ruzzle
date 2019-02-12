@@ -5,6 +5,8 @@ use crate::game::constants::{
     TILE_SIZE,
     TREE_BURNING_X_OFFSET,
     TREE_BURNING_Y_OFFSET,
+    TREE_BURNING_ANIMATION_TIME,
+    TREE_BURNING_ANIMATION_SPRITE_LENGTH,
     TREE_BURNING_END_X_OFFSET,
     TREE_BURNING_END_Y_OFFSET,
     TREE_BURN_DOWN_TIME,
@@ -74,8 +76,7 @@ impl Tree {
     fn animate_burning(&mut self) {
         match self.attribute_manager.burning_level {
             1 | 2 => {
-                self.asset.set_x_offset(TREE_BURNING_X_OFFSET);
-                self.asset.set_y_offset(TREE_BURNING_Y_OFFSET);
+                self.animate_flame();
             },
             3 => {
                 self.asset.set_x_offset(TREE_BURNING_END_X_OFFSET);
@@ -83,5 +84,11 @@ impl Tree {
             },
             _ => (),
         }
+    }
+    fn animate_flame (&mut self) {
+        let time_per_sprite = TREE_BURNING_ANIMATION_TIME / TREE_BURNING_ANIMATION_SPRITE_LENGTH as f64;
+        let dx = (self.status_manager.animation_timer / time_per_sprite) as isize % TREE_BURNING_ANIMATION_SPRITE_LENGTH;
+        self.asset.set_x_offset(TREE_BURNING_X_OFFSET + dx as f64 * 2f64);
+        self.asset.set_y_offset(TREE_BURNING_Y_OFFSET);
     }
 }
