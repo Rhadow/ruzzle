@@ -16,22 +16,18 @@ http://blog.studiominiboss.com/pixelart
 
 Sprites to draw:
 
-- fire source animation
 - burning tree animation
 - main character idle
 - main character walk
 - main character push
 - main character death
-- smoke effect
 
 - fixed location projector?
 - fixed rotation projector?
 
 UI to draw:
-- level selection btn
-- level selection complete btn
-- numbers
 - background
+- arrow
 
 Programming:
 

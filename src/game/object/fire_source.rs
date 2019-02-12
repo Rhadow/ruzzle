@@ -16,7 +16,6 @@ pub struct FireSource {
     asset: Asset,
     status_manager: StatusManager,
     pub attribute_manager: AttributeManager,
-    animation_timer: f64,
 }
 
 impl Object for FireSource {
@@ -71,13 +70,12 @@ impl FireSource {
             attribute_manager,
             asset,
             status_manager,
-            animation_timer: 0f64,
         }
     }
     fn animate_flame (&mut self) {
         let time_per_sprite = FIRE_ANIMATION_TIME / FIRE_ANIMATION_SPRITE_LENGTH as f64;
-        let dx = (self.animation_timer / time_per_sprite) as isize % FIRE_ANIMATION_SPRITE_LENGTH;
-        self.asset.set_x_offset(FIRE_SOURCE_ON_X_OFFSET + dx as f64);
+        let dx = (self.status_manager.animation_timer / time_per_sprite) as isize % FIRE_ANIMATION_SPRITE_LENGTH;
+        self.asset.set_x_offset(FIRE_SOURCE_ON_X_OFFSET + dx as f64 * 2f64);
     }
     fn animate_idle (&mut self) {
         self.status_manager.delta_time = 0f64;

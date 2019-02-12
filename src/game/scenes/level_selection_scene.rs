@@ -8,8 +8,12 @@ use crate::game::constants::{
     TILE_SIZE,
     WINDOW_WIDTH_IN_TILES,
     WINDOW_HEIGHT_IN_TILES,
+    LEVEL_BUTTON_X_OFFSET,
+    LEVEL_BUTTON_Y_OFFSET,
     LEVEL_BUTTON_WIDTH,
     LEVEL_BUTTON_HEIGHT,
+    LEVEL_BUTTON_SPRITE_WIDTH,
+    LEVEL_BUTTON_SPRITE_HEIGHT,
     LEVEL_BUTTON_MARGIN,
     LEVELS_PER_PAGE,
     ROW_PER_PAGE,
@@ -196,11 +200,19 @@ impl LevelSelectionScene {
     }
 
     fn draw_level_block(&self, renderer: &Renderer, x: f64, y: f64, level: usize, completed_levels: &Vec<bool>) {
-        let mut level_fill_color = JsValue::from_str("#d4ce46");
+        let mut level_btn_asset = Asset::new(
+            AssetType::RuzzleUI,
+            LEVEL_BUTTON_X_OFFSET,
+            LEVEL_BUTTON_Y_OFFSET,
+            LEVEL_BUTTON_SPRITE_WIDTH,
+            LEVEL_BUTTON_SPRITE_HEIGHT,
+            None,
+            None,
+        );
         if completed_levels[level] {
-            level_fill_color = JsValue::from_str("#cc0000");
+            level_btn_asset.set_x_offset(LEVEL_BUTTON_X_OFFSET + 2f64);
         }
-        renderer.draw_rectangle(x, y, LEVEL_BUTTON_WIDTH, LEVEL_BUTTON_HEIGHT, &level_fill_color);
+        renderer.draw_asset_by_coordinate(&level_btn_asset, x, y, LEVEL_BUTTON_WIDTH, LEVEL_BUTTON_HEIGHT);
         let level = level + 1;
         let num_digits = level.to_string().len() as f64;
         let digit_x_start = x + (LEVEL_BUTTON_WIDTH - num_digits * DIGIT_WIDTH) / 2f64;
@@ -222,7 +234,7 @@ impl LevelSelectionScene {
             };
             if let Some((num_x_offset, num_y_offset)) = num {
                 let asset = Asset::new(
-                    AssetType::Object,
+                    AssetType::RuzzleUI,
                     num_x_offset,
                     num_y_offset,
                     DIGIT_WIDTH,

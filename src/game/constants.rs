@@ -1,6 +1,8 @@
 // Entry Scene
-pub const START_BUTTON_WIDTH: f64 = 100f64;
-pub const START_BUTTON_HEIGHT: f64 = 20f64;
+pub const START_BUTTON_X_OFFSET: f64 = 8f64;
+pub const START_BUTTON_Y_OFFSET: f64 = 2f64;
+pub const START_BUTTON_WIDTH: f64 = 124f64;
+pub const START_BUTTON_HEIGHT: f64 = 32f64;
 pub const START_BUTTON_FLASH_FREQUENCY: f64 = 1500f64;
 
 pub const TITLE_X_OFFSET: f64 = 0f64;
@@ -9,8 +11,12 @@ pub const TITLE_WIDTH: f64 = 64f64;
 pub const TITLE_HEIGHT: f64 = 32f64;
 
 // Level Selection Scene
+pub const LEVEL_BUTTON_X_OFFSET: f64 = 4f64;
+pub const LEVEL_BUTTON_Y_OFFSET: f64 = 2f64;
 pub const LEVEL_BUTTON_WIDTH: f64 = 40f64;
 pub const LEVEL_BUTTON_HEIGHT: f64 = 40f64;
+pub const LEVEL_BUTTON_SPRITE_WIDTH: f64 = 32f64;
+pub const LEVEL_BUTTON_SPRITE_HEIGHT: f64 = 32f64;
 pub const LEVEL_BUTTON_MARGIN: f64 = 15f64;
 pub const LEVELS_PER_PAGE: usize = 8;
 pub const ROW_PER_PAGE: usize = 2;
@@ -18,26 +24,26 @@ pub const PAGE_BUTTON_WIDTH: f64 = 15f64;
 pub const PAGE_BUTTON_HEIGHT: f64 = 15f64;
 pub const DIGIT_WIDTH: f64 = 16f64;
 pub const DIGIT_HEIGHT: f64 = 16f64;
-pub const ZERO_X_OFFSET: f64 = 6f64;
-pub const ZERO_Y_OFFSET: f64 = 16f64;
-pub const ONE_X_OFFSET: f64 = 5f64;
-pub const ONE_Y_OFFSET: f64 = 14f64;
-pub const TWO_X_OFFSET: f64 = 6f64;
-pub const TWO_Y_OFFSET: f64 = 14f64;
-pub const THREE_X_OFFSET: f64 = 7f64;
-pub const THREE_Y_OFFSET: f64 = 14f64;
-pub const FOUR_X_OFFSET: f64 = 8f64;
-pub const FOUR_Y_OFFSET: f64 = 14f64;
-pub const FIVE_X_OFFSET: f64 = 5f64;
-pub const FIVE_Y_OFFSET: f64 = 15f64;
-pub const SIX_X_OFFSET: f64 = 6f64;
-pub const SIX_Y_OFFSET: f64 = 15f64;
-pub const SEVEN_X_OFFSET: f64 = 7f64;
-pub const SEVEN_Y_OFFSET: f64 = 15f64;
-pub const EIGHT_X_OFFSET: f64 = 8f64;
-pub const EIGHT_Y_OFFSET: f64 = 15f64;
-pub const NINE_X_OFFSET: f64 = 5f64;
-pub const NINE_Y_OFFSET: f64 = 16f64;
+pub const ZERO_X_OFFSET: f64 = 8f64;
+pub const ZERO_Y_OFFSET: f64 = 0f64;
+pub const ONE_X_OFFSET: f64 = 9f64;
+pub const ONE_Y_OFFSET: f64 = 0f64;
+pub const TWO_X_OFFSET: f64 = 10f64;
+pub const TWO_Y_OFFSET: f64 = 0f64;
+pub const THREE_X_OFFSET: f64 = 11f64;
+pub const THREE_Y_OFFSET: f64 = 0f64;
+pub const FOUR_X_OFFSET: f64 = 12f64;
+pub const FOUR_Y_OFFSET: f64 = 0f64;
+pub const FIVE_X_OFFSET: f64 = 8f64;
+pub const FIVE_Y_OFFSET: f64 = 1f64;
+pub const SIX_X_OFFSET: f64 = 9f64;
+pub const SIX_Y_OFFSET: f64 = 1f64;
+pub const SEVEN_X_OFFSET: f64 = 10f64;
+pub const SEVEN_Y_OFFSET: f64 = 1f64;
+pub const EIGHT_X_OFFSET: f64 = 11f64;
+pub const EIGHT_Y_OFFSET: f64 = 1f64;
+pub const NINE_X_OFFSET: f64 = 12f64;
+pub const NINE_Y_OFFSET: f64 = 1f64;
 
 // Game Scene
 pub const WINDOW_WIDTH_IN_TILES: usize = 13;
@@ -156,10 +162,10 @@ pub const PROJECTILE_MOVE_TIME: f64 = 150f64;
 pub const PROJECTILE_BURNING_X_OFFSET: f64 = 2f64;
 pub const PROJECTILE_BURNING_Y_OFFSET: f64 = 4f64;
 
-pub const SMOKE_BASE_X_OFFSET: f64 = 4f64;
-pub const SMOKE_BASE_Y_OFFSET: f64 = 4f64;
+pub const SMOKE_BASE_X_OFFSET: f64 = 0f64;
+pub const SMOKE_BASE_Y_OFFSET: f64 = 10f64;
 pub const SMOKE_ANIMATION_TIME: f64 = 420f64;
-pub const SMOKE_ANIMATION_SPRITE_LENGTH: isize = 7;
+pub const SMOKE_ANIMATION_SPRITE_LENGTH: isize = 8;
 pub const SMOKE_SIZE: f64 = 32f64;
 
 pub const FIRE_SOURCE_OFF_X_OFFSET: f64 = 0f64;
@@ -169,8 +175,8 @@ pub const FIRE_SOURCE_ON_Y_OFFSET: f64 = 8f64;
 pub const FIRE_SOURCE_SIZE: f64 = 32f64;
 pub const FIRE_SOURCE_MOVE_TIME: f64 = 280f64;
 pub const FIRE_SOURCE_IGNITE_FRAMES: f64 = 60f64;
-pub const FIRE_ANIMATION_TIME: f64 = 500f64;
-pub const FIRE_ANIMATION_SPRITE_LENGTH: isize = 1;
+pub const FIRE_ANIMATION_TIME: f64 = 350f64;
+pub const FIRE_ANIMATION_SPRITE_LENGTH: isize = 2;
 
 pub const WALL_X_OFFSET: f64 = 2f64;
 pub const WALL_Y_OFFSET: f64 = 2f64;

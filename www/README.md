@@ -27,6 +27,7 @@ Sprites to draw:
 
 UI to draw:
 - background
+- arrow
 
 Programming:
 

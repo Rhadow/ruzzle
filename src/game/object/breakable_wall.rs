@@ -75,7 +75,7 @@ impl BreakableWall {
     fn update_dead_sprite(&mut self) {
         let sprite_dt = SMOKE_ANIMATION_TIME / SMOKE_ANIMATION_SPRITE_LENGTH as f64;
         let dx = (self.status_manager.delta_time / sprite_dt) as isize % SMOKE_ANIMATION_SPRITE_LENGTH;
-        self.asset.set_asset_type(AssetType::Object);
+        self.asset.set_asset_type(AssetType::RuzzleObject);
         self.asset.set_x_offset(SMOKE_BASE_X_OFFSET + (dx * 2) as f64);
         self.asset.set_y_offset(SMOKE_BASE_Y_OFFSET);
         self.asset.set_width(SMOKE_SIZE);

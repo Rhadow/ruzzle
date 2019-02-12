@@ -10,6 +10,8 @@ use crate::game::constants::{
     TILE_SIZE,
     WINDOW_WIDTH_IN_TILES,
     WINDOW_HEIGHT_IN_TILES,
+    START_BUTTON_X_OFFSET,
+    START_BUTTON_Y_OFFSET,
     START_BUTTON_WIDTH,
     START_BUTTON_HEIGHT,
     START_BUTTON_FLASH_FREQUENCY,
@@ -82,19 +84,28 @@ impl EntryScene {
             None,
             None,
         );
-        let width = WINDOW_WIDTH_IN_TILES as f64 * TILE_SIZE;
-        let height = WINDOW_HEIGHT_IN_TILES as f64 * TILE_SIZE;
         let title_render_width = TITLE_WIDTH * 3f64;
         let title_render_height = TITLE_HEIGHT * 3f64;
-        let x = (width - title_render_width) / 2f64;
-        let y = height * 0.2f64;
+        let x = (self.width - title_render_width) / 2f64;
+        let y = self.height * 0.2f64;
         renderer.draw_asset_by_coordinate(&asset, x, y, title_render_width, title_render_height);
     }
     fn draw_hint(&self, renderer: &Renderer) {
-        let start_btn_x = self.width / 2f64 - START_BUTTON_WIDTH / 2f64;
-        let start_btn_y = self.height / 2f64 - START_BUTTON_HEIGHT / 2f64;
         if self.delta_time < START_BUTTON_FLASH_FREQUENCY {
-            renderer.draw_rectangle(start_btn_x, start_btn_y, START_BUTTON_WIDTH, START_BUTTON_HEIGHT, &JsValue::from_str("#ffffff"));
+            let asset = Asset::new(
+                AssetType::RuzzleUI,
+                START_BUTTON_X_OFFSET,
+                START_BUTTON_Y_OFFSET,
+                START_BUTTON_WIDTH,
+                START_BUTTON_HEIGHT,
+                None,
+                None,
+            );
+            let start_btn_render_width = START_BUTTON_WIDTH;
+            let start_btn_render_height = START_BUTTON_HEIGHT / 2f64;
+            let start_btn_x = (self.width - start_btn_render_width) / 2f64;
+            let start_btn_y = self.height * 0.75f64;
+            renderer.draw_asset_by_coordinate(&asset, start_btn_x, start_btn_y, start_btn_render_width, start_btn_render_height);
         }
     }
 }
