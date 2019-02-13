@@ -41,6 +41,11 @@ use crate::game::constants::{
     EIGHT_Y_OFFSET,
     NINE_X_OFFSET,
     NINE_Y_OFFSET,
+    LEFT_ARROW_X_OFFSET,
+    LEFT_ARROW_Y_OFFSET,
+    RIGHT_ARROW_X_OFFSET,
+    RIGHT_ARROW_Y_OFFSET,
+    ARROW_BUTTON_SPRITE_SIZE,
 };
 use crate::game::{
     Asset,
@@ -173,15 +178,33 @@ impl LevelSelectionScene {
     }
 
     fn render_last_page_button(&self, renderer: &Renderer) {
+        let left_arrow_asset = Asset::new(
+            AssetType::RuzzleUI,
+            LEFT_ARROW_X_OFFSET,
+            LEFT_ARROW_Y_OFFSET,
+            ARROW_BUTTON_SPRITE_SIZE,
+            ARROW_BUTTON_SPRITE_SIZE,
+            None,
+            None,
+        );
         let x = self.horizontal_padding / 2f64 - PAGE_BUTTON_WIDTH;
         let y = self.height / 2f64 - PAGE_BUTTON_HEIGHT;
-        renderer.draw_rectangle(x, y, PAGE_BUTTON_WIDTH, PAGE_BUTTON_HEIGHT, &JsValue::from_str("#ffffff"));
+        renderer.draw_asset_by_coordinate(&left_arrow_asset, x, y, PAGE_BUTTON_WIDTH, PAGE_BUTTON_HEIGHT);
     }
 
     fn render_next_page_button(&self, renderer: &Renderer) {
+        let right_arrow_asset = Asset::new(
+            AssetType::RuzzleUI,
+            RIGHT_ARROW_X_OFFSET,
+            RIGHT_ARROW_Y_OFFSET,
+            ARROW_BUTTON_SPRITE_SIZE,
+            ARROW_BUTTON_SPRITE_SIZE,
+            None,
+            None,
+        );
         let x = self.width - (self.horizontal_padding / 2f64) - PAGE_BUTTON_WIDTH;
         let y = self.height / 2f64 - PAGE_BUTTON_HEIGHT;
-        renderer.draw_rectangle(x, y, PAGE_BUTTON_WIDTH, PAGE_BUTTON_HEIGHT, &JsValue::from_str("#ffffff"));
+        renderer.draw_asset_by_coordinate(&right_arrow_asset, x, y, PAGE_BUTTON_WIDTH, PAGE_BUTTON_HEIGHT);
     }
 
     fn is_next_page_pressed (&self, down_x: f64, down_y: f64, up_x: f64, up_y: f64) -> bool {

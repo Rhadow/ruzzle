@@ -20,8 +20,8 @@ pub const LEVEL_BUTTON_SPRITE_HEIGHT: f64 = 32f64;
 pub const LEVEL_BUTTON_MARGIN: f64 = 15f64;
 pub const LEVELS_PER_PAGE: usize = 8;
 pub const ROW_PER_PAGE: usize = 2;
-pub const PAGE_BUTTON_WIDTH: f64 = 15f64;
-pub const PAGE_BUTTON_HEIGHT: f64 = 15f64;
+pub const PAGE_BUTTON_WIDTH: f64 = 32f64;
+pub const PAGE_BUTTON_HEIGHT: f64 = 32f64;
 pub const DIGIT_WIDTH: f64 = 16f64;
 pub const DIGIT_HEIGHT: f64 = 16f64;
 pub const ZERO_X_OFFSET: f64 = 8f64;
@@ -44,6 +44,11 @@ pub const EIGHT_X_OFFSET: f64 = 11f64;
 pub const EIGHT_Y_OFFSET: f64 = 1f64;
 pub const NINE_X_OFFSET: f64 = 12f64;
 pub const NINE_Y_OFFSET: f64 = 1f64;
+pub const LEFT_ARROW_X_OFFSET: f64 = 13f64;
+pub const LEFT_ARROW_Y_OFFSET: f64 = 0f64;
+pub const RIGHT_ARROW_X_OFFSET: f64 = 14f64;
+pub const RIGHT_ARROW_Y_OFFSET: f64 = 0f64;
+pub const ARROW_BUTTON_SPRITE_SIZE: f64 = 16f64;
 
 // Game Scene
 pub const WINDOW_WIDTH_IN_TILES: usize = 13;
