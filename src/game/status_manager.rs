@@ -2,7 +2,7 @@ use crate::game::{Coordinate, Position};
 use crate::game::constants::TILE_SIZE;
 use crate::utils::coordinate_lerp;
 
-#[derive(PartialEq, Copy, Clone)]
+#[derive(PartialEq, Copy, Clone, Debug)]
 pub enum Direction {
     Up,
     Down,

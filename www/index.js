@@ -7,12 +7,17 @@ function loadAssets() {
                 console.log(`${element.id} loaded`);
                 resolve();
             } else {
-                const cb = () => {
-                    console.log(`${element.id} loaded`);
-                    element.removeEventListener('canplaythrough', cb);
+                if (element.src.endsWith('.ogg')) {
                     resolve();
-                };
-                element.addEventListener('canplaythrough', cb);
+                } else {
+                    const cb = () => {
+                        console.log(`${element.id} loaded`);
+                        element.removeEventListener('canplaythrough', cb);
+                        resolve();
+                    };
+                    element.addEventListener('canplaythrough', cb);
+                    element.load();
+                }
             }
         });
     });
@@ -52,7 +57,6 @@ function bindControllerEvents(webClient) {
         webClient.handle_keyup(e.key);
     });
 }
-
 loadAssets().then(() => {
     console.log('All assets loaded, starting game!');
     const webClient = WebClient.new("canvas", {

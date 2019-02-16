@@ -181,7 +181,7 @@ impl World {
         self.handle_player_movement(direction);
     }
 
-    fn handle_player_movement(&mut self, direction: Option<Direction>) {
+    pub fn handle_player_movement(&mut self, direction: Option<Direction>) {
         if let Some(dir) = direction {
             let mut player = self.player().borrow_mut();
             if player.status_manager().status == Status::Idle {

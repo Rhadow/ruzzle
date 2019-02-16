@@ -2,7 +2,7 @@
 use wasm_bindgen::prelude::JsValue;
 use super::{SceneType, Scene};
 use crate::renderer::Renderer;
-use crate::game::{Asset, AssetType, World};
+use crate::game::{Asset, AssetType, World, Position, Direction};
 use crate::controller::Controller;
 use crate::game::constants::{
     ARROW_DOWN,
@@ -61,15 +61,21 @@ impl Scene for GameScene {
         self.next_scene_type = Some(scene_type);
     }
     fn on_mouse_up(&mut self, mouse_x: f64, mouse_y: f64, world: &mut World, _current_level_page: &mut usize) {
-        let is_menu_disabled = world.player().borrow().at_exit();
+        let is_input_disabled = world.player().borrow().at_exit();
+        let player_position = world.player().borrow().status_manager().position;
         if let Some((down_x, down_y)) = self.mouse_down_coordinate {
-            if !is_menu_disabled {
+            if !is_input_disabled {
                 if self.is_back_btn_pressed(down_x, down_y, mouse_x, mouse_y) {
                     self.set_next_scene_type(SceneType::LevelSelection);
                 }
                 if self.is_reset_btn_pressed(down_x, down_y, mouse_x, mouse_y) {
                     let level = world.level_number.unwrap();
                     world.init_level(level);
+                }
+                if self.is_mouse_on_map(mouse_x, mouse_y) {
+                    let mouse_position = self.get_mouse_position(mouse_x, mouse_y);
+                    let target_direction = self.get_relative_mouse_direction(&mouse_position, &player_position);
+                    world.handle_player_movement(target_direction);
                 }
             }
         }
@@ -81,8 +87,8 @@ impl Scene for GameScene {
         }
     }
     fn on_mouse_move(&mut self, mouse_x: f64, mouse_y: f64, world: &mut World) {
-        let is_menu_disabled = world.player().borrow().at_exit();
-        if !is_menu_disabled {
+        let is_input_disabled = world.player().borrow().at_exit();
+        if !is_input_disabled {
             if self.is_back_btn_hovered(mouse_x, mouse_y) {
                 self.back_btn_asset.set_x_offset(BACK_BUTTON_X_OFFSET + 2f64);
             } else {
@@ -197,5 +203,43 @@ impl GameScene {
         let y1 = WORLD_HEIGHT_IN_TILES as f64 * TILE_SIZE - BACK_BUTTON_SIZE;
         let y0 = y1 - RESET_BUTTON_SIZE;
         self.is_mouse_inside_box(x, y, x0, y0, x1, y1)
+    }
+    fn is_mouse_on_map(&self, x: f64, y: f64) -> bool {
+        let x0 = 0f64;
+        let x1 = x0 + WORLD_WIDTH_IN_TILES as f64 * TILE_SIZE;
+        let y0 = 0f64;
+        let y1 = y0 + WORLD_HEIGHT_IN_TILES as f64 * TILE_SIZE;
+        self.is_mouse_inside_box(x, y, x0, y0, x1, y1)
+    }
+    fn get_mouse_position(&self, x: f64, y: f64) -> Position {
+        let row = (y / TILE_SIZE).floor();
+        let col = (x / TILE_SIZE).floor();
+        Position(row,col)
+    }
+    fn get_relative_mouse_direction(&self, mouse_position: &Position, player_position: &Position) -> Option<Direction> {
+        let mut result = None;
+        let m_row = mouse_position.row();
+        let m_col = mouse_position.col();
+        let p_row = player_position.row();
+        let p_col = player_position.col();
+        let vertical_diff = m_row - p_row;
+        let horizontal_diff = m_col - p_col;
+        if vertical_diff == 0f64 && horizontal_diff == 0f64 {
+            return None;
+        }
+        if vertical_diff.abs() > horizontal_diff.abs() {
+            result = if vertical_diff > 0f64 {
+                Some(Direction::Down)
+            } else {
+                Some(Direction::Up)
+            }
+        } else {
+            result = if horizontal_diff < 0f64 {
+                Some(Direction::Left)
+            } else {
+                Some(Direction::Right)
+            };
+        }
+        result
     }
 }
