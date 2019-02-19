@@ -4,7 +4,6 @@
     "G2" : GrassLand2,
     "G3" : GrassLand3,
     "G4" : GrassLand4,
-    "WP": WoodenPath,
     "H" : Hole,
 
     Objects:
@@ -63,9 +62,6 @@ use crate::game::constants::{
     GRASS_LAND_FOUR_X_OFFSET,
     GRASS_LAND_FOUR_Y_OFFSET,
     GRASS_LAND_SIZE,
-    WOODEN_PATH_X_OFFSET,
-    WOODEN_PATH_Y_OFFSET,
-    WOODEN_PATH_SIZE,
     HOLE_X_OFFSET,
     HOLE_Y_OFFSET,
     HOLE_SIZE,
@@ -169,7 +165,6 @@ impl LevelManager {
                 "G2" => self.create_grass_land(position, 2),
                 "G3" => self.create_grass_land(position, 3),
                 "G4" => self.create_grass_land(position, 4),
-                "WP" => self.create_wooden_path(position),
                 "H" => self.create_hole(position),
                 _ => None
             };
@@ -224,19 +219,6 @@ impl LevelManager {
         } else {
             None
         }
-    }
-
-    fn create_wooden_path(&self, position: Position) -> Option<RefCell<Box<dyn Terrain>>> {
-        let asset = Asset::new(
-            AssetType::Environment,
-            WOODEN_PATH_X_OFFSET,
-            WOODEN_PATH_Y_OFFSET,
-            WOODEN_PATH_SIZE,
-            WOODEN_PATH_SIZE,
-            None,
-            None,
-        );
-        Some(RefCell::new(Box::new(Land::new(position, asset))))
     }
 
     fn create_hole(&self, position: Position) -> Option<RefCell<Box<dyn Terrain>>> {

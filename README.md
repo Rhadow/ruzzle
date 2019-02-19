@@ -16,10 +16,7 @@ http://blog.studiominiboss.com/pixelart
 
 Sprites to draw:
 
-- main character idle
-- main character walk
-- main character push
-- main character death
+- main character win
 
 - fixed location projector?
 - fixed rotation projector?
@@ -28,6 +25,7 @@ UI to draw:
 - background
 
 Programming:
+- win animation
 
 Level Design:
 - 01: stone, hole tutorial (done)

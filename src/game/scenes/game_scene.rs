@@ -217,7 +217,6 @@ impl GameScene {
         Position(row,col)
     }
     fn get_relative_mouse_direction(&self, mouse_position: &Position, player_position: &Position) -> Option<Direction> {
-        let mut result = None;
         let m_row = mouse_position.row();
         let m_col = mouse_position.col();
         let p_row = player_position.row();
@@ -228,18 +227,17 @@ impl GameScene {
             return None;
         }
         if vertical_diff.abs() > horizontal_diff.abs() {
-            result = if vertical_diff > 0f64 {
+            if vertical_diff > 0f64 {
                 Some(Direction::Down)
             } else {
                 Some(Direction::Up)
             }
         } else {
-            result = if horizontal_diff < 0f64 {
+            if horizontal_diff < 0f64 {
                 Some(Direction::Left)
             } else {
                 Some(Direction::Right)
-            };
+            }
         }
-        result
     }
 }

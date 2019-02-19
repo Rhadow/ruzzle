@@ -108,12 +108,10 @@ impl WebRenderer {
 
     fn init_id_asset_type_map() -> HashMap<String, AssetType> {
         let mut asset_type_map: HashMap<String, AssetType> = HashMap::new();
-        asset_type_map.insert(String::from("environment"), AssetType::Environment);
-        asset_type_map.insert(String::from("object"), AssetType::Object);
-        asset_type_map.insert(String::from("character"), AssetType::Character);
         asset_type_map.insert(String::from("ruzzle_object"), AssetType::RuzzleObject);
         asset_type_map.insert(String::from("ruzzle_ui"), AssetType::RuzzleUI);
         asset_type_map.insert(String::from("ruzzle_environment"), AssetType::RuzzleEnvironment);
+        asset_type_map.insert(String::from("ruzzle_characters"), AssetType::RuzzleCharacters);
         asset_type_map
     }
 }

@@ -30,13 +30,18 @@ use crate::game::constants::{
     PLAYER_IDLE_X_OFFSET,
     PLAYER_IDLE_ANIMATION_TIME,
     PLAYER_IDLE_ANIMATION_SPRITE_LENGTH,
-    PLAYER_IDLE_ANIMATION_WAITING_TIME,
     PLAYER_PUSHING_X_OFFSET,
     PLAYER_DEAD_ANIMATION_TIME,
     PLAYER_DEAD_ANIMATION_SPRITE_LENGTH,
     PLAYER_DEAD_X_OFFSET,
+    PLAYER_DEAD_Y_OFFSET,
+    PLAYER_FALL_DEAD_X_OFFSET,
+    PLAYER_FALL_DEAD_Y_OFFSET,
+    PLAYER_FALL_DEAD_ANIMATION_SPRITE_LENGTH,
     PLAYER_RESPAWNING_ANIMATION_TIME,
     PLAYER_RESPAWNING_ANIMATION_SPRITE_LENGTH,
+    PLAYER_EXITING_X_OFFSET,
+    PLAYER_EXITING_Y_OFFSET,
     PLAYER_EXITING_ANIMATION_TIME,
     PLAYER_EXITING_ANIMATION_SPRITE_LENGTH,
     PLAYER_ROTATION_LAG,
@@ -46,6 +51,7 @@ pub struct Player {
     asset: Asset,
     status_manager: StatusManager,
     pub at_exit: bool,
+    pub is_falling: bool,
     delta_rotate_time: f64,
 }
 
@@ -94,6 +100,7 @@ impl Character for Player {
     }
     fn handle_fall(&mut self, audio: &mut Box<dyn AudioPlayer>) {
         self.status_manager.set_status(Status::Dead);
+        self.is_falling = true;
         audio.play_sfx(SFX::Dead);
     }
     fn update(&mut self, now: f64, world: &World, audio: &mut Box<dyn AudioPlayer>) {
@@ -131,7 +138,7 @@ impl Character for Player {
 impl Player {
     pub fn new(position: Position, direction: Direction) -> Player {
         let asset = Asset::new(
-            AssetType::Character,
+            AssetType::RuzzleCharacters,
             PLAYER_DOWN_X_OFFSET,
             PLAYER_DOWN_Y_OFFSET,
             PLAYER_WIDTH,
@@ -145,19 +152,12 @@ impl Player {
             status_manager,
             delta_rotate_time: 0f64,
             at_exit: false,
+            is_falling: false,
         }
     }
 
     fn animate_idle (&mut self) {
-        if self.asset.get_x_offset() != PLAYER_DOWN_X_OFFSET {
-            self.asset.set_x_offset(PLAYER_DOWN_X_OFFSET);
-        }
-        if self.status_manager.delta_time >= PLAYER_IDLE_ANIMATION_WAITING_TIME {
-            self.update_idle_sprite();
-            if self.status_manager.delta_time >= PLAYER_IDLE_ANIMATION_WAITING_TIME + PLAYER_IDLE_ANIMATION_TIME {
-                self.status_manager.delta_time = 0f64;
-            }
-        }
+        self.update_idle_sprite();
     }
 
     fn animate_moving (&mut self, _audio: &mut Box<dyn AudioPlayer>) {
@@ -180,6 +180,7 @@ impl Player {
     fn animate_dead (&mut self, _audio: &mut Box<dyn AudioPlayer>) {
         self.update_dead_sprite();
         if self.status_manager.delta_time >= PLAYER_DEAD_ANIMATION_TIME {
+            self.is_falling = false;
             self.status_manager.set_status(Status::Respawning);
             let new_position = self.status_manager.initial_position;
             self.status_manager.set_position(new_position);
@@ -204,44 +205,44 @@ impl Player {
     fn update_idle_sprite(&mut self) {
         let sprite_dt = PLAYER_IDLE_ANIMATION_TIME / PLAYER_IDLE_ANIMATION_SPRITE_LENGTH as f64;
         let dx = (self.status_manager.delta_time / sprite_dt) as isize % PLAYER_IDLE_ANIMATION_SPRITE_LENGTH;
-        self.asset.set_x_offset(PLAYER_DOWN_X_OFFSET + PLAYER_IDLE_X_OFFSET + dx as f64);
+        self.asset.set_x_offset(PLAYER_DOWN_X_OFFSET + PLAYER_IDLE_X_OFFSET + dx as f64 * 2f64);
     }
 
     fn update_walking_sprite(&mut self) {
         let sprite_dt = PLAYER_WALKING_ANIMATION_TIME / PLAYER_WALKING_ANIMATION_SPRITE_LENGTH as f64;
         let dx = (self.status_manager.delta_time / sprite_dt) as isize % PLAYER_WALKING_ANIMATION_SPRITE_LENGTH;
-        self.asset.set_x_offset(PLAYER_DOWN_X_OFFSET + dx as f64);
+        self.asset.set_x_offset(PLAYER_DOWN_X_OFFSET + dx as f64 * 2f64);
     }
 
     fn update_pushing_sprite(&mut self) {
         let sprite_dt = PLAYER_WALKING_ANIMATION_TIME / PLAYER_WALKING_ANIMATION_SPRITE_LENGTH as f64;
         let dx = (self.status_manager.delta_time / sprite_dt) as isize % PLAYER_WALKING_ANIMATION_SPRITE_LENGTH;
-        self.asset.set_x_offset(PLAYER_DOWN_X_OFFSET + PLAYER_PUSHING_X_OFFSET + dx as f64);
+        self.asset.set_x_offset(PLAYER_DOWN_X_OFFSET + PLAYER_PUSHING_X_OFFSET + dx as f64 * 2f64);
     }
 
     fn update_dead_sprite(&mut self) {
-        let sprite_dt = PLAYER_DEAD_ANIMATION_TIME / PLAYER_DEAD_ANIMATION_SPRITE_LENGTH as f64;
-        let dx = (self.status_manager.delta_time / sprite_dt) as isize % PLAYER_DEAD_ANIMATION_SPRITE_LENGTH;
-        // FIX: The hard coded offsets needs to be removed once formal assets are done.
-        if dx == 0 {
-            self.asset.set_x_offset(PLAYER_DOWN_X_OFFSET + PLAYER_DEAD_X_OFFSET + dx as f64);
-            self.asset.set_y_offset(PLAYER_DOWN_Y_OFFSET);
-        } else {
-            self.asset.set_x_offset(4f64);
-            self.asset.set_y_offset(1f64);
+        let mut animation_sprite_length = PLAYER_DEAD_ANIMATION_SPRITE_LENGTH;
+        let mut player_death_x_offset = PLAYER_DEAD_X_OFFSET;
+        let mut player_death_y_offset = PLAYER_DEAD_Y_OFFSET;
+        if self.is_falling {
+            animation_sprite_length = PLAYER_FALL_DEAD_ANIMATION_SPRITE_LENGTH;
+            player_death_x_offset = PLAYER_FALL_DEAD_X_OFFSET;
+            player_death_y_offset = PLAYER_FALL_DEAD_Y_OFFSET;
         }
+        let sprite_dt = PLAYER_DEAD_ANIMATION_TIME / animation_sprite_length as f64;
+        let dx = (self.status_manager.delta_time / sprite_dt) as isize % animation_sprite_length;
+        self.asset.set_x_offset(player_death_x_offset + dx as f64 * 2f64);
+        self.asset.set_y_offset(player_death_y_offset);
     }
 
     fn update_exiting_sprite(&mut self) {
         let sprite_dt = PLAYER_EXITING_ANIMATION_TIME / PLAYER_EXITING_ANIMATION_SPRITE_LENGTH as f64;
         let dx = (self.status_manager.delta_time / sprite_dt) as isize % PLAYER_EXITING_ANIMATION_SPRITE_LENGTH;
-        // FIX: The hard coded offsets needs to be removed once formal assets are done.
+        self.asset.set_y_offset(PLAYER_EXITING_Y_OFFSET);
         if dx % 2 == 0 {
-            self.asset.set_x_offset(0f64);
-            self.asset.set_y_offset(0f64);
+            self.asset.set_x_offset(PLAYER_EXITING_X_OFFSET);
         } else {
-            self.asset.set_x_offset(7f64);
-            self.asset.set_y_offset(0f64);
+            self.asset.set_x_offset(PLAYER_EXITING_X_OFFSET + 2f64);
         }
     }
 

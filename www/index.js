@@ -61,12 +61,10 @@ loadAssets().then(() => {
     console.log('All assets loaded, starting game!');
     const webClient = WebClient.new("canvas", {
         "sprite": [
-            "environment",
-            "object",
-            "character",
             "ruzzle_object",
             "ruzzle_ui",
             "ruzzle_environment",
+            "ruzzle_characters",
         ],
         "bgm": [
             "bgm_0",

@@ -2,12 +2,10 @@ use crate::game::Direction;
 
 #[derive(PartialEq, Copy, Clone, Eq, Hash)]
 pub enum AssetType {
-    Environment,
-    Character,
-    Object,
     RuzzleObject,
     RuzzleUI,
     RuzzleEnvironment,
+    RuzzleCharacters,
 }
 
 pub struct Asset {
