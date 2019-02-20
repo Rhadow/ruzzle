@@ -41,14 +41,15 @@ function loadAssets() {
 };
 
 function bindControllerEvents(webClient) {
+    const scaleRatio = 2;
     document.getElementById("canvas").addEventListener("mousedown", (e) => {
-        webClient.handle_mouse_down(e.offsetX, e.offsetY);
+        webClient.handle_mouse_down(e.offsetX / scaleRatio, e.offsetY / scaleRatio);
     });
     document.getElementById("canvas").addEventListener("mouseup", (e) => {
-        webClient.handle_mouse_up(e.offsetX, e.offsetY);
+        webClient.handle_mouse_up(e.offsetX / scaleRatio, e.offsetY / scaleRatio);
     });
     document.getElementById("canvas").addEventListener("mousemove", (e) => {
-        webClient.handle_mouse_move(e.offsetX, e.offsetY);
+        webClient.handle_mouse_move(e.offsetX / scaleRatio, e.offsetY / scaleRatio);
     });
     window.addEventListener("keydown", (e) => {
         webClient.handle_keydown(e.key, performance.now());

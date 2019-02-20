@@ -10,6 +10,12 @@ html {
 }
 
 canvas {
+    /*
+        Width and height are scaled up by a factor of 2
+        Ref: https://developer.mozilla.org/en-US/docs/Games/Techniques/Crisp_pixel_art_look
+    */
+    width: 832px;
+    height: 512px;
     image-rendering: -moz-crisp-edges;
     image-rendering: -webkit-crisp-edges;
     image-rendering: pixelated;

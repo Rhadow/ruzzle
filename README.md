@@ -13,10 +13,9 @@ Ruzzle is licensed under the Apache 2.0 License.
 
 TODO:
 http://blog.studiominiboss.com/pixelart
+https://www.behance.net/gallery/65290819/Pixel-Art-Backgrounds-Tutorial-Skip
 
 Sprites to draw:
-
-- main character win
 
 - fixed location projector?
 - fixed rotation projector?
@@ -25,7 +24,6 @@ UI to draw:
 - background
 
 Programming:
-- win animation
 
 Level Design:
 - 01: stone, hole tutorial (done)
