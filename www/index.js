@@ -2,33 +2,26 @@ import { WebClient } from "ruzzle";
 
 function loadAssets() {
     const audioPromises = Array.from(document.querySelectorAll('.audio')).map(element => {
+        element.volume = element.id.startsWith('bgm') ? 0.4 : 1;
         return new Promise((resolve) => {
             if (element.readyState > 3) {
-                console.log(`${element.id} loaded`);
                 resolve();
             } else {
-                if (element.src.endsWith('.ogg')) {
+                const cb = () => {
+                    element.removeEventListener('canplaythrough', cb);
                     resolve();
-                } else {
-                    const cb = () => {
-                        console.log(`${element.id} loaded`);
-                        element.removeEventListener('canplaythrough', cb);
-                        resolve();
-                    };
-                    element.addEventListener('canplaythrough', cb);
-                    element.load();
-                }
+                };
+                element.addEventListener('canplaythrough', cb);
+                element.load();
             }
         });
     });
     const spritePromises = Array.from(document.querySelectorAll('.sprite')).map(element => {
         return new Promise((resolve) => {
             if (element.complete) {
-                console.log(`${element.id} loaded`);
                 resolve();
             } else {
                 const cb = () => {
-                    console.log(`${element.id} loaded`);
                     element.removeEventListener('load', cb);
                     resolve();
                 };
@@ -40,26 +33,40 @@ function loadAssets() {
     return Promise.all(assetPromises);
 };
 
-function bindControllerEvents(webClient) {
-    const scaleRatio = 2;
-    document.getElementById("canvas").addEventListener("mousedown", (e) => {
-        webClient.handle_mouse_down(e.offsetX / scaleRatio, e.offsetY / scaleRatio);
-    });
-    document.getElementById("canvas").addEventListener("mouseup", (e) => {
-        webClient.handle_mouse_up(e.offsetX / scaleRatio, e.offsetY / scaleRatio);
-    });
-    document.getElementById("canvas").addEventListener("mousemove", (e) => {
-        webClient.handle_mouse_move(e.offsetX / scaleRatio, e.offsetY / scaleRatio);
-    });
-    window.addEventListener("keydown", (e) => {
-        webClient.handle_keydown(e.key, performance.now());
-    });
-    window.addEventListener("keyup", (e) => {
-        webClient.handle_keyup(e.key);
-    });
+
+function createBindControllerEventHandler() {
+    const canvasElement = document.getElementById("canvas");
+    let lastHandlers = null;
+    return (handlers) => {
+        if (lastHandlers) {
+            canvasElement.removeEventListener("mousedown", lastHandlers.mouseDownHandler);
+            canvasElement.removeEventListener("mouseup", lastHandlers.mouseUpHandler);
+            canvasElement.removeEventListener("mousemove", lastHandlers.mouseMoveHandler);
+            window.removeEventListener("keydown", lastHandlers.keyDownHandler);
+            window.removeEventListener("keyup", lastHandlers.keyUpHandler);
+        }
+        canvasElement.addEventListener("mousedown", handlers.mouseDownHandler);
+        canvasElement.addEventListener("mouseup", handlers.mouseUpHandler);
+        canvasElement.addEventListener("mousemove", handlers.mouseMoveHandler);
+        window.addEventListener("keydown", handlers.keyDownHandler);
+        window.addEventListener("keyup", handlers.keyUpHandler);
+        lastHandlers = handlers;
+    };
 }
+
+function createHandlers(webClient) {
+    // NOTE: Make sure mouse position are correct after canvas scaled
+    const scaleRatio = getComputedStyle(document.documentElement).getPropertyValue('--scale-ratio');
+    return {
+        mouseDownHandler: e => webClient.handle_mouse_down(e.offsetX / scaleRatio, e.offsetY / scaleRatio),
+        mouseUpHandler: e => webClient.handle_mouse_up(e.offsetX / scaleRatio, e.offsetY / scaleRatio),
+        mouseMoveHandler: e => webClient.handle_mouse_move(e.offsetX / scaleRatio, e.offsetY / scaleRatio),
+        keyDownHandler: e => webClient.handle_keydown(e.key, performance.now()),
+        keyUpHandler: e => webClient.handle_keyup(e.key),
+    };
+}
+
 loadAssets().then(() => {
-    console.log('All assets loaded, starting game!');
     const webClient = WebClient.new("canvas", {
         "sprite": [
             "ruzzle_object",
@@ -79,7 +86,9 @@ loadAssets().then(() => {
             "sfx_projecting",
         ]
     });
-    bindControllerEvents(webClient);
+    const bindControllerEvents = createBindControllerEventHandler();
+    bindControllerEvents(createHandlers(webClient));
+    window.addEventListener('resize', () => { bindControllerEvents(createHandlers(webClient)); });
     webClient.render();
     function render() {
         webClient.update();

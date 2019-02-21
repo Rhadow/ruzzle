@@ -1,0 +1,36 @@
+# How Is Ruzzle Created
+
+In 2018, I spent a month playing Breathe of the Wild and was facinated by the world and all the chemistry interactions in the game. As a coder, the idea of creating a game myself has arised. People usually thought about using a game engine like Unity when they want to create games, using game engine has several advantages: physics, animations, rendering, etc... are all being modularized and handled properly. Developers can create a prototype and focus on the gameplay rapidly. The downside is you are missing the fun to implement those logics by yourself. I have never developed a legit game from scratch before so I thought this is a good time to try it myself.
+
+## Rust & WebAssembly
+
+My day job is mostly focusing on frontend development, so when thinking on what platform should my first game to be on, web is the first that comes to my mind. I've seen awesome 3D game demos posted online based on webassembly and heard of it several times in the past. After reading several articles, I decided to use webassembly in the project mainly due to its performance and its future trend. If you haven't heard about webassembly, [here](https://hacks.mozilla.org/2017/02/a-cartoon-intro-to-webassembly/) is a quick introduction. However, webaseembly is not normally something you can directly write, it is often compiled from another programming languages like C++, Rust, Go, etc... After doing some research, I decided to use Rust. Here are the reasons:
+
+1. The toolchain for compiling Rust to webassembly is relativly complete, a lot of tutorials out there. [Here is one](https://rustwasm.github.io/book/game-of-life/introduction.html)
+2. Rust seems to be a good language to do game development. Some reasons are mentioned [here](http://arewegameyet.com/)
+3. It's fun to learn a language that is [most loved in 2018](https://insights.stackoverflow.com/survey/2018/)
+
+## Ruzzle Game Description
+
+Initially, I was planning to make a simple 2D breathe of the wild prototype like Nintendo showed in this [video](https://www.youtube.com/watch?v=ruNLBHDS3yM).
+I then realized the scope is too big for a game dev noob's first project. The new plan is to make a puzzle game similar to [this one](http://www.luduminis.com/pascal/) but add chemistry interaction like Breathe of the Wild into it. It is going to be a 2D top down genre with no camera movement. The minimum viable product (MVP) will only include simple objects like cannons, rocks and fire in it. If you are curious about why this gameis called Ruzzle, it's just a combined word from Rust and Puzzle.
+
+## Game Architecture
+
+This is the section that gets more technical, I'll try to explain how this game is being put together. Please note, this is my first game project and the architecture is not perfect. In fact, some of my design flaws are already being mentioned in this [awesome article](https://kyren.github.io/2018/09/14/rustconf-talk.html) that I wish I have read it before starting to develop Ruzzle. If you are developing a game using Rust, I strongly recommend to read it.
+
+
+## Game Art
+
+Whew, with the technical part done, let's let our left brain to rest a bit and put the right brain to work. Speaking of the game art, I was originally going to use some of the resources from [opengameart.org](https://opengameart.org/) since I haven't been drawing anything except flow chart and [trees](https://en.wikipedia.org/wiki/Tree_(data_structure)) after high school, not to mention music. However, learning something new is always the main goal of doing these side projects so I decided to draw the assets myself. If you are asking me why not write game music yourself, I would say I thought about it and found some cool playlist on youtube such as [this one](https://www.youtube.com/channel/UCeZLO2VgbZHeDcongKzzfOw) but drawing has already taken most of my time, so maybe in the next project.
+
+The program I used to draw sprite is [aseprite](https://www.aseprite.org/), it is mostly recommended online. Initially, I thought drawing these low resolution characters are easy but it turns out I'm totally wrong. Since there aren't many pixels you can utilize in pixel art, everything needs to be calculated to make the image look symmetrical, some details needs to be simplified into one pixel or even ignored. Also, there are different types of shadows, in what angle the user is perceiving etc... To draw a decent image, it requires tons of observations in our daily life and practices.
+
+Here are some pixel art tutorials if you are interested in drawing them:
+
+- [https://medium.com/@davidbyttow/a-quick-and-dirty-guide-to-creating-pixel-art-d3d43d4bf421](https://medium.com/@davidbyttow/a-quick-and-dirty-guide-to-creating-pixel-art-d3d43d4bf421)
+- [http://blog.studiominiboss.com/pixelart](http://blog.studiominiboss.com/pixelart)
+- [https://medium.com/pixel-grimoire](https://medium.com/pixel-grimoire)
+
+## Conclusion
+
