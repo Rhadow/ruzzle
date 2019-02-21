@@ -6,14 +6,49 @@ In 2018, I spent a month playing Breathe of the Wild and was facinated by the wo
 
 My day job is mostly focusing on frontend development, so when thinking on what platform should my first game to be on, web is the first that comes to my mind. I've seen awesome 3D game demos posted online based on webassembly and heard of it several times in the past. After reading several articles, I decided to use webassembly in the project mainly due to its performance and its future trend. If you haven't heard about webassembly, [here](https://hacks.mozilla.org/2017/02/a-cartoon-intro-to-webassembly/) is a quick introduction. However, webaseembly is not normally something you can directly write, it is often compiled from another programming languages like C++, Rust, Go, etc... After doing some research, I decided to use Rust. Here are the reasons:
 
-1. The toolchain for compiling Rust to webassembly is relativly complete, a lot of tutorials out there. [Here is one](https://rustwasm.github.io/book/game-of-life/introduction.html)
+1. The toolchain for compiling Rust to webassembly is relativly complete, a lot of tutorials out there.
 2. Rust seems to be a good language to do game development. Some reasons are mentioned [here](http://arewegameyet.com/)
 3. It's fun to learn a language that is [most loved in 2018](https://insights.stackoverflow.com/survey/2018/)
 
-## Ruzzle Game Description
+I'll give a quick summary on how Rust, Webassembly and Javascript work together in this project. I'll go over it with what each tool is used for:
+
+### wasm-pack
+wasm-pack seems to be the most popular tool for building and compiling Rust to WebAssembly that can interoperate with JavaScript. It can also publish Rust-generated WebAssembly to the npm registry for other people to use with their own project.
+
+### wasm-bindgen
+This is probably the most important tool for this project. It creates the glue code between Rust and Javascript allowing them to communicate with each other. In simpler word, Rust can call custom Javascript functions and Javascript can call custom functions written in Rust because of wasm-bindgen is doing its magic behind. Anyone interested can take a look at this [blog](https://hacks.mozilla.org/2018/04/javascript-to-rust-and-back-again-a-wasm-bindgen-tale/).
+
+### js-sys
+js-sys brings Javascript global types and methods into Rust world. An actual use case in my project is dealing with `random` method. The rand crate from Rust does not work in the browser after compiled to webassembly, so my solution is to call `Math.random()` from javascript inside Rust by `js_sys::Math::random()`.
+
+### web-sys
+This is similar to js-sys. It brings all the Web's APIs, such as DOM manipulation, setTimeout etc... to the Rust world. I used it heavily to render game, play audio and getting DOM.
+
+If you follow the [rust-wasm tutorial](https://rustwasm.github.io/book/introduction.html), this tools are included automatically. A small note on web-sys, if there are any features you need and it didn't work in rust, try to update the web-sys features tag in Cargo.toml. If you are not sure how, you can take a look at Cargo.toml in this repository. I have added several features to make web-sys work with canvas, audio etc...
+
+Please correct me if any of the above information is wrong. Those are the information I got from their documents.
+
+Lastly, here are the steps to build and run this project locally, this steps only needs to be run in the first time:
+
+1. cd ruzzle
+2. wasm-pack build
+3. npm init wasm-app www
+4. cd www
+5. npm install
+6. cd ruzzle/pkg
+7. npm link
+8. cd ruzzle/www
+9. npm link ruzzle
+10. npm run start
+
+I know there are a lot of steps and you want to know why we do them. These steps are documented in more details in the tutorial link above. If you want a TLDR version, here it is: ruzzle is a rust repository and wasm-pack builds it into webassembly that lives in `ruzzle/pkg`. We also create `ruzzle/www` folder where the website lives in. The npm links the compiled rust code to the `ruzzle/www` so it can be used in the website. Finally, webpack dev server is used to serve the website locally.
+
+When doing development, everytime a change is made in the Rust code, you need to run `wasm-pack build` to compile it in order to see the result. You don't need to restart the server though, webpack will pick it up automatically. This is still not very efficient for developing, but the tool chain is evolving and I'm sure running `wasm-pack build` repeatedly will be solved in the near future.
+
+## Ruzzle Gameplay
 
 Initially, I was planning to make a simple 2D breathe of the wild prototype like Nintendo showed in this [video](https://www.youtube.com/watch?v=ruNLBHDS3yM).
-I then realized the scope is too big for a game dev noob's first project. The new plan is to make a puzzle game similar to [this one](http://www.luduminis.com/pascal/) but add chemistry interaction like Breathe of the Wild into it. It is going to be a 2D top down genre with no camera movement. The minimum viable product (MVP) will only include simple objects like cannons, rocks and fire in it. If you are curious about why this gameis called Ruzzle, it's just a combined word from Rust and Puzzle.
+I then realized the scope is too big for a game dev noob's first project. The new plan is to make a puzzle game similar to [this one](http://www.luduminis.com/pascal/) but add chemistry interaction like Breathe of the Wild into it. It is going to be a 2D top down genre with no camera movement. The minimum viable product (MVP) will only include simple objects like cannons, rocks and fire in it. If you are curious about why this game is called Ruzzle, it's just a combined word from Rust and Puzzle.
 
 ## Game Architecture
 
@@ -22,7 +57,7 @@ This is the section that gets more technical, I'll try to explain how this game 
 
 ## Game Art
 
-Whew, with the technical part done, let's let our left brain to rest a bit and put the right brain to work. Speaking of the game art, I was originally going to use some of the resources from [opengameart.org](https://opengameart.org/) since I haven't been drawing anything except flow chart and [trees](https://en.wikipedia.org/wiki/Tree_(data_structure)) after high school, not to mention music. However, learning something new is always the main goal of doing these side projects so I decided to draw the assets myself. If you are asking me why not write game music yourself, I would say I thought about it and found some cool playlist on youtube such as [this one](https://www.youtube.com/channel/UCeZLO2VgbZHeDcongKzzfOw) but drawing has already taken most of my time, so maybe in the next project.
+Whew, with the technical part done, let's let our left brain to rest a bit and put the right brain to work. Speaking of the game art, I was originally going to use some of the resources from [opengameart.org](https://opengameart.org/) since I haven't been drawing anything except flow chart and [trees](https://en.wikipedia.org/wiki/Tree_(data_structure)) after high school, not to mention creating music. However, learning something new is always the main goal of doing these side projects so I decided to draw the assets myself. If you are asking me why not write game music yourself, I would say I thought about it and found some cool playlist on youtube such as [this one](https://www.youtube.com/channel/UCeZLO2VgbZHeDcongKzzfOw) but drawing has already taken most of my time, so maybe in the next project.
 
 The program I used to draw sprite is [aseprite](https://www.aseprite.org/), it is mostly recommended online. Initially, I thought drawing these low resolution characters are easy but it turns out I'm totally wrong. Since there aren't many pixels you can utilize in pixel art, everything needs to be calculated to make the image look symmetrical, some details needs to be simplified into one pixel or even ignored. Also, there are different types of shadows, in what angle the user is perceiving etc... To draw a decent image, it requires tons of observations in our daily life and practices.
 
