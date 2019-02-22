@@ -29,14 +29,4 @@ pub trait Scene {
     fn on_mouse_up(&mut self, _mouse_x: f64, _mouse_y: f64, _world: &mut World, _current_level_page: &mut usize) {}
     fn on_mouse_down(&mut self, _mouse_x: f64, _mouse_y: f64, _world: &mut World) {}
     fn on_mouse_move(&mut self, _mouse_x: f64, _mouse_y: f64, _world: &mut World) {}
-    fn is_mouse_inside_box(&self, x: f64, y: f64, x0: f64, y0: f64, x1: f64, y1: f64) -> bool {
-        let mut result = false;
-        if x >= x0 && x <= x1 && y >= y0 && y <= y1 {
-            result = true;
-        }
-        result
-    }
-    fn is_pressed_inside_box(&self, down_x: f64, down_y: f64, up_x: f64, up_y: f64, x0: f64, y0: f64, x1: f64, y1: f64) -> bool {
-        self.is_mouse_inside_box(down_x, down_y, x0, y0, x1, y1) && self.is_mouse_inside_box(up_x, up_y, x0, y0, x1, y1)
-    }
 }

@@ -1,5 +1,6 @@
 // use web_sys::console::log_1;
 use wasm_bindgen::prelude::JsValue;
+use crate::utils::is_pressed_inside_box;
 use super::{SceneType, Scene};
 use crate::renderer::Renderer;
 use crate::game::World;
@@ -212,14 +213,14 @@ impl LevelSelectionScene {
         let x1 = x0 + PAGE_BUTTON_WIDTH;
         let y0 = self.height / 2f64 - PAGE_BUTTON_HEIGHT;
         let y1 = y0 + PAGE_BUTTON_HEIGHT;
-        self.is_pressed_inside_box(down_x, down_y, up_x, up_y, x0, y0, x1, y1)
+        is_pressed_inside_box(down_x, down_y, up_x, up_y, x0, y0, x1, y1)
     }
     fn is_last_page_pressed (&self, down_x: f64, down_y: f64, up_x: f64, up_y: f64) -> bool {
         let x0 = self.horizontal_padding / 2f64 - PAGE_BUTTON_WIDTH;
         let x1 = x0 + PAGE_BUTTON_WIDTH;
         let y0 = self.height / 2f64 - PAGE_BUTTON_HEIGHT;
         let y1 = y0 + PAGE_BUTTON_HEIGHT;
-        self.is_pressed_inside_box(down_x, down_y, up_x, up_y, x0, y0, x1, y1)
+        is_pressed_inside_box(down_x, down_y, up_x, up_y, x0, y0, x1, y1)
     }
 
     fn draw_level_block(&self, renderer: &Renderer, x: f64, y: f64, level: usize, completed_levels: &Vec<bool>) {

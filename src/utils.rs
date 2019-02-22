@@ -73,6 +73,19 @@ pub fn get_object_coverage(parent_status: &StatusManager, object_status: &Status
     }
 }
 
+
+pub fn is_mouse_inside_box(mouse_x: f64, mouse_y: f64, x0: f64, y0: f64, x1: f64, y1: f64) -> bool {
+    let mut result = false;
+    if mouse_x >= x0 && mouse_x <= x1 && mouse_y >= y0 && mouse_y <= y1 {
+        result = true;
+    }
+    result
+}
+
+pub fn is_pressed_inside_box(down_x: f64, down_y: f64, up_x: f64, up_y: f64, x0: f64, y0: f64, x1: f64, y1: f64) -> bool {
+    is_mouse_inside_box(down_x, down_y, x0, y0, x1, y1) && is_mouse_inside_box(up_x, up_y, x0, y0, x1, y1)
+}
+
 // pub fn terrain_generator() -> Vec<&'static str> {
 //     let mut result = vec![];
 //     for _ in 0..TOTAL_TILES {

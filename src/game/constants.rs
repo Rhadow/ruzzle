@@ -132,8 +132,8 @@ pub const TREE_BURN_DOWN_TIME: f64 = 4_800f64;
 pub const TREE_IGNITE_FRAMES: f64 = 100f64;
 pub const TREE_SIZE: f64 = 32f64;
 
-pub const ROCK_X_OFFSET: f64 = 0f64;
-pub const ROCK_Y_OFFSET: f64 = 2f64;
+pub const ROCK_X_OFFSET: f64 = 4f64;
+pub const ROCK_Y_OFFSET: f64 = 4f64;
 pub const ROCK_SIZE: f64 = 32f64;
 pub const ROCK_MOVE_TIME: f64 = 280f64;
 
@@ -143,7 +143,7 @@ pub const HOLE_Y_OFFSET: f64 = 0f64;
 pub const HOLE_SIZE: f64 = 32f64;
 pub const HOLE_FALL_THRESHOLD: f64 = 0.9f64;
 
-pub const CHEST_X_OFFSET: f64 = 8f64;
+pub const CHEST_X_OFFSET: f64 = 6f64;
 pub const CHEST_Y_OFFSET: f64 = 2f64;
 pub const CHEST_SIZE: f64 = 32f64;
 
@@ -186,17 +186,17 @@ pub const FIRE_SOURCE_IGNITE_FRAMES: f64 = 60f64;
 pub const FIRE_ANIMATION_TIME: f64 = 350f64;
 pub const FIRE_ANIMATION_SPRITE_LENGTH: isize = 2;
 
-pub const WALL_X_OFFSET: f64 = 2f64;
+pub const WALL_X_OFFSET: f64 = 0f64;
 pub const WALL_Y_OFFSET: f64 = 2f64;
 pub const WALL_WIDTH: f64 = 32f64;
 pub const WALL_HEIGHT: f64 = 32f64;
 
-pub const BREAKABLE_WALL_X_OFFSET: f64 = 4f64;
+pub const BREAKABLE_WALL_X_OFFSET: f64 = 2f64;
 pub const BREAKABLE_WALL_Y_OFFSET: f64 = 2f64;
 pub const BREAKABLE_WALL_WIDTH: f64 = 32f64;
 pub const BREAKABLE_WALL_HEIGHT: f64 = 32f64;
 
-pub const SPAWNING_POINT_X_OFFSET: f64 = 6f64;
+pub const SPAWNING_POINT_X_OFFSET: f64 = 4f64;
 pub const SPAWNING_POINT_Y_OFFSET: f64 = 2f64;
 pub const SPAWNING_POINT_WIDTH: f64 = 32f64;
 pub const SPAWNING_POINT_HEIGHT: f64 = 32f64;

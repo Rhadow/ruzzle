@@ -1,5 +1,6 @@
 // use web_sys::console::log_1;
 use wasm_bindgen::prelude::JsValue;
+use crate::utils::is_mouse_inside_box;
 use super::{SceneType, Scene};
 use crate::renderer::Renderer;
 use crate::game::{Asset, AssetType, World, Position, Direction};
@@ -195,21 +196,21 @@ impl GameScene {
         let x1 = x + BACK_BUTTON_SIZE;
         let y1 = WORLD_HEIGHT_IN_TILES as f64 * TILE_SIZE;
         let y0 = y1 - BACK_BUTTON_SIZE;
-        self.is_mouse_inside_box(x, y, x0, y0, x1, y1)
+        is_mouse_inside_box(x, y, x0, y0, x1, y1)
     }
     fn is_reset_btn_hovered (&self, x: f64, y: f64) -> bool {
         let x0 = WORLD_WIDTH_IN_TILES as f64 * TILE_SIZE;
         let x1 = x0 + RESET_BUTTON_SIZE;
         let y1 = WORLD_HEIGHT_IN_TILES as f64 * TILE_SIZE - BACK_BUTTON_SIZE;
         let y0 = y1 - RESET_BUTTON_SIZE;
-        self.is_mouse_inside_box(x, y, x0, y0, x1, y1)
+        is_mouse_inside_box(x, y, x0, y0, x1, y1)
     }
     fn is_mouse_on_map(&self, x: f64, y: f64) -> bool {
         let x0 = 0f64;
         let x1 = x0 + WORLD_WIDTH_IN_TILES as f64 * TILE_SIZE;
         let y0 = 0f64;
         let y1 = y0 + WORLD_HEIGHT_IN_TILES as f64 * TILE_SIZE;
-        self.is_mouse_inside_box(x, y, x0, y0, x1, y1)
+        is_mouse_inside_box(x, y, x0, y0, x1, y1)
     }
     fn get_mouse_position(&self, x: f64, y: f64) -> Position {
         let row = (y / TILE_SIZE).floor();
