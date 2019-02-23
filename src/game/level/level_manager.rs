@@ -105,6 +105,7 @@ use crate::game::constants::{
     SPAWNING_POINT_WIDTH,
     SPAWNING_POINT_HEIGHT,
 };
+use super::level00::LEVEL00;
 use super::level01::LEVEL01;
 use super::level02::LEVEL02;
 use super::level03::LEVEL03;
@@ -145,8 +146,10 @@ impl LevelManager {
 
     pub fn construct_level(&mut self, level: usize) -> (Vec<Tile>, Vec<RefCell<Box<dyn Object>>>) {
         let mut tiles = vec![];
-        let mut all_objects = vec![];
         let (terrains, objects, player_position) = LEVELS[level];
+        let mut all_objects = vec![
+            self.create_spawning_point(player_position, uuid()).unwrap()
+        ];
         self.set_player_position(Some(player_position));
         for i in 0..TOTAL_TILES {
             let terrain = terrains[i];
@@ -178,7 +181,6 @@ impl LevelManager {
                 "RF" => self.create_cannon(position, Direction::Right, uuid(), FAST_CANNON_PROJECT_CYCLE),
                 "BF" => self.create_fire_source(position, uuid(), 1),
                 "NF" => self.create_fire_source(position, uuid(), 0),
-                "SP" => self.create_spawning_point(position, uuid()),
                 _ => None
             };
 

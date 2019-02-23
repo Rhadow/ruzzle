@@ -31,7 +31,12 @@ impl Terrain for Hole {
                 self.asset.set_x_offset(HOLE_X_OFFSET);
             }
             for obj in world.get_objects().iter() {
-                if get_object_coverage(&self.status_manager, obj.borrow_mut().status_manager()) >= HOLE_FALL_THRESHOLD {
+                let mut is_object_projectile = false;
+                {
+                    let mut object = obj.borrow_mut();
+                    is_object_projectile = object.attribute_manager().is_projectile;
+                }
+                if get_object_coverage(&self.status_manager, obj.borrow_mut().status_manager()) >= HOLE_FALL_THRESHOLD && !is_object_projectile {
                     self.handle_object_falling(obj, audio);
                 }
             }
@@ -69,9 +74,6 @@ impl Hole {
         let mut object = object.borrow_mut();
         {
             let object_attribute = object.attribute_manager();
-            if object_attribute.is_projectile {
-                return;
-            }
             if object_attribute.is_filler {
                 self.is_filled = true;
             }

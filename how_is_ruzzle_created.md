@@ -75,29 +75,29 @@ In Rust side, the entry point is `ruzzle/src/lib.rs`, the game is divided into f
 - utils
 - game
 
-#### Client
+### Client
 
 The client corresponds to the platform that the game is going to be running on. Each platform uses different ways to render graphics, play audios and receive user inputs. For example, web uses canvas and HTMLAudioElement to render graphics and play audios. In order to make Ruzzle portable, I have separate these logic from the actual game.
 Each client will have its own renderer, audio and controller module to deal with platform specific logic. It will also include an instance of the actual game world and other metadata.
 
-#### Renderer
+### Renderer
 
 Renderer is used to render the game graphics. There are traits defined in `ruzzle/src/renderer/mod.rs`. With this approach, the rendering logic is being abstracted away from the game. Ruzzle only needs to call something like `draw_objects` and the renderer will handle the rest.
 
-#### Audio
+### Audio
 
 Same idea with audio. Traits are defined in `ruzzle/src/audio/mod.rs`
 
-#### Controller
+### Controller
 
 Initially, I didn't extract controller to a module. The original design was calling `handle_player_movement` directly when keydown event happens. Unfortunately, this approach introduce a significant delay to player control.
 The solution to this issue is to maintain a map of which keys are presently down. The game then reads the controller map for further computation. I'm not sure if this is needed for other platforms, but extracting it to a standalone module is always good for further extension.
 
-#### Utils
+### Utils
 
 Utils is the place where general functions reside. Functions like `coordinate_lerp` for animation and `check_collision` for collision detection are put in here.
 
-#### Game
+### Game
 
 This is where the main game logic lives and it is further divided into several modules:
 
@@ -109,30 +109,54 @@ This is where the main game logic lives and it is further divided into several m
 - tile
 - character
 - objects
-- world
 - level
+- world
 
 Let's go over them one by one:
 
-##### Scenes
+### Scenes
 
 There are currently three scenes in Ruzzle, the entry scene on the initial load, level selection scene and the game scene where the level is being instantiated. I have created traits for scenes so each scene can have its own rendering logic or handlers when a mouse click event happens.
 To handle scene switching, each scene has an optional `next_scene` attribute. When a scene switching is happening, current scene will set its next scene base on its own logic in its `update` method. The client will then detect that current scene's `next_scene` attribute is not `None` anymore and render the new scene in next frame.
 Honestly, I don't think it's a perfect design here. A possible refactor direction is to use the [observer pattern](http://www.gameprogrammingpatterns.com/observer.html).
 
-##### Assets
+### Assets
 
-Asset stores information of sprite for a game entity. There are four sprite sheets in this game, when the game wants to draw an entity, it needs to know which sprite sheet to use, what position in the sprite sheet the object is at and what is the sprite size. When an entity status change, for example a tree turning into burning tree, the tree entity needs to update its asset to use a new sprite to show the fire.
+Asset stores information of sprite for a game entity. There are four sprite sheets in this game, when the game wants to draw an entity, it needs to know which sprite sheet to use, what position in the sprite sheet the object is at and what is the sprite size. When an entity status change, for example a tree turning into burning tree, the tree entity needs to update its asset to use a new sprite to show the fire. With asset, code for entities with same behavior but different skin can be reused.
 
-##### Constants
+### Constants
 
 All the game constants.
 
-##### Status Manager
+### Status Manager
 
-Status manager controls an entity status. What size it is, where it is at on the map, which direction it is facing etc... Every entity (characters, objects and terrains) in this game includes it. There is a design flaw here, entities like terrain doesn't need to know if it's walking or dying but theses information are included. A possible solution is to implement ECS instead of using OO.
+Status manager controls an entity status. What size it is, where it is at on the map, which direction it is facing etc... Every entity (characters, objects and terrains) in this game includes it. There is a design flaw here, entities like terrain doesn't need to know if it's walking or dying but theses information are included. A possible solution is to implement ECS instead of OO like approach (Rust doesn't support inheritance directly).
 
 The logic for moving characters and items smoothly also resides here. As a grid based game, entities like characters use `Position` (row, column) to locate themselves. One problem with position is the entity snaps to the target position directly when moving, there is no smooth animation of moving from point A to point B. The solution is to add `Coordinate` (actual x and y) for entities. It allows the entity to locate between tiles when moving. Position and Coordinate can be easily converted into one another using methods in status manager.
+
+### Terrains
+
+So far in Ruzzle, there are only two terrains: `Land` and `Hole`. Each terrain will have its own update logic for example falling logic is handled in the `update` of `hole.rs`.
+
+### Tile
+
+The map in the game is created by an array of tiles called `tile_map`. Each tile contains a terrain in it. It seems like an extra wrapper for terrains for now, but the plan is to add other attributes into tiles such as special effect in the future.
+
+### Character
+
+This is where the player character code resides. The traits for characters are also defined here.
+
+### Objects
+
+Objects are all the other entities except characters on the map. They have an extra `attribute_manager` to control their behavior. For example, `temperature` shows how hot this object is, `is_burnable` indicates whether the entity can be burned. This `attribute_manager` serves similar purpose as `status_manager`, what makes them different is attributes in `attribute_manager` are only limited to objects. If for example, characters need `temperature` in the future, it needs to be moved to `status_manager`. I personally think this is a design flaw and again it should be solved by ECS.
+
+### Level
+
+Every levels and level editor is stored in this module. Each level is composed by three elements: terrains, objects and player initial position. Terrains and objects are array of strings. Each string is a key that maps to its correspond entity for example 'T' maps to tree. The full documentation of this key/entity map is documented in `ruzzle/src/game/level/level_manager.rs`. Player initial position is a row/column tuple. One extra note, the spawn point object is automatically added to player's initial position.
+
+### World
+
+World is everything above combined together. A world has a tile map, list of objects and list of characters. It also has state indicating which level the user is currently playing and whether it is completed or not. World also provides setters and getters for different entities where most game logic will use.
 
 ## Game Art
 
