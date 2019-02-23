@@ -1,12 +1,12 @@
 # How Is Ruzzle Created
 
-In 2018, I spent a month playing Breathe of the Wild and was fascinated by the world and all the chemistry interactions in the game. As a programmer, the idea of creating a game myself has arised.
-People usually thought about using a game engine like Unity when creating games. Using game engine has several advantages: physics, animations, rendering, etc... are all being modularized and handled properly. Developers can create a prototype and focus on the gameplay rapidly. The downside is you are missing the fun to implement those logic by yourself.
-I have never developed a legit game from scratch before so I thought this is a good time to try it myself.
+In 2018, I played Zelda's latest game *Breathe of the Wild* and was fascinated by the world and all the chemistry interactions in the game. As a programmer, the idea of creating a game myself has arised.
+People usually thought about using a game engine like Unity when creating games. Using game engine has several advantages: physics, animations, rendering and all the stuff you need to make a game is properly modularized and ready to use. Developers can create a prototype and focus on the gameplay rapidly. The downside is you are missing the fun to implement those logic by yourself.
+I have never developed a game from scratch before so I thought this is a good time to try it myself.
 
 ## Rust & WebAssembly
 
-My day job is mostly focusing on frontend development, so when thinking on what platform should my first game to be on, web is the first that comes to my mind. I've seen awesome 3D game demos posted online based on **webassembly** and heard of it several times in the past. After reading some articles, I decided to use webassembly in the project mainly due to its performance and its future trend. If you haven't heard about webassembly, [here](https://hacks.mozilla.org/2017/02/a-cartoon-intro-to-webassembly/) is a quick introduction. However, webaseembly is not something you can write directly (some people might disagree), it is often compiled from another programming languages like C++, Rust, Go, etc... After doing more research, I decided to adopt Rust. Here are the reasons:
+My day job is mostly focusing on frontend development, so when thinking on what platform should my first game to be on, web is the first that comes to my mind. I've seen awesome 3D game demos posted online based on **webassembly** and heard of it several times in the past. After reading some articles, I decided to use webassembly in the project mainly due to its performance and its future trend. If you haven't heard about webassembly, [here](https://hacks.mozilla.org/2017/02/a-cartoon-intro-to-webassembly/) is a quick introduction. However, webaseembly is not something you can write directly, it is often compiled from another programming languages like C++, Rust, Go, etc... After doing more research, I decided to adopt Rust. Here are the reasons:
 
 1. The toolchain for compiling Rust to webassembly is relatively complete, there are a lot of tutorials out in the internet
 2. Rust seems to be a good language to do game development. Some reasons are mentioned [here](http://arewegameyet.com/)
@@ -24,11 +24,13 @@ This is probably the most important tool for this project. It creates the glue c
 js-sys brings Javascript global types and methods into Rust world. An actual use case in my project is dealing with `random` method. The rand crate from Rust does not work in the browser after compiled to webassembly, so my solution is to call `Math.random()` from Javascript in Rust by using `js_sys::Math::random()`.
 
 ### web-sys
-This is similar to js-sys. It brings all the Web's APIs, such as DOM manipulation, setTimeout etc... to the Rust world. I used it heavily to render game, play audio and getting DOM.
+This is similar to js-sys. It brings all the Web's APIs, such as DOM manipulation, setTimeout etc... to the Rust world. I used it heavily to render game, play audio and retrieving DOM object.
 
 If you follow the [rust-wasm tutorial](https://rustwasm.github.io/book/introduction.html), these tools are included automatically. A small note on web-sys, if there are any features you need and it didn't work in rust, try to update the web-sys features tag in Cargo.toml. If you are not sure how, you can take a look at Cargo.toml in this repository. I have added several features to make web-sys work with canvas, audio etc...
 
 Please correct me if any of the above is wrong. Those are the information I got from their official documents.
+
+### How to Start Dev Environment
 
 Lastly, here are the steps to build and run this project locally, these steps only need to be run for the first time:
 
@@ -43,9 +45,9 @@ Lastly, here are the steps to build and run this project locally, these steps on
 9. npm link ruzzle
 10. npm run start
 
-I know there are a lot of steps and you want to know the reason behind them. These steps are documented in more details in the rust-wasm tutorial link above.
+I know there are a lot of steps and its tedious. These steps are documented in more details in the rust-wasm tutorial link above.
 
-If you want a TLDR version, here it is: ruzzle is a rust repository and wasm-pack builds it into webassembly that lives in `ruzzle/pkg`. We also create `ruzzle/www` folder where the website lives in. The npm links the compiled rust code to the `ruzzle/www` so it can be used in the website. Finally, webpack dev server is used to serve the website locally.
+If you want a TLDR version, here it is: ruzzle is a rust repository and wasm-pack builds it into webassembly that lives in `ruzzle/pkg`. We also create `ruzzle/www` folder where the website lives in. Npm then links the compiled rust code to the `ruzzle/www` node modules directory so it can be used in the website. Finally, webpack dev server is used to serve the website locally.
 
 When doing development, everytime a change is made in the Rust code, you need to run `wasm-pack build` to compile it in order to see the result. You don't need to restart the server though, webpack will pick it up automatically. This is still not very efficient for development, but the tool chain is evolving and I'm sure running `wasm-pack build` repeatedly will be solved in the near future.
 
@@ -62,7 +64,7 @@ With the introduction get out of the way, lets get started:
 
 ### Javascript
 
-The entry point in the Javascript side is `ruzzle/www/index.js`. There is no game logic written in it. It's purpose is to make sure game runs after assets are loaded, bind ui events and rendering. The actual game is written entirely in Rust and its being imported to Javascript as `WebClient`. Javascript only needs to call certain exposed method to get the game started.
+The entry point in the Javascript side is `ruzzle/www/index.js`. There is no game logic written in it. It's purpose is to make sure game runs after assets are loaded, bind ui events and rendering. The actual game is written entirely in Rust and its being imported to Javascript as `WebClient`. Javascript only needs to call certain exposed method such as `update` and `render` to get the game started.
 
 ### Rust
 
@@ -77,8 +79,8 @@ In Rust side, the entry point is `ruzzle/src/lib.rs`, the game is divided into f
 
 ### Client
 
-The client corresponds to the platform that the game is going to be running on. Each platform uses different ways to render graphics, play audios and receive user inputs. For example, web uses canvas and HTMLAudioElement to render graphics and play audios. In order to make Ruzzle portable, I have separate these logic from the actual game.
-Each client will have its own renderer, audio and controller module to deal with platform specific logic. It will also include an instance of the actual game world and other metadata.
+The client corresponds to the platform that the game is going to be running on. Each platform uses different ways to render graphics, play audios and receive user inputs. For example, web uses canvas and HTMLAudioElement to render graphics and play audios. In order to make Ruzzle portable, These logic are separated from the actual game.
+Each client will have its own renderer, audio and controller module to deal with platform specific logic. Client also includes an instance of the actual game world and other metadata.
 
 ### Renderer
 
@@ -90,8 +92,8 @@ Same idea with audio. Traits are defined in `ruzzle/src/audio/mod.rs`
 
 ### Controller
 
-Initially, I didn't extract controller to a module. The original design was calling `handle_player_movement` directly when keydown event happens. Unfortunately, this approach introduce a significant delay to player control.
-The solution to this issue is to maintain a map of which keys are presently down. The game then reads the controller map for further computation. I'm not sure if this is needed for other platforms, but extracting it to a standalone module is always good for further extension.
+Initially, I didn't extract controller to a module. The original design was something like "call `handle_player_movement` directly when keydown event happens". Unfortunately, this approach introduce a significant delay to player control.
+The solution to this issue is to maintain a map of which keys are presently pressed. The game then reads the controller map for further computation. I'm not sure if this is needed for other platforms, but extracting it to a standalone module is always good for further extension.
 
 ### Utils
 
@@ -116,27 +118,27 @@ Let's go over them one by one:
 
 ### Scenes
 
-There are currently three scenes in Ruzzle, the entry scene on the initial load, level selection scene and the game scene where the level is being instantiated. I have created traits for scenes so each scene can have its own rendering logic or handlers when a mouse click event happens.
+There are currently three scenes in Ruzzle, the entry scene on the initial load, level selection scene and the game scene where the level is being instantiated. I have created traits for scenes so each scene can have its own rendering logic and handlers when input event happens.
 To handle scene switching, each scene has an optional `next_scene` attribute. When a scene switching is happening, current scene will set its next scene base on its own logic in its `update` method. The client will then detect that current scene's `next_scene` attribute is not `None` anymore and render the new scene in next frame.
 Honestly, I don't think it's a perfect design here. A possible refactor direction is to use the [observer pattern](http://www.gameprogrammingpatterns.com/observer.html).
 
 ### Assets
 
-Asset stores information of sprite for a game entity. There are four sprite sheets in this game, when the game wants to draw an entity, it needs to know which sprite sheet to use, what position in the sprite sheet the object is at and what is the sprite size. When an entity status change, for example a tree turning into burning tree, the tree entity needs to update its asset to use a new sprite to show the fire. With asset, code for entities with same behavior but different skin can be reused.
+Asset stores information of sprite for a game entity. There are four sprite sheets in this game, when the game wants to draw an entity, it needs to know which sprite sheet to use, what position in the sprite sheet the object is at and what is the sprite size. When an entity status change, for example a tree turning into burning tree, the tree entity needs to update its asset to use a new sprite to show the fire. With asset, code for entities with same behavior but different skins can be reused.
 
 ### Constants
 
-All the game constants.
+All the game constants, nothing special.
 
 ### Status Manager
 
-Status manager controls an entity status. What size it is, where it is at on the map, which direction it is facing etc... Every entity (characters, objects and terrains) in this game includes it. There is a design flaw here, entities like terrain doesn't need to know if it's walking or dying but theses information are included. A possible solution is to implement ECS instead of OO like approach (Rust doesn't support inheritance directly).
+Status manager controls the status of entity. What size it is, where it is at on the map, which direction it is facing etc... Every entity (characters, objects and terrains) in this game has it. There is a design flaw here, entities like terrain doesn't need to know if it's walking or dying but theses information are included. A possible solution is to implement ECS instead of using OO like approach (Rust doesn't support inheritance directly).
 
 The logic for moving characters and items smoothly also resides here. As a grid based game, entities like characters use `Position` (row, column) to locate themselves. One problem with position is the entity snaps to the target position directly when moving, there is no smooth animation of moving from point A to point B. The solution is to add `Coordinate` (actual x and y) for entities. It allows the entity to locate between tiles when moving. Position and Coordinate can be easily converted into one another using methods in status manager.
 
 ### Terrains
 
-So far in Ruzzle, there are only two terrains: `Land` and `Hole`. Each terrain will have its own update logic for example falling logic is handled in the `update` of `hole.rs`.
+So far in Ruzzle, there are only two terrains: `Land` and `Hole`. Each terrain will have its own update logic for example falling is handled in the `update` of `hole.rs`.
 
 ### Tile
 
@@ -148,11 +150,13 @@ This is where the player character code resides. The traits for characters are a
 
 ### Objects
 
-Objects are all the other entities except characters on the map. They have an extra `attribute_manager` to control their behavior. For example, `temperature` shows how hot this object is, `is_burnable` indicates whether the entity can be burned. This `attribute_manager` serves similar purpose as `status_manager`, what makes them different is attributes in `attribute_manager` are only limited to objects. If for example, characters need `temperature` in the future, it needs to be moved to `status_manager`. I personally think this is a design flaw and again it should be solved by ECS.
+Objects are all the other entities except characters on the map. They have an extra `attribute_manager` to control their behavior. For example, `temperature` shows how hot this object is, `is_burnable` indicates whether the entity can be burned. This `attribute_manager` serves similar purpose as `status_manager`, what makes them different is attributes in `attribute_manager` are only limited to objects. If for example, characters need `temperature` in the future, the `temperature` attribute needs to be moved to `status_manager`. I personally think this is a design flaw and again it should be solved by ECS.
 
 ### Level
 
 Every levels and level editor is stored in this module. Each level is composed by three elements: terrains, objects and player initial position. Terrains and objects are array of strings. Each string is a key that maps to its correspond entity for example 'T' maps to tree. The full documentation of this key/entity map is documented in `ruzzle/src/game/level/level_manager.rs`. Player initial position is a row/column tuple. One extra note, the spawn point object is automatically added to player's initial position.
+
+If you are wondering why spawn point is needed, The answer is to prevent user move objects to the player's respawn point. since when player dies, he will be respawned at spawn point and having an object there doesn't make any sense.
 
 ### World
 
@@ -160,9 +164,9 @@ World is everything above combined together. A world has a tile map, list of obj
 
 ## Game Art
 
-Whew, with the technical part done, let's let our left brain to rest a bit and put the right brain to work. Speaking of the game art, I was originally going to use some of the resources from [opengameart.org](https://opengameart.org/) since I haven't been drawing anything except flow chart and [trees](https://en.wikipedia.org/wiki/Tree_(data_structure)) after high school, not to mention creating music. However, learning something new is always the main goal of doing these side projects so I decided to draw the assets myself. If you are asking me why not write game music yourself, I would say I thought about it and I have found some cool channel on youtube such as [this one](https://www.youtube.com/channel/UCeZLO2VgbZHeDcongKzzfOw) to learn how to compose music. Then I realized drawing has already taken a lot of time then I originally planned. In fact, half of the development time of this game is drawing sprites, so maybe I'll try music in the next project.
+Whew, with the technical part done, let's let our left brain to rest a bit and put the right brain to work. Speaking of the game art, I was originally going to use some of the resources from [opengameart.org](https://opengameart.org/) since I haven't been drawing anything except flow chart and [trees](https://en.wikipedia.org/wiki/Tree_(data_structure)) after high school, not to mention creating music. However, learning something new is always the main goal of doing these side projects so I decided to draw the assets myself. If you are asking me why not also compose game music yourself, I would say I thought about it and I have found some cool channel on youtube such as [this one](https://www.youtube.com/channel/UCeZLO2VgbZHeDcongKzzfOw) to learn how to compose music. Then I realized drawing has already taken a lot of time than I originally planned. In fact, half of the development time of this game is drawing sprites, so maybe I'll try music in the next project.
 
-The program I used to draw sprite is [aseprite](https://www.aseprite.org/), it is recommended by most artist online. Initially, I thought drawing these low resolution characters are easy but it turns out I'm totally wrong. Since there aren't many pixels you can utilize in pixel art, everything needs to be calculated to make the image look natural, some details needs to be simplified into one pixel or even ignored. Also, there are a lot of details such as different types of shadows, in what angle the user is perceiving etc... To draw a decent image, it requires tons of practices and observations in our daily life.
+The program I used to draw sprite is [aseprite](https://www.aseprite.org/), it is recommended by most artist online. Initially, I thought drawing these low resolution characters are easy but it turns out I'm totally wrong. Since there aren't many pixels you can utilize in pixel art, everything needs to be calculated to make the image look natural, some details needs to be simplified into one pixel or even ignored. Also, there are a lot of techniques to learn such as different types of shadows, in what angle the user is perceiving etc... To draw a decent image, it requires tons of practices and observations in our daily life.
 
 Here are some tutorials if you are interested in creating pixel art:
 
@@ -172,7 +176,7 @@ Here are some tutorials if you are interested in creating pixel art:
 
 ## Conclusion
 
-Developing a game with Rust is a weird experience, I feel safe when making code changes as the mighty compiler will always do a final check before the program starts running. On the other hand, everytime I see `Cannot borrow as mutable because it is also borrowed as immutable` or `cannot infer an appropriate lifetime for lifetime parameter`, it gives me a lot of headache. In general, programming in Rust is a good practice as these errors often leads to subtle bug in other languages. It may take you hours to make those error messages go away at first, but as you get used to it, these errors can be prevented beforehand or fixed sooner.
+Developing a game with Rust is a weird experience, I feel safe when making code changes as the mighty compiler will always do a final check before the program starts running. On the other hand, everytime I see `Cannot borrow as mutable because it is also borrowed as immutable` or `cannot infer an appropriate lifetime for lifetime parameter`, it gives me a lot of headache. In general, programming in Rust will make you a shaper programmer as these errors often leads to subtle bug in other languages. It may take you hours to make those error messages go away at first, but as you get used to it, these errors can be prevented beforehand or fixed sooner.
 
 I always know writing a game from scratch is not an easy task, but after creating the MVP of Ruzzle, I realized it's way harder than I originally thought. Here is my personal list of requirements to make a decent indie game:
 

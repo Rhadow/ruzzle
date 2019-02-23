@@ -1,5 +1,4 @@
 // use web_sys::console::log_1;
-use wasm_bindgen::prelude::JsValue;
 use crate::utils::is_pressed_inside_box;
 use super::{SceneType, Scene};
 use crate::renderer::Renderer;
@@ -47,6 +46,10 @@ use crate::game::constants::{
     RIGHT_ARROW_X_OFFSET,
     RIGHT_ARROW_Y_OFFSET,
     ARROW_BUTTON_SPRITE_SIZE,
+    BACKGROUND_X_OFFSET,
+    BACKGROUND_Y_OFFSET,
+    BACKGROUND_WIDTH,
+    BACKGROUND_HEIGHT,
 };
 use crate::game::{
     Asset,
@@ -70,7 +73,7 @@ impl Scene for LevelSelectionScene {
     }
     fn render(&self, renderer: &Renderer, _world: &World, completed_levels: &Vec<bool>) {
         renderer.clear_screen();
-        renderer.draw_rectangle(0f64, 0f64, self.width, self.height, &JsValue::from_str("#0d9263"));
+        self.draw_background(renderer);
         let levels = self.get_levels_by_page();
         for (index, level) in levels.iter().enumerate() {
             let x = self.horizontal_padding + (index % (LEVELS_PER_PAGE / ROW_PER_PAGE)) as f64 * (LEVEL_BUTTON_WIDTH + LEVEL_BUTTON_MARGIN);
@@ -269,5 +272,17 @@ impl LevelSelectionScene {
                 renderer.draw_asset_by_coordinate(&asset, digit_x, digit_y, DIGIT_WIDTH, DIGIT_HEIGHT);
             }
         }
+    }
+    fn draw_background(&self, renderer: &Renderer) {
+        let asset = Asset::new(
+            AssetType::RuzzleBackground,
+            BACKGROUND_X_OFFSET,
+            BACKGROUND_Y_OFFSET,
+            BACKGROUND_WIDTH,
+            BACKGROUND_HEIGHT,
+            None,
+            None,
+        );
+        renderer.draw_asset_by_coordinate(&asset, 0f64, 0f64, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
     }
 }

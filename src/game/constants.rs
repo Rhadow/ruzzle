@@ -1,14 +1,19 @@
 // Entry Scene
 pub const START_BUTTON_X_OFFSET: f64 = 8f64;
-pub const START_BUTTON_Y_OFFSET: f64 = 2f64;
-pub const START_BUTTON_WIDTH: f64 = 124f64;
-pub const START_BUTTON_HEIGHT: f64 = 32f64;
+pub const START_BUTTON_Y_OFFSET: f64 = 3f64;
+pub const START_BUTTON_WIDTH: f64 = 64f64;
+pub const START_BUTTON_HEIGHT: f64 = 16f64;
 pub const START_BUTTON_FLASH_FREQUENCY: f64 = 1500f64;
 
 pub const TITLE_X_OFFSET: f64 = 0f64;
 pub const TITLE_Y_OFFSET: f64 = 2f64;
 pub const TITLE_WIDTH: f64 = 64f64;
 pub const TITLE_HEIGHT: f64 = 32f64;
+
+pub const BACKGROUND_X_OFFSET: f64 = 0f64;
+pub const BACKGROUND_Y_OFFSET: f64 = 0f64;
+pub const BACKGROUND_WIDTH: f64 = 416f64;
+pub const BACKGROUND_HEIGHT: f64 = 256f64;
 
 // Level Selection Scene
 pub const LEVEL_BUTTON_X_OFFSET: f64 = 4f64;

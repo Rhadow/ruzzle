@@ -1,5 +1,4 @@
 // use web_sys::console::log_1;
-use wasm_bindgen::prelude::JsValue;
 use super::{SceneType, Scene};
 use crate::renderer::Renderer;
 use crate::controller::Controller;
@@ -19,6 +18,10 @@ use crate::game::constants::{
     TITLE_Y_OFFSET,
     TITLE_WIDTH,
     TITLE_HEIGHT,
+    BACKGROUND_X_OFFSET,
+    BACKGROUND_Y_OFFSET,
+    BACKGROUND_WIDTH,
+    BACKGROUND_HEIGHT,
 };
 
 pub struct EntryScene {
@@ -72,7 +75,16 @@ impl EntryScene {
         }
     }
     fn draw_background(&self, renderer: &Renderer) {
-        renderer.draw_rectangle(0f64, 0f64, self.width, self.height, &JsValue::from_str("#01cafe"));
+        let asset = Asset::new(
+            AssetType::RuzzleBackground,
+            BACKGROUND_X_OFFSET,
+            BACKGROUND_Y_OFFSET,
+            BACKGROUND_WIDTH,
+            BACKGROUND_HEIGHT,
+            None,
+            None,
+        );
+        renderer.draw_asset_by_coordinate(&asset, 0f64, 0f64, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
     }
     fn draw_title(&self, renderer: &Renderer) {
         let asset = Asset::new(
@@ -84,10 +96,10 @@ impl EntryScene {
             None,
             None,
         );
-        let title_render_width = TITLE_WIDTH * 3f64;
-        let title_render_height = TITLE_HEIGHT * 3f64;
+        let title_render_width = TITLE_WIDTH * 2.5f64;
+        let title_render_height = TITLE_HEIGHT * 2.5f64;
         let x = (self.width - title_render_width) / 2f64;
-        let y = self.height * 0.2f64;
+        let y = self.height * 0.15f64;
         renderer.draw_asset_by_coordinate(&asset, x, y, title_render_width, title_render_height);
     }
     fn draw_hint(&self, renderer: &Renderer) {
@@ -102,7 +114,7 @@ impl EntryScene {
                 None,
             );
             let start_btn_render_width = START_BUTTON_WIDTH;
-            let start_btn_render_height = START_BUTTON_HEIGHT / 2f64;
+            let start_btn_render_height = START_BUTTON_HEIGHT;
             let start_btn_x = (self.width - start_btn_render_width) / 2f64;
             let start_btn_y = self.height * 0.75f64;
             renderer.draw_asset_by_coordinate(&asset, start_btn_x, start_btn_y, start_btn_render_width, start_btn_render_height);
