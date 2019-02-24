@@ -1,0 +1,34 @@
+:root {
+    --scale-ratio: 1;
+}
+
+@media screen and (min-width: 832px) and (min-height: 512px) {
+    :root {
+        --scale-ratio: 2;
+    }
+}
+
+html {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.asset {
+    display: none;
+}
+
+canvas {
+    /*
+        Width and height are scaled up by scale-ratio variable
+        Ref: https://developer.mozilla.org/en-US/docs/Games/Techniques/Crisp_pixel_art_look
+    */
+    width: calc(416px * var(--scale-ratio));
+    height: calc(256px * var(--scale-ratio));
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    -webkit-tap-highlight-color: transparent;
+}
