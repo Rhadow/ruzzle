@@ -1,5 +1,7 @@
 # How Is Ruzzle Created
 
+**想讀中文版[請點這](https://github.com/Rhadow/ruzzle/blob/master/how_is_ruzzle_created_zh_TW.md)**
+
 In 2018, I played Zelda's latest game *Breathe of the Wild* and was fascinated by the world and all the chemistry interactions in the game. As a programmer, the idea of creating a game myself has arised.
 People usually thought about using a game engine like Unity when creating games. Using game engine has several advantages: physics, animations, rendering and all the stuff you need to make a game is properly modularized and ready to use. Developers can create a prototype and focus on the gameplay rapidly. The downside is you are missing the fun to implement those logic by yourself.
 I have never developed a game from scratch before so I thought this is a good time to try it myself.
@@ -92,12 +94,12 @@ Same idea with audio. Traits are defined in `ruzzle/src/audio/mod.rs`
 
 ### Controller
 
-Initially, I didn't extract controller to a module. The original design was something like "call `handle_player_movement` directly when keydown event happens". Unfortunately, this approach introduce a significant delay to player control.
+Controller is used to map user's input to the game. Initially, I didn't extract controller to a module. The original design was something like "call `handle_player_movement` directly when keydown event happens". Unfortunately, this approach introduce a significant delay to player control.
 The solution to this issue is to maintain a map of which keys are presently pressed. The game then reads the controller map for further computation. I'm not sure if this is needed for other platforms, but extracting it to a standalone module is always good for further extension.
 
 ### Utils
 
-Utils is the place where general functions reside. Functions like `coordinate_lerp` for animation and `check_collision` for collision detection are put in here.
+Utils is the place where general functions reside. Functions like `coordinate_lerp` for animation and `check_collision` for collision detection are put in here. By the way, the collision system in this game uses rectangle area which leetcode has a [problem on it](https://leetcode.com/problems/rectangle-area/). Finally see a leetcode question in action in real projects.
 
 ### Game
 
@@ -132,9 +134,9 @@ All the game constants, nothing special.
 
 ### Status Manager
 
-Status manager controls the status of entity. What size it is, where it is at on the map, which direction it is facing etc... Every entity (characters, objects and terrains) in this game has it. There is a design flaw here, entities like terrain doesn't need to know if it's walking or dying but theses information are included. A possible solution is to implement ECS instead of using OO like approach (Rust doesn't support inheritance directly).
+Status manager controls the status of entity. What size it is, where it is at on the map, which direction it is facing etc... Every entity (characters, objects and terrains) in this game has it. There is a design flaw here, entities like terrain doesn't need to know if it's walking or dying but theses information are included. A possible solution is to implement ECS (Entity Component System) instead of using OO like approach (Rust doesn't support inheritance directly).
 
-The logic for moving characters and items smoothly also resides here. As a grid based game, entities like characters use `Position` (row, column) to locate themselves. One problem with position is the entity snaps to the target position directly when moving, there is no smooth animation of moving from point A to point B. The solution is to add `Coordinate` (actual x and y) for entities. It allows the entity to locate between tiles when moving. Position and Coordinate can be easily converted into one another using methods in status manager.
+The logic for moving characters and items smoothly also resides here. As a grid based game, entities like characters use `Position` (row, column) to locate themselves. One problem with position is the entity snaps to the target position directly when moving, there is no smooth animation of moving from point A to point B. The solution is to add `Coordinate` (actual x and y relative to canvas) for entities. It allows the entity to locate between tiles when moving. Position and Coordinate can be easily converted into one another using methods in status manager.
 
 ### Terrains
 
