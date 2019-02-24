@@ -1,13 +1,14 @@
 # Ruzzle
 
 A puzzle game inspired by Breath of the wild made by rust and webassembly.
+Play here: [https://rhadow.github.io/ruzzle/](https://rhadow.github.io/ruzzle/)
 
 ## Documentation:
 
 Documentation on why this game is created and how this game is structured.
 
-[Read in English](https://github.com/Rhadow/ruzzle/blob/master/how_is_ruzzle_created_en.md)
-[Read in Mandarin](https://github.com/Rhadow/ruzzle/blob/master/how_is_ruzzle_created_zh_TW.md)
+* [Read in English](https://github.com/Rhadow/ruzzle/blob/master/how_is_ruzzle_created_en.md)
+* [Read in Mandarin](https://github.com/Rhadow/ruzzle/blob/master/how_is_ruzzle_created_zh_TW.md)
 
 ## Screenshots
 
