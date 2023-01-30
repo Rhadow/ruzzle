@@ -53,6 +53,12 @@ If you want a TLDR version, here it is: ruzzle is a rust repository and wasm-pac
 
 When doing development, everytime a change is made in the Rust code, you need to run `wasm-pack build` to compile it in order to see the result. You don't need to restart the server though, webpack will pick it up automatically. This is still not very efficient for development, but the tool chain is evolving and I'm sure running `wasm-pack build` repeatedly will be solved in the near future.
 
+### How to Deploy the Game
+
+1. cd www
+2. npm run build
+3. push the newly created dist dir content to the gh-pages branch
+
 ## Ruzzle Gameplay
 
 Initially, I was planning to make a simple 2D breathe of the wild prototype like Nintendo showed in this [video](https://www.youtube.com/watch?v=ruNLBHDS3yM).
