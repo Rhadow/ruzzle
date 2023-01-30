@@ -63,7 +63,6 @@ impl Scene for GameScene {
     }
     fn on_mouse_up(&mut self, mouse_x: f64, mouse_y: f64, world: &mut World, _current_level_page: &mut usize) {
         let is_input_disabled = world.player().borrow().at_exit();
-        let player_position = world.player().borrow().status_manager().position;
         if let Some((down_x, down_y)) = self.mouse_down_coordinate {
             if !is_input_disabled {
                 if self.is_back_btn_pressed(down_x, down_y, mouse_x, mouse_y) {
@@ -72,11 +71,6 @@ impl Scene for GameScene {
                 if self.is_reset_btn_pressed(down_x, down_y, mouse_x, mouse_y) {
                     let level = world.level_number.unwrap();
                     world.init_level(level);
-                }
-                if self.is_mouse_on_map(mouse_x, mouse_y) {
-                    let mouse_position = self.get_mouse_position(mouse_x, mouse_y);
-                    let target_direction = self.get_relative_mouse_direction(&mouse_position, &player_position);
-                    world.handle_player_movement(target_direction);
                 }
             }
         }
@@ -134,6 +128,7 @@ impl GameScene {
         }
     }
     fn check_direction_event(&mut self, controller: &mut Controller, world: &mut World) {
+        // Check for a keyboard event that would cause player movement first
         let key_map = &controller.key_map;
         let mut direction_key = None;
         let mut most_recent_timestamp = 0f64;
@@ -149,6 +144,15 @@ impl GameScene {
         }
         if let Some(direction_key) = direction_key {
             world.handle_direction_event(direction_key);
+            return;
+        }
+
+        // Otherwise check if the mouse is currently pressed in a way that would cause player movement
+        if controller.is_mouse_down && self.is_mouse_on_map(controller.mouse_x, controller.mouse_y) {
+            let mouse_position = self.get_mouse_position(controller.mouse_x, controller.mouse_y);
+            let player_position = world.player().borrow().status_manager().position;
+            let target_direction = self.get_relative_mouse_direction(&mouse_position, &player_position);
+            world.handle_player_movement(target_direction);
         }
     }
     fn check_action_event(&mut self, controller: &mut Controller, world: &mut World) {
