@@ -2,12 +2,13 @@
   "name": "create-wasm-app",
   "version": "0.1.0",
   "description": "create an app to consume rust-generated wasm packages",
+  "type": "module",
   "main": "index.js",
   "bin": {
     "create-wasm-app": ".bin/create-wasm-app.js"
   },
   "scripts": {
-    "build": "webpack --config webpack.build.config.js",
+    "build": "webpack --config webpack.build.config.cjs",
     "start": "webpack-dev-server --host 0.0.0.0"
   },
   "repository": {
@@ -27,10 +28,17 @@
   },
   "homepage": "https://github.com/rustwasm/create-wasm-app#readme",
   "devDependencies": {
+    "@babel/core": "^7.27.1",
+    "@babel/plugin-syntax-import-meta": "^7.10.4",
+    "@babel/preset-env": "^7.27.2",
+    "babel-loader": "^8.4.1",
+    "copy-webpack-plugin": "^5.0.0",
     "hello-wasm-pack": "^0.1.0",
     "webpack": "^4.29.3",
     "webpack-cli": "^3.1.0",
-    "webpack-dev-server": "^3.1.5",
-    "copy-webpack-plugin": "^5.0.0"
+    "webpack-dev-server": "^3.1.5"
+  },
+  "dependencies": {
+    "ruzzle": "file:../pkg"
   }
 }

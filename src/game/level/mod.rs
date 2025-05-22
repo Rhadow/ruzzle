@@ -4,6 +4,7 @@ mod level01;
 mod level02;
 mod level03;
 mod level04;
+mod level05;
 pub use self::level_manager::LevelManager;
 pub use self::level_manager::LEVELS;
 pub use self::level_manager::Level;
